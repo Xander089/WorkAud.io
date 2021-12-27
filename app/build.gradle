@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -29,9 +31,62 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    viewBinding {
+        enabled = true
+    }
 }
 
 dependencies {
+
+    //NAVIGATION
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    
+    //HILT
+    implementation 'com.google.dagger:hilt-android:2.40'
+    kapt 'com.google.dagger:hilt-compiler:2.40'
+    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.40'
+    kaptAndroidTest 'com.google.dagger:hilt-compiler:2.40'
+    testImplementation 'com.google.dagger:hilt-android-testing:2.40'
+    kaptTest 'com.google.dagger:hilt-compiler:2.40'
+
+    //ROOM
+    implementation("androidx.room:room-runtime:2.4.0")
+    annotationProcessor("androidx.room:room-compiler:2.4.0")
+    kapt("androidx.room:room-compiler:2.4.0")
+    implementation("androidx.room:room-ktx:2.4.0")
+
+
+    //NETWORK
+    implementation"com.squareup.okhttp3:okhttp:4.9.0"
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
+    implementation "com.google.code.gson:gson:2.8.6"
+    implementation 'com.android.volley:volley:1.2.1'
+
+
+    //SPOTIFY
+    implementation files('libs/spotify-app-remote-release-0.7.2.aar')
+    implementation 'com.spotify.android:auth:1.2.6'
+
+
+    //LIFECYCLE
+    implementation 'androidx.activity:activity-ktx:1.4.0'
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.4.0")
+    kapt("androidx.lifecycle:lifecycle-compiler:2.4.0")
+
+
+
+    //CORE
+    implementation 'androidx.fragment:fragment-ktx:1.4.0'
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
