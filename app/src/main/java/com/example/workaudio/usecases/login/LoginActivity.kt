@@ -1,18 +1,40 @@
-package com.example.workaudio
+package com.example.workaudio.usecases.login
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
+import com.example.workaudio.MainActivity
+import com.example.workaudio.R
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
+
+    companion object {
+        private const val CLIENT_ID = "522adc8dc0d643bea4200d7e3721dbc5"
+        private const val REDIRECT_URI = "http://10.0.2.2:8090/callback"
+        private const val REQUEST_CODE = 1337
+        private const val SCOPES =
+            "user-read-recently-played,user-library-modify,user-read-email,user-read-private"
+    }
+
+
+    private val viewModel: LoginViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+
+        //SPOTIFY AUTHENTICATION
         authenticateSpotify()
+
     }
 
     private fun authenticateSpotify() {
@@ -32,26 +54,21 @@ class LoginActivity : AppCompatActivity() {
         )
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+
         if (requestCode == REQUEST_CODE) {
             val response: AuthorizationResponse =
                 AuthorizationClient.getResponse(resultCode, intent)
-            if (response.accessToken != null) {
-                Log.v("from login",response.accessToken.toString())
-                val intent = MainActivity.newIntent(this)
-                intent.putExtra(MainActivity.SPOTIFY_TOKEN, response.accessToken)
-                startActivity(intent)
+
+            response.accessToken?.let { token ->
+                viewModel.insertToken(token)
+                startActivity(MainActivity.newIntent(this))
                 finish()
             }
+
         }
         super.onActivityResult(requestCode, resultCode, intent)
     }
 
-    companion object {
-        const val CLIENT_ID = "522adc8dc0d643bea4200d7e3721dbc5"
-        const val REDIRECT_URI = "http://10.0.2.2:8090/callback"
-        const val REQUEST_CODE = 1337
-        const val SCOPES =
-            "user-read-recently-played,user-library-modify,user-read-email,user-read-private"
-    }
 }

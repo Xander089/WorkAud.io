@@ -3,39 +3,32 @@ package com.example.workaudio.usecases.workoutEditing
 import com.example.workaudio.entities.Track
 import com.example.workaudio.entities.Workout
 
-class WorkoutEditing {
+class WorkoutEditing(
+    private val facade: WorkoutEditingFacade
+) {
 
-    fun updateWorkoutName(
-        workout: Workout,
+    suspend fun getWorkout(id: Int): Workout? = facade.getWorkout(id)
+
+    suspend fun updateWorkoutName(
+        id: Int,
         name: String
-    ): Workout {
-        return Workout(
-            name,
-            workout.duration,
-            workout.tracks
-        )
-    }
+    ) = facade.updateWorkoutName(name, id)
 
-    fun updateWorkoutDuration(
-        workout: Workout,
+    suspend fun updateWorkoutCurrentDuration(
+        id: Int,
+        currentDuration: Int
+    ) = facade.updateWorkoutCurrentDuration(id, currentDuration)
+
+    suspend fun updateWorkoutDuration(
+        id: Int,
         duration: Int
-    ): Workout {
-        return Workout(
-            workout.name,
-            duration,
-            workout.tracks
-        )
-    }
+    ) = facade.updateWorkoutDuration(id, duration)
 
-    fun updateWorkoutTracks(
-        workout: Workout,
-        tracks: List<Track>
-    ): Workout {
-        return Workout(
-            workout.name,
-            workout.duration,
-            tracks
-        )
-    }
+    suspend fun insertWorkoutTrack(
+        id: Int,
+        track: Track
+    ) = facade.insertWorkoutTrack(track, id)
+
+    suspend fun deleteTrack(uri: String, id: Int) = facade.deleteTrack(uri,id)
 
 }
