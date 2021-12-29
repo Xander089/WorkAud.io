@@ -1,5 +1,6 @@
 package com.example.workaudio.usecases.workoutCreation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -30,6 +31,10 @@ class WorkoutCreationViewModel @Inject constructor(private val workoutCreation: 
     private val _currentDuration = MutableLiveData<Int>()
     val currentDuration: LiveData<Int> = _currentDuration
 
+    init {
+        _currentDuration.value = 0
+    }
+
     private val _searchedTracks = MutableLiveData<List<Track>>()
     val searchedTracks: LiveData<List<Track>> = _searchedTracks
 
@@ -37,7 +42,13 @@ class WorkoutCreationViewModel @Inject constructor(private val workoutCreation: 
     val addedTracks: LiveData<MutableList<Track>> = _addedTracks
 
     fun addTrack(track: Track) {
-        _addedTracks.value?.add(track)
+        val currentTracks = _addedTracks.value.orEmpty().toMutableList()
+        if (_addedTracks.value.isNullOrEmpty()) {
+            _addedTracks.value = mutableListOf(track)
+        } else {
+            currentTracks.add(track)
+            _addedTracks.value = currentTracks
+        }
         updateCurrentDuration(track.duration)
     }
 
@@ -68,12 +79,6 @@ class WorkoutCreationViewModel @Inject constructor(private val workoutCreation: 
             val duration = workoutDuration.value ?: 0
             val tracks = addedTracks.value.orEmpty().toList()
             workoutCreation.createWorkout(name, duration, tracks)
-        }
-    }
-
-    fun insertWorkoutTrack(id: Int, track: Track) {
-        viewModelScope.launch(Dispatchers.IO) {
-            workoutCreation.insertWorkoutTrack(id, track)
         }
     }
 

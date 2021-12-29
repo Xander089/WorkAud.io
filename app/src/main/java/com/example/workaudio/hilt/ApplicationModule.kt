@@ -2,13 +2,13 @@ package com.example.workaudio.hilt
 
 import android.content.Context
 import androidx.room.Room
-import com.android.volley.RequestQueue
-import com.android.volley.toolbox.Volley
 import com.example.workaudio.repository.database.ApplicationDatabase
 import com.example.workaudio.repository.web.SpotifyRestApi
 import com.example.workaudio.repository.web.SpotifyWebService
 import com.example.workaudio.usecases.login.Login
 import com.example.workaudio.usecases.login.LoginFacade
+import com.example.workaudio.usecases.player.Player
+import com.example.workaudio.usecases.player.PlayerFacade
 import com.example.workaudio.usecases.workoutCreation.WorkoutCreation
 import com.example.workaudio.usecases.workoutCreation.WorkoutCreationFacade
 import com.example.workaudio.usecases.workoutEditing.WorkoutEditing
@@ -111,6 +111,16 @@ class ApplicationModule {
     @Provides
     fun provideLogin(facade: LoginFacade) =
         Login(facade)
+
+    @Singleton
+    @Provides
+    fun providePlayerFacade(db: ApplicationDatabase) =
+        PlayerFacade(db.applicationDao())
+
+    @Singleton
+    @Provides
+    fun providePlayer(facade: PlayerFacade) =
+        Player(facade)
 
 
 }

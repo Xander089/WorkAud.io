@@ -8,16 +8,16 @@ import com.example.workaudio.repository.database.WorkoutRoomEntity
 import com.example.workaudio.repository.database.WorkoutTracksRoomEntity
 import com.example.workaudio.repository.web.GsonTrack
 import com.example.workaudio.repository.web.SpotifyWebService
+import kotlinx.coroutines.delay
+import java.lang.Thread.sleep
 
 class WorkoutCreationFacade(
     private val dao: ApplicationDAO,
     private val service: SpotifyWebService,
 ) {
 
-    private suspend fun getToken(): String = dao.getToken().token.orEmpty()
-
-    suspend fun searchTracks(queryText: String) : List<Track> {
-        val token = getToken()
+    suspend fun searchTracks(queryText: String): List<Track> {
+        val token = dao.getToken().token.orEmpty()
         val GsonResponse = service.fetchTracks(token, queryText)
         val tracks = mutableListOf<Track>()
         GsonResponse.tracks.items.forEach {
@@ -26,60 +26,28 @@ class WorkoutCreationFacade(
         return tracks
     }
 
-    suspend fun getLatestWorkout(): Workout = dao.getLatestWorkout().toWorkout(emptyList<Track>())
-
-    suspend fun updateWorkoutCurrentDuration(currentDuration: Int, id: Int) {
-        dao.updateWorkoutCurrentDuration(currentDuration, id)
-    }
-
-    suspend fun insertWorkoutTrack(track: Track, id: Int) {
-        dao.insertWorkoutTrack(
-            track.toTrackRoomEntity(id)
-        )
-    }
-
-    suspend fun deleteTrack(uri: String, id: Int) {
-        dao.deleteWorkoutTrack(uri, id)
-    }
-
     suspend fun insertWorkout(
         name: String,
-        currentDuration: Int = 0,
-        duration: Int
+        duration: Int,
+        tracks: List<Track>
     ) {
-        val entity = WorkoutRoomEntity(
-            name,
-            currentDuration,
-            duration
-        )
-        dao.insertWorkout(entity)
+        val workoutRoomEntity = WorkoutRoomEntity(name, duration)
+        dao.insertWorkout(workoutRoomEntity)
+        delay(500)
+        insertWorkoutTracks(tracks)
+    }
+
+    private suspend fun insertWorkoutTracks(tracks: List<Track>) {
+        val currentWorkout = dao.getLatestWorkout()
+        val workoutId = currentWorkout.id
+        tracks.forEach { track ->
+            val roomEntityTrack = track.toTrackRoomEntity(workoutId)
+            dao.insertWorkoutTrack(roomEntityTrack)
+        }
     }
 
 
     //MAPPING methods
-
-    private fun WorkoutRoomEntity.toWorkout(
-        tracks: List<Track>
-    ): Workout {
-        return Workout(
-            this.id,
-            this.name.orEmpty(),
-            this.currentDuration ?: 0,
-            this.duration ?: 0,
-            tracks
-        )
-    }
-
-    private fun WorkoutTracksRoomEntity.toTrack(): Track {
-        return Track(
-            this.title.orEmpty(),
-            this.uri.orEmpty(),
-            this.duration ?: 0,
-            this.artist.orEmpty(),
-            this.album.orEmpty(),
-            this.imageUrl.orEmpty()
-        )
-    }
 
     private fun Track.toTrackRoomEntity(workoutId: Int): WorkoutTracksRoomEntity {
         return WorkoutTracksRoomEntity(
@@ -95,8 +63,8 @@ class WorkoutCreationFacade(
 
     private fun GsonTrack.toTrack(): Track {
         return Track(
-            title =this.name,
-            uri =this.uri,
+            title = this.name,
+            uri = this.uri,
             duration = this.duration,
             artist = this.artists[0].name,
             album = this.album.name,

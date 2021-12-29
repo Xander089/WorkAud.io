@@ -1,11 +1,13 @@
 package com.example.workaudio.usecases.workoutNavigation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.workaudio.R
@@ -19,31 +21,33 @@ class WorkoutListFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkoutListBinding
     private lateinit var workoutAdapter: WorkoutAdapter
+    private val viewModel: WorkoutNavigationViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentWorkoutListBinding.inflate(inflater, container, false)
-        val workout = Workout(
-            name = "pippo",
-            currentDuration = 0,
-            duration = 1800,
-            tracks = emptyList(),
-        )
+        workoutAdapter = provideAdapter()
+        setLayoutFunctionality()
+        setObservers()
+        return binding.root
+    }
 
-        workoutAdapter = WorkoutAdapter(
-            mutableListOf<Workout>(workout),
-            startWorkout = { workoutId ->
-                navigateToFragment(
-                    R.id.action_workoutListFragment_to_workoutDetailFragment,
-                    workoutId
-                )
-            },
-            deleteWorkout = {},
-            bottomModalLambda = {}
-        )
+    private fun setObservers() {
+        viewModel.workouts.observe(this, { workouts ->
+            Log.v("workouts", workouts.toString())
+            workouts?.let {
+                workoutAdapter.apply {
+                    updateWorkouts(it)
+                    notifyDataSetChanged()
+                }
 
+            }
+        })
+    }
+
+    private fun setLayoutFunctionality() {
         binding.apply {
             workoutList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
@@ -54,15 +58,24 @@ class WorkoutListFragment : Fragment() {
                 navigateToFragment(R.id.action_workoutListFragment_to_nameFragment)
             }
         }
-
-        return binding.root
     }
+
+    private fun provideAdapter() = WorkoutAdapter(
+        mutableListOf<Workout>(),
+        startWorkout = { workoutId ->
+            navigateToFragment(
+                R.id.action_workoutListFragment_to_workoutDetailFragment,
+                workoutId
+            )
+        },
+        deleteWorkout = {},
+        bottomModalLambda = {}
+    )
 
     private fun navigateToFragment(
         fragmentId: Int,
         workoutId: Int = 0
     ) {
-        //
         findNavController().navigate(
             fragmentId,
             bundleOf("id" to workoutId)

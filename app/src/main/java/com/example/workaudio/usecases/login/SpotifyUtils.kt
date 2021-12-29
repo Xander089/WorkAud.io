@@ -5,6 +5,7 @@ import android.util.Log
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector.ConnectionListener
 import com.spotify.android.appremote.api.SpotifyAppRemote
+import com.spotify.protocol.types.PlayerRestrictions
 import com.spotify.protocol.types.PlayerState
 import com.spotify.sdk.android.auth.AuthorizationClient
 
@@ -32,11 +33,14 @@ object SpotifyUtils {
             object : ConnectionListener {
                 override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                     mSpotifyAppRemote = spotifyAppRemote
+
                 }
 
                 override fun onFailure(throwable: Throwable) {}
             })
     }
+
+
 
     fun play(uri: String) {
 

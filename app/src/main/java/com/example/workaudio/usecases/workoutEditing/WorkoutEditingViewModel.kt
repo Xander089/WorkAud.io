@@ -1,9 +1,7 @@
 package com.example.workaudio.usecases.workoutEditing
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.util.Log
+import androidx.lifecycle.*
 import com.example.workaudio.entities.Track
 import com.example.workaudio.entities.Workout
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,12 +13,18 @@ import javax.inject.Inject
 class WorkoutEditingViewModel @Inject constructor(private val workoutEditing: WorkoutEditing) :
     ViewModel() {
 
-    private val _selectedWorkout = MutableLiveData<Workout>()
-    private val selectedWorkout: LiveData<Workout> = _selectedWorkout
 
-    fun getWorkout(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _selectedWorkout.value = workoutEditing.getWorkout(id)
+    var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
+    var tracks: LiveData<List<Track>> = MutableLiveData<List<Track>>()
+
+    fun setSelectedWorkout(workoutId: Int) {
+        selectedWorkout = liveData(Dispatchers.IO) {
+            val workout = workoutEditing.getWorkout(workoutId)
+            emit(workout)
+        }
+        tracks = liveData(Dispatchers.IO) {
+            val workout = workoutEditing.getWorkout(workoutId)
+            emit(workout.tracks)
         }
     }
 
@@ -30,11 +34,6 @@ class WorkoutEditingViewModel @Inject constructor(private val workoutEditing: Wo
         }
     }
 
-    fun updateWorkoutCurrentDuration(id: Int, currentDuration: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            workoutEditing.updateWorkoutCurrentDuration(id, currentDuration)
-        }
-    }
 
     fun updateWorkoutDuration(id: Int, duration: Int) {
         viewModelScope.launch(Dispatchers.IO) {

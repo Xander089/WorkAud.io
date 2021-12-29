@@ -9,6 +9,5 @@ import kotlinx.coroutines.flow.collect
 class WorkoutNavigation(
     private val facade: WorkoutNavigationFacade
 ) {
-    suspend fun getAllWorkouts(): List<Workout> = facade.getAllWorkouts()
-    suspend fun getWorkout(id: Int): Workout? = facade.getWorkout(id)
+    val workouts  = facade.workouts
 }

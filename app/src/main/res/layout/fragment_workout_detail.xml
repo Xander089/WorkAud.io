@@ -7,7 +7,7 @@
     android:background="@color/black">
 
     <Button
-        android:id="@+id/editButton"
+        android:id="@+id/editNameButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
@@ -18,18 +18,18 @@
         app:layout_constraintStart_toEndOf="@+id/workoutName"
         app:layout_constraintTop_toTopOf="@+id/workoutName" />
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/topAppBar"
-        style="@style/Widget.MaterialComponents.Toolbar.Primary"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/black_light2"
-        android:theme="@style/AppTheme.Toolbar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="Detail"
-        app:navigationIcon="@drawable/ic_back" />
+
+    <Button
+        android:id="@+id/editDurationButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:background="@color/transparent"
+        android:backgroundTint="@color/transparent"
+        app:icon="@drawable/ic_edit"
+        app:layout_constraintBottom_toBottomOf="@+id/durationText"
+        app:layout_constraintStart_toEndOf="@+id/durationText"
+        app:layout_constraintTop_toTopOf="@+id/durationText" />
 
     <TextView
         android:id="@+id/workoutName"
@@ -42,7 +42,7 @@
         android:textColor="@color/grey"
         android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topAppBar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/durationText"
@@ -65,7 +65,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/durationText" />
+        app:layout_constraintTop_toBottomOf="@+id/editTracksButton" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/playButton"
@@ -77,5 +77,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/workoutName"
         app:srcCompat="@drawable/ic_play" />
+
+    <Button
+        android:id="@+id/editTracksButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/grey"
+        android:fontFamily="@font/hammersmith_one"
+        style="?attr/materialButtonOutlinedStyle"
+        android:text="Change tracks"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/durationText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

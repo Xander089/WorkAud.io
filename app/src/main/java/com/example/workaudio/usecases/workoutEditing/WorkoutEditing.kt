@@ -7,17 +7,13 @@ class WorkoutEditing(
     private val facade: WorkoutEditingFacade
 ) {
 
-    suspend fun getWorkout(id: Int): Workout? = facade.getWorkout(id)
+    suspend fun getWorkout(id: Int): Workout = facade.getWorkout(id)
 
     suspend fun updateWorkoutName(
         id: Int,
         name: String
     ) = facade.updateWorkoutName(name, id)
 
-    suspend fun updateWorkoutCurrentDuration(
-        id: Int,
-        currentDuration: Int
-    ) = facade.updateWorkoutCurrentDuration(id, currentDuration)
 
     suspend fun updateWorkoutDuration(
         id: Int,

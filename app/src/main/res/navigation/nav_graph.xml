@@ -48,5 +48,9 @@
         android:id="@+id/tracksFragment"
         android:name="com.example.workaudio.usecases.workoutCreation.TracksFragment"
         android:label="fragment_tracks"
-        tools:layout="@layout/fragment_tracks" />
+        tools:layout="@layout/fragment_tracks" >
+        <action
+            android:id="@+id/action_tracksFragment_to_workoutListFragment"
+            app:destination="@id/workoutListFragment" />
+    </fragment>
 </navigation>

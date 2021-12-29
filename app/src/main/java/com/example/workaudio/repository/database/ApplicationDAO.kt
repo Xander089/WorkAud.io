@@ -23,18 +23,14 @@ interface ApplicationDAO {
     fun getAllWorkouts(): Flow<List<WorkoutRoomEntity>>
 
     @Query("SELECT * FROM WorkoutTracksRoomEntity WHERE playlistId = :id")
-    fun getWorkoutTracks(id: Int): Flow<List<WorkoutTracksRoomEntity>>
+    fun getWorkoutTracks(id: Int): List<WorkoutTracksRoomEntity>
 
     @Query("SELECT * FROM WorkoutRoomEntity WHERE id = :id")
-    fun getWorkout(id: Int): Flow<WorkoutRoomEntity>
-
-    @Query("SELECT * FROM SearchedTracksRoomEntity")
-    fun getSearchedTracks(): Flow<List<SearchedTracksRoomEntity>>
+    suspend fun getWorkout(id: Int): WorkoutRoomEntity
 
 
     //UPDATE
-    @Query("UPDATE WorkoutRoomEntity SET currentDuration = currentDuration + :currentDuration WHERE id = :id")
-    suspend fun updateWorkoutCurrentDuration(currentDuration: Int, id: Int)
+
 
     @Query("UPDATE WorkoutRoomEntity SET duration = :duration WHERE id = :id")
     suspend fun updateWorkoutDuration(duration: Int, id: Int)
@@ -43,8 +39,7 @@ interface ApplicationDAO {
     suspend fun updateWorkoutName(name: String, id: Int)
 
     //INSERT
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSearchedTracks(tracks: List<SearchedTracksRoomEntity>)
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertToken(tokenEntity: TokenRoomEntity)

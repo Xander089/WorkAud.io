@@ -9,7 +9,7 @@ import com.example.workaudio.entities.Workout
 
 
 class WorkoutAdapter(
-    private val workoutEntities: MutableList<Workout>,
+    private val _workouts: MutableList<Workout>,
     private val startWorkout: (id: Int) -> Unit,
     private val deleteWorkout: (id: Int) -> Unit,
     private val bottomModalLambda: () -> Unit
@@ -17,12 +17,12 @@ class WorkoutAdapter(
 
     fun onItemDismissed(position: Int) {
         if (position in 0..itemCount) {
-            deleteWorkout(workoutEntities[position].id)
+            deleteWorkout(_workouts[position].id)
         }
     }
 
     fun updateWorkouts(workouts: List<Workout>) {
-        workoutEntities.apply {
+        _workouts.apply {
             clear()
             addAll(workouts)
             notifyDataSetChanged()
@@ -61,9 +61,9 @@ class WorkoutAdapter(
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        val playlist = workoutEntities[position]
+        val playlist = _workouts[position]
         holder.bind(playlist, startWorkout, deleteWorkout, bottomModalLambda)
     }
 
-    override fun getItemCount(): Int = workoutEntities.size
+    override fun getItemCount(): Int = _workouts.size
 }

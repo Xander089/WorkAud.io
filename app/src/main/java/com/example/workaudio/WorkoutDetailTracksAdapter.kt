@@ -2,9 +2,11 @@ package com.example.workaudio
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.workaudio.databinding.ItemDetailTrackBinding
 import com.example.workaudio.databinding.ItemTrackBinding
 import com.example.workaudio.entities.Track
 import com.example.workaudio.repository.database.WorkoutTracksRoomEntity
@@ -13,29 +15,23 @@ import kotlinx.coroutines.*
 import java.io.IOException
 import java.net.URL
 
-class WorkoutTracksAdapter(
+class WorkoutDetailTracksAdapter(
     val tracks: MutableList<Track>,
     private val addTrack: (Track) -> Unit
-) : RecyclerView.Adapter<WorkoutTracksAdapter.TrackListViewHolder>() {
+) : RecyclerView.Adapter<WorkoutDetailTracksAdapter.TrackListViewHolder>() {
 
     inner class TrackListViewHolder(
-        private val binding: ItemTrackBinding,
+        private val binding: ItemDetailTrackBinding,
         private val addTrack: (Track) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(track: Track) {
+            Log.v("tracce",track.toString())
             binding.apply {
                 artistNameText.text = track.artist
                 trackNameText.text = track.title
                 durationTrackText.text = formatTrackTime(track.duration)
                 fetchImage(track.imageUrl, binding)
-                addButton.apply {
-                    isEnabled = true
-                    setOnClickListener {
-                        addTrack(track)
-                        isEnabled = false
-                    }
-                }
             }
         }
 
@@ -48,7 +44,7 @@ class WorkoutTracksAdapter(
         }
 
         @DelicateCoroutinesApi
-        private fun fetchImage(image: String, binding: ItemTrackBinding) {
+        private fun fetchImage(image: String, binding: ItemDetailTrackBinding) {
 
             val urlImage = URL(image)
             val result: Deferred<Bitmap?> = GlobalScope.async {
@@ -72,7 +68,7 @@ class WorkoutTracksAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackListViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = ItemTrackBinding.inflate(layoutInflater, parent, false)
+        val binding = ItemDetailTrackBinding.inflate(layoutInflater, parent, false)
         return TrackListViewHolder(binding, this.addTrack)
     }
 

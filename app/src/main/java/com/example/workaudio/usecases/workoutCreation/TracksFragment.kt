@@ -9,8 +9,10 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.workaudio.R
 import com.example.workaudio.WorkoutTracksAdapter
@@ -37,15 +39,17 @@ class TracksFragment : Fragment() {
         storeWorkoutInfo()
 
         binding = FragmentTracksBinding.inflate(layoutInflater, container, false)
-        trackListAdapter = WorkoutTracksAdapter(mutableListOf<Track>()){ track ->
-
+        trackListAdapter = WorkoutTracksAdapter(mutableListOf<Track>()) { track ->
+            viewModel.addTrack(track)
         }
 
         binding.apply {
             (activity as AppCompatActivity?)!!.setSupportActionBar(topAppBar)
             minuteLabel.text = "0/${(arguments?.getInt(WORKOUT_DURATION) ?: 0)} min"
+            saveButton.isEnabled = false
             saveButton.setOnClickListener {
-
+                viewModel.createWorkout()
+                findNavController().navigate(R.id.action_tracksFragment_to_workoutListFragment)
             }
             trackList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
@@ -53,7 +57,7 @@ class TracksFragment : Fragment() {
             }
         }
 
-        viewModel.searchedTracks.observe(this,{ searchedTracks ->
+        viewModel.searchedTracks.observe(this, { searchedTracks ->
             trackListAdapter.apply {
                 tracks.clear()
                 tracks.addAll(searchedTracks)
@@ -61,20 +65,21 @@ class TracksFragment : Fragment() {
             }
         })
 
-        viewModel.currentDuration.observe(this,{  duration ->
-                binding.apply {
-                    saveButton.isEnabled = viewModel.compareDuration()
-                    minuteLabel.text = (duration/60000).toString()
-                }
+        viewModel.currentDuration.observe(this, { duration ->
+            Log.v("duration", duration.toString())
+            binding.apply {
+                saveButton.isEnabled = viewModel.compareDuration()
+                minuteLabel.text = (duration / 60000).toString()
+            }
         })
 
         return binding.root
     }
 
-    private fun storeWorkoutInfo(){
+    private fun storeWorkoutInfo() {
         val name = arguments?.getString(WORKOUT_NAME).orEmpty()
         val duration = arguments?.getInt(WORKOUT_DURATION) ?: 0
-        viewModel.storeWorkoutInfo(name,duration)
+        viewModel.storeWorkoutInfo(name, duration)
     }
 
 

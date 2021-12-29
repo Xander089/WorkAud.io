@@ -1,33 +1,15 @@
-package com.example.workaudio.usecases.workoutEditing
+package com.example.workaudio.usecases.player
 
+import android.util.Log
 import com.example.workaudio.entities.Track
 import com.example.workaudio.entities.Workout
 import com.example.workaudio.repository.database.ApplicationDAO
 import com.example.workaudio.repository.database.WorkoutRoomEntity
 import com.example.workaudio.repository.database.WorkoutTracksRoomEntity
 
-class WorkoutEditingFacade(
+class PlayerFacade(
     private val dao: ApplicationDAO
 ) {
-
-    suspend fun updateWorkoutName(name: String, id: Int) {
-        dao.updateWorkoutName(name, id)
-    }
-
-
-    suspend fun updateWorkoutDuration(duration: Int, id: Int) {
-        dao.updateWorkoutDuration(duration, id)
-    }
-
-    suspend fun insertWorkoutTrack(track: Track, id: Int) {
-        dao.insertWorkoutTrack(
-            track.toTrackRoomEntity(id)
-        )
-    }
-
-    suspend fun deleteTrack(uri: String, id: Int) {
-        dao.deleteWorkoutTrack(uri, id)
-    }
 
     suspend fun getWorkout(id: Int): Workout {
         val tracksRoomEntity = dao.getWorkoutTracks(id)
@@ -37,7 +19,6 @@ class WorkoutEditingFacade(
         }
         return workoutRoomEntity.toWorkout(tracks)
     }
-
 
     //MAPPING methods
 
@@ -62,18 +43,4 @@ class WorkoutEditingFacade(
             this.imageUrl.orEmpty()
         )
     }
-
-    private fun Track.toTrackRoomEntity(workoutId: Int): WorkoutTracksRoomEntity {
-        return WorkoutTracksRoomEntity(
-            workoutId,
-            this.uri,
-            this.title,
-            this.duration,
-            this.artist,
-            this.album,
-            this.imageUrl
-        )
-    }
-
-
 }
