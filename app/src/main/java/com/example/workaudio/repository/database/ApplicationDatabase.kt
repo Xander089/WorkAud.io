@@ -7,7 +7,7 @@ import androidx.room.*
         WorkoutRoomEntity::class,
         WorkoutTracksRoomEntity::class,
         TokenRoomEntity::class,
-//        SearchedTracksRoomEntity::class
+       CurrentPosition::class
     ], version = 1
 )
 abstract class ApplicationDatabase : RoomDatabase() {
@@ -40,20 +40,15 @@ data class WorkoutTracksRoomEntity(
 
 }
 
-//@Entity
-//data class SearchedTracksRoomEntity(
-//    @ColumnInfo(name = "playlistId") var playlistId: Int? = -1,
-//    @ColumnInfo(name = "uri") val uri: String?,
-//    @ColumnInfo(name = "name") val name: String?,
-//    @ColumnInfo(name = "duration") val duration: Int?,
-//    @ColumnInfo(name = "artist") val artist: String?,
-//    @ColumnInfo(name = "album") val album: String?,
-//    @ColumnInfo(name = "imageUrl") val imageUrl: String?,
-//    ) {
-//    @PrimaryKey(autoGenerate = true)
-//    var id: Int = 0
-//
-//}
+@Entity
+data class CurrentPosition(
+    @ColumnInfo(name = "position") val position: Int = 0
+){
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+}
+
+
 @Entity
 data class TokenRoomEntity(
     @ColumnInfo(name = "token") val token: String?

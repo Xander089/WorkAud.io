@@ -9,6 +9,7 @@ import com.example.workaudio.usecases.login.Login
 import com.example.workaudio.usecases.login.LoginFacade
 import com.example.workaudio.usecases.player.Player
 import com.example.workaudio.usecases.player.PlayerFacade
+import com.example.workaudio.usecases.player.SpotifyManager
 import com.example.workaudio.usecases.workoutCreation.WorkoutCreation
 import com.example.workaudio.usecases.workoutCreation.WorkoutCreationFacade
 import com.example.workaudio.usecases.workoutEditing.WorkoutEditing
@@ -121,6 +122,8 @@ class ApplicationModule {
     @Provides
     fun providePlayer(facade: PlayerFacade) =
         Player(facade)
+
+
 
 
 }

@@ -66,7 +66,6 @@ class TracksFragment : Fragment() {
         })
 
         viewModel.currentDuration.observe(this, { duration ->
-            Log.v("duration", duration.toString())
             binding.apply {
                 saveButton.isEnabled = viewModel.compareDuration()
                 minuteLabel.text = (duration / 60000).toString()

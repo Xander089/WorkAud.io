@@ -7,4 +7,5 @@ data class Track(
     val artist: String,
     val album: String,
     val imageUrl: String,
+    var endingTime: Int = 0
 )

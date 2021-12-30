@@ -23,8 +23,8 @@
         android:label="fragment_workout_detail"
         tools:layout="@layout/fragment_workout_detail" >
         <action
-            android:id="@+id/action_workoutDetailFragment_to_tracksFragment"
-            app:destination="@id/tracksFragment" />
+            android:id="@+id/action_workoutDetailFragment_to_editingTracksFragment"
+            app:destination="@id/editingTracksFragment" />
     </fragment>
     <fragment
         android:id="@+id/nameFragment"
@@ -53,4 +53,9 @@
             android:id="@+id/action_tracksFragment_to_workoutListFragment"
             app:destination="@id/workoutListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/editingTracksFragment"
+        android:name="com.example.workaudio.usecases.workoutEditing.EditingTracksFragment"
+        android:label="fragment_editing_tracks"
+        tools:layout="@layout/fragment_editing_tracks" />
 </navigation>

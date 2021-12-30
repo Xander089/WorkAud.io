@@ -11,20 +11,13 @@ import com.example.workaudio.R
 import com.example.workaudio.WorkoutDetailTracksAdapter
 import com.example.workaudio.databinding.ActivityPlayerBinding
 import com.example.workaudio.entities.Track
-import com.example.workaudio.usecases.login.SpotifyUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PlayerActivity : AppCompatActivity() {
 
     companion object {
-
-        private const val MAX_MILLISECONDS = 1800000L
-        private const val MILLIS_PER_SECOND = 1000L
-        private const val START_TIME = "00:00:15"
-        private const val RESET_TIME = "00:00:00"
         private const val WORKOUT_ID = "WORKOUT_ID"
-
         fun newIntent(context: Context, workoutId: Int): Intent {
             val intent = Intent(context, PlayerActivity::class.java)
             intent.putExtra(WORKOUT_ID, workoutId)
@@ -33,10 +26,13 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private val viewModel: PlayerViewModel by viewModels()
+    private val spotify = SpotifyManager()
     private lateinit var _adapter: WorkoutDetailTracksAdapter
     private lateinit var binding: ActivityPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        spotify.spotifyConnect(this)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -44,49 +40,89 @@ class PlayerActivity : AppCompatActivity() {
         _adapter = WorkoutDetailTracksAdapter(mutableListOf<Track>(), {})
 
         intent?.extras?.getInt(WORKOUT_ID)?.let { workoutId ->
-            viewModel.setSelectedWorkout(workoutId)
+            viewModel.initializeCurrentWorkout(workoutId)
         }
 
+        initializeLayout()
+        initializeViewModelObservers()
+
+    }
+
+    override fun onStart() {
+        spotify.spotifyConnect(this)
+        super.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        spotify.spotifyDisconnect()
+        spotify.logOut(this)
+
+    }
+
+    private fun initializeLayout() {
         binding.apply {
-            timerText.text = START_TIME
+
+            timerText.text = resources?.getString(R.string.reset_time).orEmpty()
             playButton.setOnClickListener {
-                viewModel.tracks.value?.get(0)?.let { it1 -> SpotifyUtils.play(it1.uri) }
+                viewModel.startTimer()
             }
             pauseButton.setOnClickListener { }
             stopButton.setOnClickListener {
-                timerText.text = START_TIME
+                timerText.text = resources?.getString(R.string.reset_time).orEmpty()
             }
             trackList.apply {
                 layoutManager = LinearLayoutManager(this@PlayerActivity)
                 adapter = _adapter
             }
         }
+    }
 
-        viewModel.selectedWorkout.observe(this, { workout ->
-            binding.apply {
-                workoutNameText.text = workout.name
-            }
-        })
+    private fun initializeViewModelObservers() {
 
-        viewModel.tracks.observe(this, { trackList ->
-            _adapter.tracks.apply {
-                clear()
-                addAll(trackList)
-            }
-            _adapter.notifyDataSetChanged()
-        })
+        viewModel.apply {
+
+            selectedWorkout.observe(this@PlayerActivity, { workout ->
+                binding.apply {
+                    workoutNameText.text = workout.name
+                }
+                viewModel.initializeWorkoutTracks(workout.tracks)
+            })
+
+            timerText.observe(this@PlayerActivity, { timerText ->
+                binding.timerText.text = timerText
+                stopSpotifyPlayer(timerText)
+            })
+
+            viewModel.tracks.observe(this@PlayerActivity, { trackList ->
+                _adapter.tracks.apply {
+                    clear()
+                    addAll(trackList)
+                }
+                _adapter.notifyDataSetChanged()
+            })
+
+            currentTrackPosition.observe(this@PlayerActivity, { newSongPosition ->
+                val state = viewModel.playerState.value ?: 0
+                if (state != 0) {
+                    val trackUri = getTrackUri(newSongPosition.position)
+                    spotify.play(trackUri)
+                }
+
+            })
+
+
+        }
 
     }
 
-    override fun onStart() {
-        SpotifyUtils.spotifyConnect(this)
-        super.onStart()
+    private fun stopSpotifyPlayer(timerText: String) {
+
+        val resetTimeText = resources?.getString(R.string.reset_time).orEmpty()
+        if (timerText == resetTimeText) {
+            spotify.mSpotifyAppRemote?.playerApi?.pause()
+        }
     }
 
-    override fun onStop() {
-        super.onStop()
-        SpotifyUtils.spotifyDisconnect()
-        SpotifyUtils.logOut(this)
 
-    }
 }

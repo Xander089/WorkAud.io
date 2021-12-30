@@ -6,8 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.workaudio.R
 import com.example.workaudio.WorkoutAdapter
@@ -39,7 +41,7 @@ class WorkoutDetailFragment : Fragment() {
         return binding.root
     }
 
-    private fun setLayoutFunctionality(){
+    private fun setLayoutFunctionality() {
         binding.apply {
             trackList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
@@ -48,10 +50,18 @@ class WorkoutDetailFragment : Fragment() {
             playButton.setOnClickListener {
                 startPlayerActivity()
             }
+            editTracksButton.setOnClickListener {
+                arguments?.getInt("id")?.let { workoutId ->
+                    navigateToFragment(
+                        R.id.action_workoutDetailFragment_to_editingTracksFragment,
+                        workoutId
+                    )
+                }
+            }
         }
     }
 
-    private fun setObservers(){
+    private fun setObservers() {
         viewModel.selectedWorkout.observe(this, { workout ->
             binding.apply {
                 workoutName.text = workout.name
@@ -73,6 +83,16 @@ class WorkoutDetailFragment : Fragment() {
             val intent = PlayerActivity.newIntent(requireContext(), workoutId)
             startActivity(intent)
         }
+    }
+
+    private fun navigateToFragment(
+        fragmentId: Int,
+        workoutId: Int = 0
+    ) {
+        findNavController().navigate(
+            fragmentId,
+            bundleOf("id" to workoutId)
+        )
     }
 
 }

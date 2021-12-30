@@ -9,6 +9,19 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ApplicationDAO {
 
+    //POSITION
+    @Query("UPDATE CurrentPosition SET position = position + :pos")
+    suspend fun updateCurrentPosition(pos: Int)
+
+    @Query("SELECT * FROM CurrentPosition LIMIT 1")
+    fun getCurrentPosition(): Flow<CurrentPosition>
+
+    @Query("DELETE FROM CurrentPosition")
+    suspend fun clearCurrentPosition()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCurrentPosition(position: CurrentPosition)
+
     //READ
     @Query("SELECT * FROM TokenRoomEntity")
     fun readToken(): Flow<TokenRoomEntity>
