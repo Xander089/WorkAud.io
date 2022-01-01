@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/workoutListFragment"
-        android:name="com.example.workaudio.usecases.workoutNavigation.WorkoutListFragment"
+        android:name="com.example.workaudio.presentation.navigation.WorkoutListFragment"
         android:label="fragment_workout_list"
         tools:layout="@layout/fragment_workout_list" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/workoutDetailFragment"
-        android:name="com.example.workaudio.usecases.workoutEditing.WorkoutDetailFragment"
+        android:name="com.example.workaudio.presentation.editing.WorkoutDetailFragment"
         android:label="fragment_workout_detail"
         tools:layout="@layout/fragment_workout_detail" >
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/nameFragment"
-        android:name="com.example.workaudio.usecases.workoutCreation.NameFragment"
+        android:name="com.example.workaudio.presentation.creation.NameFragment"
         android:label="fragment_name"
         tools:layout="@layout/fragment_name" >
         <action
@@ -37,7 +37,7 @@
     </fragment>
     <fragment
         android:id="@+id/durationFragment"
-        android:name="com.example.workaudio.usecases.workoutCreation.DurationFragment"
+        android:name="com.example.workaudio.presentation.creation.DurationFragment"
         android:label="fragment_duration"
         tools:layout="@layout/fragment_duration" >
         <action
@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/tracksFragment"
-        android:name="com.example.workaudio.usecases.workoutCreation.TracksFragment"
+        android:name="com.example.workaudio.presentation.creation.TracksFragment"
         android:label="fragment_tracks"
         tools:layout="@layout/fragment_tracks" >
         <action
@@ -55,7 +55,7 @@
     </fragment>
     <fragment
         android:id="@+id/editingTracksFragment"
-        android:name="com.example.workaudio.usecases.workoutEditing.EditingTracksFragment"
+        android:name="com.example.workaudio.presentation.editing.EditingTracksFragment"
         android:label="fragment_editing_tracks"
         tools:layout="@layout/fragment_editing_tracks" />
 </navigation>

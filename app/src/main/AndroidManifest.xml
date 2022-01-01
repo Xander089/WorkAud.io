@@ -13,10 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkAudIo">
         <activity
-            android:name=".usecases.player.PlayerActivity"
+            android:name=".presentation.player.PlayerActivity"
             android:exported="false" />
         <activity
-            android:name=".usecases.login.LoginActivity"
+            android:name="com.example.workaudio.presentation.login.LoginActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.navigation.MainActivity"
             android:exported="false">
         </activity>
     </application>

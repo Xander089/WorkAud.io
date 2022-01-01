@@ -5,17 +5,17 @@ import androidx.room.Room
 import com.example.workaudio.repository.database.ApplicationDatabase
 import com.example.workaudio.repository.web.SpotifyRestApi
 import com.example.workaudio.repository.web.SpotifyWebService
-import com.example.workaudio.usecases.login.Login
-import com.example.workaudio.usecases.login.LoginFacade
-import com.example.workaudio.usecases.player.Player
-import com.example.workaudio.usecases.player.PlayerFacade
-import com.example.workaudio.usecases.player.SpotifyManager
-import com.example.workaudio.usecases.workoutCreation.WorkoutCreation
-import com.example.workaudio.usecases.workoutCreation.WorkoutCreationFacade
-import com.example.workaudio.usecases.workoutEditing.WorkoutEditing
-import com.example.workaudio.usecases.workoutEditing.WorkoutEditingFacade
-import com.example.workaudio.usecases.workoutNavigation.WorkoutNavigation
-import com.example.workaudio.usecases.workoutNavigation.WorkoutNavigationFacade
+import com.example.workaudio.core.usecases.login.LoginInteractor
+import com.example.workaudio.core.usecases.login.LoginFacade
+import com.example.workaudio.core.usecases.player.PlayerInteractor
+import com.example.workaudio.core.usecases.player.PlayerFacade
+import com.example.workaudio.core.usecases.creation.WorkoutCreationInteractor
+import com.example.workaudio.core.usecases.creation.WorkoutCreationFacade
+import com.example.workaudio.core.usecases.editing.WorkoutEditingInteractor
+import com.example.workaudio.core.usecases.editing.WorkoutEditingFacade
+import com.example.workaudio.core.usecases.navigation.WorkoutNavigationInteractor
+import com.example.workaudio.core.usecases.navigation.WorkoutNavigationFacade
+import com.example.workaudio.spotify.SpotifyManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -80,7 +80,7 @@ class ApplicationModule {
     @Singleton
     @Provides
     fun provideWorkoutNavigation(facade: WorkoutNavigationFacade) =
-        WorkoutNavigation(facade)
+        WorkoutNavigationInteractor(facade)
 
     @Singleton
     @Provides
@@ -90,7 +90,7 @@ class ApplicationModule {
     @Singleton
     @Provides
     fun provideWorkoutEditing(facade: WorkoutEditingFacade) =
-        WorkoutEditing(facade)
+        WorkoutEditingInteractor(facade)
 
     @Singleton
     @Provides
@@ -100,7 +100,7 @@ class ApplicationModule {
     @Singleton
     @Provides
     fun provideWorkoutCreation(facade: WorkoutCreationFacade) =
-        WorkoutCreation(facade)
+        WorkoutCreationInteractor(facade)
 
 
     @Singleton
@@ -111,7 +111,7 @@ class ApplicationModule {
     @Singleton
     @Provides
     fun provideLogin(facade: LoginFacade) =
-        Login(facade)
+        LoginInteractor(facade)
 
     @Singleton
     @Provides
@@ -121,9 +121,7 @@ class ApplicationModule {
     @Singleton
     @Provides
     fun providePlayer(facade: PlayerFacade) =
-        Player(facade)
-
-
+        PlayerInteractor(facade)
 
 
 }
