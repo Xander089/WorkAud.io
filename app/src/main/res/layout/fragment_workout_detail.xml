@@ -6,30 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <Button
-        android:id="@+id/editNameButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:background="@color/transparent"
-        android:backgroundTint="@color/transparent"
-        app:icon="@drawable/ic_edit"
-        app:layout_constraintBottom_toBottomOf="@+id/workoutName"
-        app:layout_constraintStart_toEndOf="@+id/workoutName"
-        app:layout_constraintTop_toTopOf="@+id/workoutName" />
-
-
-    <Button
-        android:id="@+id/editDurationButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:background="@color/transparent"
-        android:backgroundTint="@color/transparent"
-        app:icon="@drawable/ic_edit"
-        app:layout_constraintBottom_toBottomOf="@+id/durationText"
-        app:layout_constraintStart_toEndOf="@+id/durationText"
-        app:layout_constraintTop_toTopOf="@+id/durationText" />
 
     <TextView
         android:id="@+id/workoutName"
@@ -60,34 +36,37 @@
         android:id="@+id/trackList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/playButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTracksButton" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/playButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:clickable="true"
+        android:text="Start"
         app:backgroundTint="@color/yellow"
+        app:icon="@drawable/ic_play"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/workoutName"
-        app:srcCompat="@drawable/ic_play" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/editTracksButton"
+        style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:textColor="@color/grey"
         android:fontFamily="@font/hammersmith_one"
-        style="?attr/materialButtonOutlinedStyle"
-        android:text="Change tracks"
+        android:text="Edit tracks"
+        android:textColor="@color/grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/durationText" />
 

@@ -15,8 +15,8 @@ class WorkoutEditingFacade(
     }
 
 
-    suspend fun updateWorkoutDuration(duration: Int, id: Int) {
-        dao.updateWorkoutDuration(duration, id)
+    suspend fun updateWorkoutDuration(id: Int, duration: Int) {
+        dao.updateWorkoutDuration(id, duration)
     }
 
     suspend fun insertWorkoutTrack(track: Track, id: Int) {

@@ -16,6 +16,8 @@ class WorkoutNavigationFacade(
         }
     }
 
+    suspend fun deleteWorkout(workoutId: Int) = dao.deleteWorkout(workoutId)
+
     private fun WorkoutRoomEntity.toWorkout(
         tracks: List<Track>
     ): Workout {

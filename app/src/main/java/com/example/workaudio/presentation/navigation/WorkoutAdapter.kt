@@ -10,17 +10,11 @@ import com.example.workaudio.core.entities.Workout
 
 class WorkoutAdapter(
     private val _workouts: MutableList<Workout>,
-    private val startWorkout: (id: Int) -> Unit,
-    private val deleteWorkout: (id: Int) -> Unit,
-    private val bottomModalLambda: () -> Unit,
+    private val openWorkoutDetail: (id: Int) -> Unit,
+    private val showBottomModal: (Int) -> Unit,
     private val fetchImage: (ImageView, String) -> Unit
 ) : RecyclerView.Adapter<WorkoutAdapter.PlaylistViewHolder>() {
 
-    fun onItemDismissed(position: Int) {
-        if (position in 0..itemCount) {
-            deleteWorkout(_workouts[position].id)
-        }
-    }
 
     fun updateWorkouts(workouts: List<Workout>) {
         _workouts.apply {
@@ -36,27 +30,31 @@ class WorkoutAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            workoutEntity: Workout,
-            startWorkout: (id: Int) -> Unit,
-            deleteWorkout: (id: Int) -> Unit,
-            bottomModalLambda: () -> Unit
+            workout: Workout,
+            openWorkoutDetail: (id: Int) -> Unit,
+            showBottomModal: (id: Int) -> Unit,
         ) {
-            workoutEntity.duration.also { it ->
+            workout.duration.also { it ->
                 "${it / 60000} min".let { converted ->
                     binding.durationPlaylistText.text = converted
                 }
             }
 
             binding.apply {
-                if (workoutEntity.tracks.isNotEmpty()) {
-                    fetchImage(imageView, workoutEntity.tracks[0].imageUrl)
+                if (workout.tracks.isNotEmpty()) {
+                    fetchImage(imageView, workout.tracks[0].imageUrl)
                 }
-                settingsButton.setOnClickListener { bottomModalLambda() }
-                playlistNameText.text = workoutEntity.name
-                openDetailButton.setOnClickListener {
-                    val myId = workoutEntity.id
-                    startWorkout(myId)
+                root.apply {
+                    setOnLongClickListener {
+                        showBottomModal(workout.id)
+                        true
+                    }
+                    setOnClickListener {
+                        openWorkoutDetail(workout.id)
+                    }
                 }
+                playlistNameText.text = workout.name
+
             }
         }
     }
@@ -69,7 +67,7 @@ class WorkoutAdapter(
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         val playlist = _workouts[position]
-        holder.bind(playlist, startWorkout, deleteWorkout, bottomModalLambda)
+        holder.bind(playlist, openWorkoutDetail, showBottomModal)
     }
 
     override fun getItemCount(): Int = _workouts.size

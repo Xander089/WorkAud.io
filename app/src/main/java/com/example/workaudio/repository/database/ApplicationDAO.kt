@@ -46,7 +46,7 @@ interface ApplicationDAO {
 
 
     @Query("UPDATE WorkoutRoomEntity SET duration = :duration WHERE id = :id")
-    suspend fun updateWorkoutDuration(duration: Int, id: Int)
+    suspend fun updateWorkoutDuration(id: Int, duration: Int)
 
     @Query("UPDATE WorkoutRoomEntity SET name = :name WHERE id = :id")
     suspend fun updateWorkoutName(name: String, id: Int)
@@ -66,6 +66,9 @@ interface ApplicationDAO {
     //DELETE
     @Query("DELETE FROM WorkoutTracksRoomEntity WHERE playlistId = :id AND uri = :uri")
     suspend fun deleteWorkoutTrack(uri: String, id: Int)
+
+    @Query("DELETE FROM WorkoutRoomEntity WHERE id = :id")
+    suspend fun deleteWorkout(id: Int)
 
     @Query("DELETE FROM TokenRoomEntity")
     suspend fun clearToken()

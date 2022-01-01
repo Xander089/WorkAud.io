@@ -32,7 +32,7 @@ class DurationFragment : Fragment() {
             rangeSlider.setValues(30.0f)
             timeLabel.text = "30''"
 
-            cancelWorkoutCreationButton.setOnClickListener {
+            cancelButton.setOnClickListener {
                 //on back pressed
             }
 

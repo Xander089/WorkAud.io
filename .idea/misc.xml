@@ -6,6 +6,8 @@
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/activity_player.xml" value="0.27291666666666664" />
+        <entry key="app/src/main/res/layout/dialog_duration.xml" value="0.37604166666666666" />
+        <entry key="app/src/main/res/layout/dialog_name.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/fragment_duration.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/fragment_editing_tracks.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/fragment_name.xml" value="0.37604166666666666" />
@@ -15,6 +17,7 @@
         <entry key="app/src/main/res/layout/item_detail_track.xml" value="0.27291666666666664" />
         <entry key="app/src/main/res/layout/item_track.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/item_workout_list.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/modal_bottom_layout.xml" value="0.37604166666666666" />
       </map>
     </option>
   </component>
