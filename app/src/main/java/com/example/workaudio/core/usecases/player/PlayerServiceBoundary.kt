@@ -16,5 +16,6 @@ abstract class PlayerServiceBoundary(
     abstract suspend fun getWorkout(id: Int): Workout
     abstract fun toTime(seconds: Int): String
     abstract fun buildCountDownTimer(tracks: List<Track>): Flow<Int>
+    abstract fun buildCountDownTimer(time: String): Flow<Int>
 
 }

@@ -1,5 +1,6 @@
 package com.example.workaudio.core.usecases.player
 
+import android.util.Log
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.repository.database.CurrentPosition
@@ -46,6 +47,21 @@ class PlayerInteractor(
         val totTime = tracks.map { track -> track.duration }.sum()
         return flow<Int> {
             var currentTime = totTime / 1000
+            while (currentTime >= 0) {
+                delay(1000)
+                currentTime--
+                emit(currentTime)
+            }
+        }
+    }
+
+    override fun buildCountDownTimer(time: String): Flow<Int> {
+        val timeList = time.split(":").map {
+            it.toInt()
+        }
+        val totTime = timeList[0] * 3600 + timeList[1] * 60 + timeList[2]
+        return flow<Int> {
+            var currentTime = totTime
             while (currentTime >= 0) {
                 delay(1000)
                 currentTime--

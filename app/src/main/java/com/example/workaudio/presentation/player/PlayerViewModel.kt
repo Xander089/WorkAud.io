@@ -1,5 +1,6 @@
 package com.example.workaudio.presentation.player
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
@@ -7,7 +8,10 @@ import com.example.workaudio.core.usecases.player.PlayerInteractor
 import com.example.workaudio.core.usecases.player.PlayerServiceBoundary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,6 +21,11 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
     ViewModel() {
 
     val playerState = MutableLiveData<Int>(0)
+
+    fun getPlayerState() = playerState.value ?: 0
+    fun setPlayerState(state: Int) {
+        playerState.value = state
+    }
     var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
     lateinit var countDownTimer: Flow<Int>
     private var _tracks = MutableLiveData<List<Track>>()
@@ -24,7 +33,13 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
     val currentTrackPlaying = playerInteractor.getCurrentPosition().asLiveData()
     private val _timerText = MutableLiveData<String>()
     val timerText: LiveData<String> = _timerText
+    lateinit var timerJob: Job
 
+    fun initTimer(tracks: List<Track>): String {
+
+        val currentPlaylistTotalTime = tracks.map { it.duration }.sum() / 1000
+        return playerInteractor.toTime(currentPlaylistTotalTime)
+    }
 
     private fun handlePlayer(currentTime: Int, currentSongEndingTime: Int) {
         if (currentTime <= 0) {
@@ -48,10 +63,10 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
     fun startTimer() {
         playerState.value = 1
         setTracksEndingTime()
-        viewModelScope.launch {
+         timerJob = viewModelScope.launch {
             playerInteractor.apply {
                 updateCurrentPosition(0)
-                countDownTimer.collect { currentTime ->
+                countDownTimer.cancellable().collect { currentTime ->
                     _timerText.value = toTime(currentTime)
                     val currentPlayerPosition = currentTrackPlaying.value?.position ?: 0
                     val currentSongEndingTime = tracks.value
@@ -61,6 +76,32 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
                 }
             }
         }
+        viewModelScope.launch {
+            timerJob.join()
+        }
+    }
+
+    fun restartTimer(time: String){
+        countDownTimer =  playerInteractor.buildCountDownTimer(time)
+        timerJob = viewModelScope.launch {
+            playerInteractor.apply {
+                countDownTimer.cancellable().collect { currentTime ->
+                    _timerText.value = toTime(currentTime)
+                    val currentPlayerPosition = currentTrackPlaying.value?.position ?: 0
+                    val currentSongEndingTime = tracks.value
+                        ?.get(currentPlayerPosition)
+                        ?.endingTime ?: 0
+                    handlePlayer(currentTime, currentSongEndingTime)
+                }
+            }
+        }
+        viewModelScope.launch {
+            timerJob.join()
+        }
+    }
+
+    fun stopTimer(){
+       timerJob.cancel()
     }
 
     fun initializeWorkoutTracks(currentTracks: List<Track>) {
@@ -71,6 +112,7 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
 
     fun initializeCurrentWorkout(workoutId: Int) {
         selectedWorkout = liveData(Dispatchers.IO) {
+            delay(300)
             playerInteractor.apply {
                 val workout = getWorkout(workoutId)
                 clearCurrentPosition()

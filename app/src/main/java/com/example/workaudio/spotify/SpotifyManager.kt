@@ -67,6 +67,7 @@ class SpotifyManager() {
         AuthorizationClient.clearCookies(context)
     }
 
+    fun pausePlayer() = mSpotifyAppRemote?.playerApi?.pause()
     fun stopSpotifyPlayer(timerText: String) {
         val resetTimeText = RESET_TIME
         if (timerText == resetTimeText) {

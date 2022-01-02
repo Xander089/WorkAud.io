@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -34,26 +35,32 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
+        super.onCreate(savedInstanceState)
+
         spotify = SpotifyManager()
         spotify.spotifyConnect(this)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
-        super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        buildTrackListAdapter()
+        setupCurrentWorkout()
+        initializeLayout()
+        initializeViewModelObservers()
+
+    }
+
+    private fun buildTrackListAdapter() {
         _adapter = WorkoutDetailTracksAdapter(mutableListOf<Track>(),
-            deleteTrack = {},
             fetchImage = { imageView, imageUrl ->
                 Glide.with(this).load(imageUrl).into(imageView)
             }
         )
+    }
 
+    private fun setupCurrentWorkout() {
         intent?.extras?.getInt(WORKOUT_ID)?.let { workoutId ->
             viewModel.initializeCurrentWorkout(workoutId)
         }
-
-        initializeLayout()
-        initializeViewModelObservers()
-
     }
 
     override fun onStart() {
@@ -74,11 +81,21 @@ class PlayerActivity : AppCompatActivity() {
 
             timerText.text = resources?.getString(R.string.reset_time).orEmpty()
             playButton.setOnClickListener {
-                viewModel.startTimer()
+                val playerState = viewModel.getPlayerState()
+                Log.v("playerrr",playerState.toString())
+                if (playerState == 1) {
+                    playButton.setBackgroundResource(R.drawable.ic_play)
+                    viewModel.setPlayerState(0)
+                    viewModel.stopTimer()
+                    spotify.pausePlayer()
+                } else {
+                    playButton.setBackgroundResource(R.drawable.ic_pause)
+                    viewModel.setPlayerState(1)
+                    viewModel.restartTimer(timerText.text.toString())
+                }
             }
-            pauseButton.setOnClickListener { }
             stopButton.setOnClickListener {
-                timerText.text = resources?.getString(R.string.reset_time).orEmpty()
+                //DIALOG
             }
             trackList.apply {
                 layoutManager = LinearLayoutManager(this@PlayerActivity)
@@ -109,6 +126,8 @@ class PlayerActivity : AppCompatActivity() {
                     addAll(trackList)
                 }
                 _adapter.notifyDataSetChanged()
+                binding.timerText.text = viewModel.initTimer(trackList.toList())
+                startTimer()
             })
 
             currentTrackPlaying.observe(this@PlayerActivity, { newSongPosition ->
