@@ -8,25 +8,23 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class PlayerInteractor(
-    private val facade: PlayerFacade
-) {
+    override val facade: PlayerFacade
+) : PlayerServiceBoundary(facade) {
 
     companion object {
         private const val RESET_TIME = "00:00:00"
     }
 
-    lateinit var countDownTimer: Flow<Int>
-
-    fun getCurrentPosition() = facade.getCurrentPosition()
-    suspend fun clearCurrentPosition() = facade.clearCurrentPosition()
-    suspend fun insertCurrentPosition(position: Int) =
+    override fun getCurrentPosition() = facade.getCurrentPosition()
+    override suspend fun clearCurrentPosition() = facade.clearCurrentPosition()
+    override suspend fun insertCurrentPosition(position: Int) =
         facade.insertCurrentPosition(CurrentPosition(position))
 
-    suspend fun updateCurrentPosition(pos: Int) = facade.updateCurrentPosition(pos)
+    override suspend fun updateCurrentPosition(pos: Int) = facade.updateCurrentPosition(pos)
 
-    suspend fun getWorkout(id: Int): Workout = facade.getWorkout(id)
+    override suspend fun getWorkout(id: Int): Workout = facade.getWorkout(id)
 
-    fun toTime(seconds: Int): String {
+    override fun toTime(seconds: Int): String {
 
         if (seconds <= 0) {
             return RESET_TIME
@@ -44,7 +42,7 @@ class PlayerInteractor(
         return "$h:$m:$s"
     }
 
-    fun buildCountDownTimer(tracks: List<Track>): Flow<Int> {
+    override fun buildCountDownTimer(tracks: List<Track>): Flow<Int> {
         val totTime = tracks.map { track -> track.duration }.sum()
         return flow<Int> {
             var currentTime = totTime / 1000

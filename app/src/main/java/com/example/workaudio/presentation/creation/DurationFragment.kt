@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentDurationBinding
@@ -14,12 +15,13 @@ import com.example.workaudio.databinding.FragmentDurationBinding
 class DurationFragment : Fragment() {
 
     companion object {
-        private const val WORKOUT_NAME = "workout_name"
+        const val WORKOUT_NAME = "workout_name"
         private const val WORKOUT_DURATION = "workout_duration"
+        private const val DEFAULT_DURATION = 30.0f
     }
 
     private lateinit var binding: FragmentDurationBinding
-
+    private val viewModel : DurationFragmentViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,33 +30,53 @@ class DurationFragment : Fragment() {
 
         binding = FragmentDurationBinding.inflate(inflater, container, false)
 
+        initLayoutFunctionality()
+
+        return binding.root
+    }
+
+    private fun initLayoutFunctionality() {
+        val workoutName = arguments?.getString(WORKOUT_NAME).orEmpty()
         binding.apply {
-            rangeSlider.setValues(30.0f)
-            timeLabel.text = "30''"
+            rangeSlider.setValues(DEFAULT_DURATION)
+            timeLabel.text = requireActivity().resources.getString(R.string.default_duration)
 
             cancelButton.setOnClickListener {
-                //on back pressed
+                navigateTo(
+                    R.id.action_durationFragment_to_nameFragment
+                )
             }
 
             continueButton.setOnClickListener {
-                arguments?.getString(WORKOUT_NAME).orEmpty().let { name ->
-                    if(name.isNotEmpty()){
-                        val duration = binding.rangeSlider.values[0].toInt()
-                        findNavController().navigate(
-                            R.id.action_durationFragment_to_tracksFragment,
-                            bundleOf(WORKOUT_NAME to name, WORKOUT_DURATION to duration)
-                        )
-                    }
-
-                }
+                val duration = binding.rangeSlider.values[0].toInt()
+                navigateTo(
+                    R.id.action_durationFragment_to_tracksFragment,
+                    bundleOf(WORKOUT_NAME to workoutName, WORKOUT_DURATION to duration)
+                )
             }
 
-            rangeSlider.addOnChangeListener { _, value, _ ->
-                timeLabel.text = "${value.toInt()}''"
+
+            rangeSlider.addOnChangeListener { _, duration, _ ->
+                timeLabel.text = viewModel.formatDuration(duration)
             }
         }
+    }
 
-        return binding.root
+    private fun navigateTo(
+        action: Int,
+        bundle: Bundle? = null
+    ) {
+        if (bundle == null) {
+            findNavController().navigate(
+                action
+            )
+        } else {
+            findNavController().navigate(
+                action,
+                bundle
+            )
+        }
+
     }
 
 }

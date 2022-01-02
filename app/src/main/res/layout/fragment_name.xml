@@ -35,7 +35,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/cancelButton"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/confirmNameButton"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"

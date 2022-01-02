@@ -28,9 +28,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private val viewModel: PlayerViewModel by viewModels()
-
     private lateinit var spotify: SpotifyManager
-
     private lateinit var _adapter: WorkoutDetailTracksAdapter
     private lateinit var binding: ActivityPlayerBinding
 
@@ -42,9 +40,12 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        _adapter = WorkoutDetailTracksAdapter(mutableListOf<Track>()) { imageView, imageUrl ->
-            Glide.with(this).load(imageUrl).into(imageView)
-        }
+        _adapter = WorkoutDetailTracksAdapter(mutableListOf<Track>(),
+            deleteTrack = {},
+            fetchImage = { imageView, imageUrl ->
+                Glide.with(this).load(imageUrl).into(imageView)
+            }
+        )
 
         intent?.extras?.getInt(WORKOUT_ID)?.let { workoutId ->
             viewModel.initializeCurrentWorkout(workoutId)
@@ -123,8 +124,6 @@ class PlayerActivity : AppCompatActivity() {
         }
 
     }
-
-
 
 
 }

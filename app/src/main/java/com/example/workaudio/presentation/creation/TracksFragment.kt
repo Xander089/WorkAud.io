@@ -115,5 +115,34 @@ class TracksFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            android.R.id.home -> navigateTo(
+                R.id.action_tracksFragment_to_durationFragment2
+            )
+            else -> {}
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun navigateTo(
+        action: Int,
+        bundle: Bundle? = null
+    ) {
+        if (bundle == null) {
+            findNavController().navigate(
+                action
+            )
+        } else {
+            findNavController().navigate(
+                action,
+                bundle
+            )
+        }
+
+    }
+
 
 }

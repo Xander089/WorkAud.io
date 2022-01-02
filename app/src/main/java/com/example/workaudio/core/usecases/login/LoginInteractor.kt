@@ -1,8 +1,8 @@
 package com.example.workaudio.core.usecases.login
 
 
-class LoginInteractor(private val facade: LoginFacade) {
+class LoginInteractor(override val facade: LoginFacade): LoginServiceBoundary(facade) {
 
-    suspend fun insertToken(token: String) = facade.insertToken(token)
+    override suspend fun insertToken(token: String) = facade.insertToken(token)
 
 }

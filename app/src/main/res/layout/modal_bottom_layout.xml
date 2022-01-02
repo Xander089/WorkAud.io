@@ -7,7 +7,7 @@
     android:background="@color/black_text">
 
     <Button
-        android:id="@+id/deleteWorkoutButton"
+        android:id="@+id/deleteButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
@@ -29,11 +29,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:fontFamily="@font/hammersmith_one"
-        android:text="Delete Workout"
+        android:text="Delete"
         android:textColor="@color/grey"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/deleteWorkoutButton"
-        app:layout_constraintStart_toEndOf="@+id/deleteWorkoutButton"
-        app:layout_constraintTop_toTopOf="@+id/deleteWorkoutButton" />
+        app:layout_constraintBottom_toBottomOf="@+id/deleteButton"
+        app:layout_constraintStart_toEndOf="@+id/deleteButton"
+        app:layout_constraintTop_toTopOf="@+id/deleteButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

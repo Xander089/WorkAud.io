@@ -2,10 +2,8 @@ package com.example.workaudio.presentation.editing
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.core.os.bundleOf
@@ -18,8 +16,8 @@ import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutDetailBinding
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.presentation.player.PlayerActivity
-import android.view.WindowManager
 import android.widget.TextView
+import com.example.workaudio.presentation.navigation.BottomModalSelectWorkout
 import com.google.android.material.slider.RangeSlider
 
 
@@ -44,12 +42,22 @@ class WorkoutDetailFragment : Fragment() {
             fetchImage = { imageView, imageUri ->
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
             },
+            deleteTrack = { uri ->
+                showModalBottomFragment(uri)
+            }
         )
 
         setupCurrentWorkout()
         setLayoutFunctionality()
         setObservers()
         return binding.root
+    }
+
+    private fun showModalBottomFragment(trackUri: String) {
+        val modalBottomSheet = BottomModalSelectTrack(trackUri){ uri ->
+            viewModel.deleteTrack(trackUri)
+        }
+        modalBottomSheet.show(parentFragmentManager, BottomModalSelectWorkout.TAG)
     }
 
     private fun setupCurrentWorkout() {
@@ -69,9 +77,9 @@ class WorkoutDetailFragment : Fragment() {
             }
             editTracksButton.setOnClickListener {
                 arguments?.getInt(ID_TAG)?.let { workoutId ->
-                    navigateToFragment(
+                    navigateTo(
                         R.id.action_workoutDetailFragment_to_editingTracksFragment,
-                        workoutId
+                        bundleOf(ID_TAG to workoutId)
                     )
                 }
             }
@@ -80,6 +88,11 @@ class WorkoutDetailFragment : Fragment() {
             }
             durationText.setOnClickListener {
                 showEditDurationDialogFragment()
+            }
+            backButton.setOnClickListener {
+                navigateTo(
+                    R.id.action_workoutDetailFragment_to_workoutListFragment
+                )
             }
         }
     }
@@ -108,15 +121,24 @@ class WorkoutDetailFragment : Fragment() {
         }
     }
 
-    private fun navigateToFragment(
-        fragmentId: Int,
-        workoutId: Int = 0
+    private fun navigateTo(
+        action: Int,
+        bundle: Bundle? = null
     ) {
-        findNavController().navigate(
-            fragmentId,
-            bundleOf(ID_TAG to workoutId)
-        )
+        if (bundle == null) {
+            findNavController().navigate(
+                action
+            )
+        } else {
+            findNavController().navigate(
+                action,
+                bundle
+            )
+        }
+
     }
+
+
 
     private fun showEditNameDialogFragment() {
         val dialog = EditNameDialogFragment { name ->

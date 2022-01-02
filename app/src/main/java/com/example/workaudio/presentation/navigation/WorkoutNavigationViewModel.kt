@@ -2,6 +2,7 @@ package com.example.workaudio.presentation.navigation
 
 import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Workout
+import com.example.workaudio.core.usecases.navigation.NavigationServiceBoundary
 import com.example.workaudio.core.usecases.navigation.WorkoutNavigationInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,7 @@ import javax.inject.Inject
 class WorkoutNavigationViewModel @Inject constructor(private val workoutNavigationInteractor: WorkoutNavigationInteractor) :
     ViewModel() {
 
-    val workouts: LiveData<List<Workout>> = workoutNavigationInteractor.workouts.asLiveData()
+    val workouts: LiveData<List<Workout>> = workoutNavigationInteractor.getWorkouts().asLiveData()
 
     fun deleteWorkout(workoutId: Int) {
         viewModelScope.launch(Dispatchers.IO) {

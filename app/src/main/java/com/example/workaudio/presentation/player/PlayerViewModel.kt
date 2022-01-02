@@ -4,8 +4,10 @@ import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.player.PlayerInteractor
+import com.example.workaudio.core.usecases.player.PlayerServiceBoundary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,14 +18,13 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
 
     val playerState = MutableLiveData<Int>(0)
     var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
-
+    lateinit var countDownTimer: Flow<Int>
     private var _tracks = MutableLiveData<List<Track>>()
     val tracks: LiveData<List<Track>> = _tracks
-
     val currentTrackPlaying = playerInteractor.getCurrentPosition().asLiveData()
-
     private val _timerText = MutableLiveData<String>()
     val timerText: LiveData<String> = _timerText
+
 
     private fun handlePlayer(currentTime: Int, currentSongEndingTime: Int) {
         if (currentTime <= 0) {

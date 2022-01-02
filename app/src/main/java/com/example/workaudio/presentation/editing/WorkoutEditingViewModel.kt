@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
+import com.example.workaudio.core.usecases.editing.EditingServiceBoundary
 import com.example.workaudio.core.usecases.editing.WorkoutEditingInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WorkoutEditingViewModel @Inject constructor(private val workoutEditingInteractor: WorkoutEditingInteractor) :
+class WorkoutEditingViewModel @Inject constructor(private val editingInteractor: WorkoutEditingInteractor) :
     ViewModel() {
 
     var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
@@ -19,19 +20,26 @@ class WorkoutEditingViewModel @Inject constructor(private val workoutEditingInte
 
     fun initializeCurrentWorkout(workoutId: Int) {
         selectedWorkout = liveData(Dispatchers.IO) {
-            val workout = workoutEditingInteractor.getWorkout(workoutId)
+            val workout = editingInteractor.getWorkout(workoutId)
             emit(workout)
         }
         tracks = liveData(Dispatchers.IO) {
-            val workout = workoutEditingInteractor.getWorkout(workoutId)
+            val workout = editingInteractor.getWorkout(workoutId)
             emit(workout.tracks)
+        }
+    }
+
+    fun deleteTrack(trackUri: String) {
+        val workoutId = selectedWorkout.value?.id ?: -1
+        viewModelScope.launch(Dispatchers.IO) {
+            editingInteractor.deleteTrack(trackUri, workoutId)
         }
     }
 
     fun updateWorkoutName(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val workoutId = selectedWorkout.value?.id ?: 0
-            workoutEditingInteractor.updateWorkoutName(workoutId, name)
+            editingInteractor.updateWorkoutName(workoutId, name)
         }
     }
 
@@ -39,7 +47,7 @@ class WorkoutEditingViewModel @Inject constructor(private val workoutEditingInte
         val workoutId = selectedWorkout.value?.id ?: -1
         viewModelScope.launch(Dispatchers.IO) {
             val durationInMillis = duration * 60 * 1000
-            workoutEditingInteractor.updateWorkoutDuration(workoutId, durationInMillis)
+            editingInteractor.updateWorkoutDuration(workoutId, durationInMillis)
         }
     }
 }
