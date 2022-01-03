@@ -19,7 +19,8 @@ abstract class ApplicationDatabase : RoomDatabase() {
 @Entity
 data class WorkoutRoomEntity(
     @ColumnInfo(name = "name") val name: String?,
-    @ColumnInfo(name = "duration") val duration: Int?
+    @ColumnInfo(name = "duration") val duration: Int?,
+    @ColumnInfo(name = "imageUrl") val imageUrl: String?,
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0

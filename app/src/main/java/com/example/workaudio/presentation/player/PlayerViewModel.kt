@@ -17,8 +17,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerInteractor) :
+class PlayerViewModel @Inject constructor(private val _playerInteractor: PlayerInteractor) :
     ViewModel() {
+
+    private val playerInteractor: PlayerServiceBoundary
+
+    init {
+        playerInteractor = _playerInteractor
+    }
 
     val playerState = MutableLiveData<Int>(0)
 
@@ -26,6 +32,7 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
     fun setPlayerState(state: Int) {
         playerState.value = state
     }
+
     var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
     lateinit var countDownTimer: Flow<Int>
     private var _tracks = MutableLiveData<List<Track>>()
@@ -63,7 +70,7 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
     fun startTimer() {
         playerState.value = 1
         setTracksEndingTime()
-         timerJob = viewModelScope.launch {
+        timerJob = viewModelScope.launch {
             playerInteractor.apply {
                 updateCurrentPosition(0)
                 countDownTimer.cancellable().collect { currentTime ->
@@ -81,8 +88,8 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
         }
     }
 
-    fun restartTimer(time: String){
-        countDownTimer =  playerInteractor.buildCountDownTimer(time)
+    fun restartTimer(time: String) {
+        countDownTimer = playerInteractor.buildCountDownTimer(time)
         timerJob = viewModelScope.launch {
             playerInteractor.apply {
                 countDownTimer.cancellable().collect { currentTime ->
@@ -100,8 +107,8 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
         }
     }
 
-    fun stopTimer(){
-       timerJob.cancel()
+    fun stopTimer() {
+        timerJob.cancel()
     }
 
     fun initializeWorkoutTracks(currentTracks: List<Track>) {
@@ -112,7 +119,7 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerIn
 
     fun initializeCurrentWorkout(workoutId: Int) {
         selectedWorkout = liveData(Dispatchers.IO) {
-            delay(300)
+            delay(2000)
             playerInteractor.apply {
                 val workout = getWorkout(workoutId)
                 clearCurrentPosition()

@@ -26,9 +26,10 @@ class WorkoutCreationFacade(
     suspend fun insertWorkout(
         name: String,
         duration: Int,
-        tracks: List<Track>
+        tracks: List<Track>,
     ) {
-        val workoutRoomEntity = WorkoutRoomEntity(name, duration)
+        val imageUrl = tracks[0].imageUrl
+        val workoutRoomEntity = WorkoutRoomEntity(name, duration, imageUrl)
         dao.insertWorkout(workoutRoomEntity)
         delay(500)
         insertWorkoutTracks(tracks)

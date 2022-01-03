@@ -9,14 +9,14 @@ import com.example.workaudio.core.entities.Track
 
 class WorkoutTracksAdapter(
     val tracks: MutableList<Track>,
-    private val addTrack: (Track) -> Unit,
+    private val addTrack: (Track,Boolean) -> Unit,
     private val fetchImage: (ImageView, String) -> Unit
 
 ) : RecyclerView.Adapter<WorkoutTracksAdapter.TrackListViewHolder>() {
 
     inner class TrackListViewHolder(
         private val binding: ItemTrackBinding,
-        private val addTrack: (Track) -> Unit,
+        private val addTrack: (Track,Boolean) -> Unit,
         private val fetchImage: (ImageView, String) -> Unit
 
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -28,10 +28,8 @@ class WorkoutTracksAdapter(
                 durationTrackText.text = formatTrackTime(track.duration)
                 fetchImage(trackImage, track.imageUrl)
                 addButton.apply {
-                    isEnabled = true
                     setOnClickListener {
-                        addTrack(track)
-                        isEnabled = false
+                        addTrack(track,false)
                     }
                 }
             }

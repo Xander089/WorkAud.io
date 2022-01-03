@@ -40,7 +40,7 @@
         app:strokeColor="@color/yellow" />
 
     <TextView
-        android:id="@+id/setDurationText"
+        android:id="@+id/stopWorkoutLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -63,9 +63,9 @@
         android:textAllCaps="false"
         android:textColor="@color/grey2"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="@+id/setDurationText"
+        app:layout_constraintBottom_toBottomOf="@+id/stopWorkoutLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/setDurationText" />
+        app:layout_constraintTop_toTopOf="@+id/stopWorkoutLabel" />
 
     <com.google.android.material.slider.RangeSlider
         android:id="@+id/rangeSlider"

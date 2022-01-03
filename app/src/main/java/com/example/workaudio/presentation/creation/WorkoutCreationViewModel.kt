@@ -7,14 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.usecases.creation.CreationServiceBoundary
 import com.example.workaudio.core.usecases.creation.WorkoutCreationInteractor
+import com.example.workaudio.core.usecases.player.PlayerServiceBoundary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WorkoutCreationViewModel @Inject constructor(private val workoutCreationInteractor: WorkoutCreationInteractor) :
+class WorkoutCreationViewModel @Inject constructor(private val _workoutCreationInteractor: WorkoutCreationInteractor) :
     ViewModel() {
+
 
     companion object {
         private const val MILLISECONDS_IN_A_MINUTE = 60000
@@ -33,8 +35,11 @@ class WorkoutCreationViewModel @Inject constructor(private val workoutCreationIn
     private val _addedTracks = MutableLiveData<MutableList<Track>>()
     val addedTracks: LiveData<MutableList<Track>> = _addedTracks
 
+    private val workoutCreationInteractor: CreationServiceBoundary
+
     init {
         _currentDuration.value = 0
+        workoutCreationInteractor = _workoutCreationInteractor
     }
 
     fun cacheWorkoutInfo(name: String, duration: Int) {
@@ -51,6 +56,17 @@ class WorkoutCreationViewModel @Inject constructor(private val workoutCreationIn
             _addedTracks.value = currentTracks
         }
         updateCurrentDuration(track.duration)
+    }
+
+    fun removeTrack(track: Track) {
+
+        val currentTracks = _addedTracks.value.orEmpty().toMutableList()
+
+        if (currentTracks.contains(track)) {
+            currentTracks.remove(track)
+            _addedTracks.value = currentTracks
+            updateCurrentDuration(-track.duration)
+        }
     }
 
     private fun updateCurrentDuration(duration: Int) {

@@ -1,7 +1,6 @@
 package com.example.workaudio.presentation.editing
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Button
@@ -44,7 +43,8 @@ class WorkoutDetailFragment : Fragment() {
             },
             deleteTrack = { uri ->
                 showModalBottomFragment(uri)
-            }
+            },
+            selectedColorId = resources.getColor(R.color.grey3,null)
         )
 
         setupCurrentWorkout()
@@ -179,7 +179,7 @@ class WorkoutDetailFragment : Fragment() {
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
             dialog?.window?.attributes = layoutParams
             val cancelButton = view.findViewById<Button>(R.id.cancelButton)
-            val confirmNameButton = view.findViewById<Button>(R.id.confirmNameButton)
+            val confirmNameButton = view.findViewById<Button>(R.id.loginButton)
             val workoutNameText = view.findViewById<EditText>(R.id.workoutNameText)
 
             cancelButton.setOnClickListener {

@@ -34,7 +34,8 @@ class PlayerFacade(
             this.id,
             this.name.orEmpty(),
             this.duration ?: 0,
-            tracks
+            tracks,
+            this.imageUrl.orEmpty()
         )
     }
 

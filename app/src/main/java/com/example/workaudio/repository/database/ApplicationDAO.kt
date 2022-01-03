@@ -38,6 +38,13 @@ interface ApplicationDAO {
     @Query("SELECT * FROM WorkoutTracksRoomEntity WHERE playlistId = :id")
     fun getWorkoutTracks(id: Int): List<WorkoutTracksRoomEntity>
 
+    @Query("SELECT * FROM WorkoutTracksRoomEntity WHERE playlistId = :id")
+    fun getFlowWorkoutTracks(id: Int): Flow<List<WorkoutTracksRoomEntity>>
+
+    @Query("SELECT * FROM WorkoutTracksRoomEntity WHERE playlistId = :id LIMIT 1")
+    fun getWorkoutTrack(id: Int): WorkoutTracksRoomEntity
+
+
     @Query("SELECT * FROM WorkoutRoomEntity WHERE id = :id")
     suspend fun getWorkout(id: Int): WorkoutRoomEntity
 

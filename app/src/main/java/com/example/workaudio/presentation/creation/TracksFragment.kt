@@ -32,19 +32,29 @@ class TracksFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        cacheWorkoutInfo()
-
         binding = FragmentTracksBinding.inflate(layoutInflater, container, false)
+
+        cacheWorkoutInfo()
+        buildAdapter()
+        initLayout()
+        initObservers()
+
+        return binding.root
+    }
+
+    private fun buildAdapter(){
         trackListAdapter = WorkoutTracksAdapter(
             mutableListOf<Track>(),
-            addTrack = { track ->
+            addTrack = { track, isAdded ->
                 viewModel.addTrack(track)
             },
             fetchImage = { imageView, imageUri ->
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
             }
         )
+    }
 
+    private fun initLayout(){
         binding.apply {
             (activity as AppCompatActivity?)!!.setSupportActionBar(topAppBar)
             minuteLabel.text = "0/${(arguments?.getInt(WORKOUT_DURATION) ?: 0)} min"
@@ -58,7 +68,9 @@ class TracksFragment : Fragment() {
                 adapter = trackListAdapter
             }
         }
+    }
 
+    private fun initObservers(){
         viewModel.searchedTracks.observe(this, { searchedTracks ->
             trackListAdapter.apply {
                 tracks.clear()
@@ -73,8 +85,6 @@ class TracksFragment : Fragment() {
                 minuteLabel.text = (duration / 60000).toString()
             }
         })
-
-        return binding.root
     }
 
     private fun cacheWorkoutInfo() {

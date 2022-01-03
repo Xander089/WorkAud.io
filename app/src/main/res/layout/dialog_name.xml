@@ -47,11 +47,11 @@
         android:text="CANCEL"
         android:textColor="@color/grey"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/confirmNameButton"
+        app:layout_constraintEnd_toStartOf="@+id/loginButton"
         app:layout_constraintTop_toBottomOf="@+id/nameTextInputLayout" />
 
     <Button
-        android:id="@+id/confirmNameButton"
+        android:id="@+id/loginButton"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

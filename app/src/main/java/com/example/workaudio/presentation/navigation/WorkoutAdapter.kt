@@ -41,9 +41,8 @@ class WorkoutAdapter(
             }
 
             binding.apply {
-                if (workout.tracks.isNotEmpty()) {
-                    fetchImage(imageView, workout.tracks[0].imageUrl)
-                }
+
+                fetchImage(imageView, workout.imageUrl)
                 root.apply {
                     setOnLongClickListener {
                         showBottomModal(workout.id)

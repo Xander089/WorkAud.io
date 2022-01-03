@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.workaudio.R
 import com.example.workaudio.databinding.ItemDetailTrackBinding
 import com.example.workaudio.core.entities.Track
 
@@ -11,13 +12,15 @@ import com.example.workaudio.core.entities.Track
 class WorkoutDetailTracksAdapter(
     val tracks: MutableList<Track>,
     private val fetchImage: (ImageView, String) -> Unit,
-    private val deleteTrack: (String) -> Unit = {}
+    private val deleteTrack: (String) -> Unit = {},
+    private val selectedColorId: Int
 ) : RecyclerView.Adapter<WorkoutDetailTracksAdapter.TrackListViewHolder>() {
 
     inner class TrackListViewHolder(
         private val binding: ItemDetailTrackBinding,
         private val fetchImage: (ImageView, String) -> Unit,
-        private val deleteTrack: (String) -> Unit
+        private val deleteTrack: (String) -> Unit,
+        private val selectedColorId: Int
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(track: Track) {
@@ -29,6 +32,7 @@ class WorkoutDetailTracksAdapter(
                 fetchImage(trackImage, track.imageUrl)
                 root.setOnLongClickListener {
                     deleteTrack(track.uri)
+                    trackLayout.setBackgroundColor(selectedColorId)
                     true
                 }
             }
@@ -51,7 +55,8 @@ class WorkoutDetailTracksAdapter(
         return TrackListViewHolder(
             binding,
             this.fetchImage,
-            this.deleteTrack
+            this.deleteTrack,
+            this.selectedColorId
         )
     }
 

@@ -49,10 +49,7 @@ class WorkoutListFragment : Fragment() {
     private fun initObservers() {
         viewModel.workouts.observe(this, { workouts ->
             workouts?.let {
-                workoutAdapter.apply {
-                    updateWorkouts(it)
-                }
-
+                workoutAdapter.updateWorkouts(it)
             }
         })
     }
@@ -84,7 +81,7 @@ class WorkoutListFragment : Fragment() {
     }
 
     private fun showModalBottomFragment(workoutId: Int) {
-        val modalBottomSheet = BottomModalSelectWorkout(workoutId){ id ->
+        val modalBottomSheet = BottomModalSelectWorkout(workoutId) { id ->
             viewModel.deleteWorkout(id)
         }
         modalBottomSheet.show(parentFragmentManager, BottomModalSelectWorkout.TAG)

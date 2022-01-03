@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import com.example.workaudio.presentation.navigation.MainActivity
 import com.example.workaudio.R
+import com.example.workaudio.databinding.ActivityLoginBinding
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
@@ -25,14 +26,16 @@ class LoginActivity : AppCompatActivity() {
 
 
     private val viewModel: LoginViewModel by viewModels()
-
+    private lateinit var binding: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(binding.root)
 
-        //SPOTIFY AUTHENTICATION
-        authenticateSpotify()
+        binding.loginButton.setOnClickListener {
+            authenticateSpotify()
+        }
+
 
     }
 

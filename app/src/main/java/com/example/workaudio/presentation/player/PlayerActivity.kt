@@ -5,14 +5,23 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.presentation.editing.WorkoutDetailTracksAdapter
 import com.example.workaudio.databinding.ActivityPlayerBinding
 import com.example.workaudio.core.entities.Track
+import com.example.workaudio.presentation.editing.WorkoutDetailFragment
 import com.example.workaudio.spotify.SpotifyManager
+import com.google.android.material.slider.RangeSlider
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -33,6 +42,7 @@ class PlayerActivity : AppCompatActivity() {
     private lateinit var _adapter: WorkoutDetailTracksAdapter
     private lateinit var binding: ActivityPlayerBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -49,18 +59,9 @@ class PlayerActivity : AppCompatActivity() {
 
     }
 
-    private fun buildTrackListAdapter() {
-        _adapter = WorkoutDetailTracksAdapter(mutableListOf<Track>(),
-            fetchImage = { imageView, imageUrl ->
-                Glide.with(this).load(imageUrl).into(imageView)
-            }
-        )
-    }
-
-    private fun setupCurrentWorkout() {
-        intent?.extras?.getInt(WORKOUT_ID)?.let { workoutId ->
-            viewModel.initializeCurrentWorkout(workoutId)
-        }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        showStopPlayerDialogFragment()
     }
 
     override fun onStart() {
@@ -71,8 +72,25 @@ class PlayerActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         spotify.apply {
+            pausePlayer()
             spotifyDisconnect()
             logOut(this@PlayerActivity)
+        }
+    }
+
+    private fun buildTrackListAdapter() {
+        _adapter = WorkoutDetailTracksAdapter(
+            mutableListOf<Track>(),
+            fetchImage = { imageView, imageUrl ->
+                Glide.with(this).load(imageUrl).into(imageView)
+            },
+            selectedColorId = resources.getColor(R.color.grey3, null)
+        )
+    }
+
+    private fun setupCurrentWorkout() {
+        intent?.extras?.getInt(WORKOUT_ID)?.let { workoutId ->
+            viewModel.initializeCurrentWorkout(workoutId)
         }
     }
 
@@ -82,7 +100,6 @@ class PlayerActivity : AppCompatActivity() {
             timerText.text = resources?.getString(R.string.reset_time).orEmpty()
             playButton.setOnClickListener {
                 val playerState = viewModel.getPlayerState()
-                Log.v("playerrr",playerState.toString())
                 if (playerState == 1) {
                     playButton.setBackgroundResource(R.drawable.ic_play)
                     viewModel.setPlayerState(0)
@@ -96,6 +113,7 @@ class PlayerActivity : AppCompatActivity() {
             }
             stopButton.setOnClickListener {
                 //DIALOG
+                showStopPlayerDialogFragment()
             }
             trackList.apply {
                 layoutManager = LinearLayoutManager(this@PlayerActivity)
@@ -142,6 +160,51 @@ class PlayerActivity : AppCompatActivity() {
 
         }
 
+    }
+
+    private fun showStopPlayerDialogFragment() {
+        StopPlayerDialogFragment {
+            finish()
+        }
+            .show(supportFragmentManager, StopPlayerDialogFragment.TAG)
+    }
+
+    class StopPlayerDialogFragment(
+        val finish: () -> Unit
+    ) : DialogFragment() {
+
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View {
+
+            return inflater.inflate(R.layout.dialog_stop_player, container, false)
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+
+            val layoutParams = WindowManager.LayoutParams()
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
+            dialog?.window?.attributes = layoutParams
+            val cancelButton = view.findViewById<Button>(R.id.cancelButton)
+            val confirmButton = view.findViewById<Button>(R.id.continueButton)
+
+            cancelButton.setOnClickListener {
+                dialog?.dismiss()
+            }
+            confirmButton.setOnClickListener {
+                finish()
+                dialog?.dismiss()
+            }
+
+        }
+
+        companion object {
+            const val TAG = "StopPlayerDialog"
+        }
     }
 
 

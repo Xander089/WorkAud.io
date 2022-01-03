@@ -12,8 +12,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WorkoutEditingViewModel @Inject constructor(private val editingInteractor: WorkoutEditingInteractor) :
+class WorkoutEditingViewModel @Inject constructor(private val _editingInteractor: WorkoutEditingInteractor) :
     ViewModel() {
+
+    private val editingInteractor: EditingServiceBoundary
+
+    init {
+        editingInteractor = _editingInteractor
+    }
 
     var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
     var tracks: LiveData<List<Track>> = MutableLiveData<List<Track>>()
