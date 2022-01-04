@@ -42,7 +42,7 @@ class DurationFragment : Fragment() {
 
     private fun setupObserver(){
         viewModel.workout.observe(this,{ workout ->
-            if(viewModel.state == DurationFragmentViewModel.Companion.STATE.CREATED){
+            if(viewModel.isWorkoutCreated()){
                 val bundle = bundleOf(ID_TAG to workout.id)
                 NavigationManager.navigateTo(findNavController(),DURATION_TO_DETAIL,bundle)
             }

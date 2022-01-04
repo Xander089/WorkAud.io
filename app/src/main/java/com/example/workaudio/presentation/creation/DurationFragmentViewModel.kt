@@ -28,6 +28,7 @@ class DurationFragmentViewModel @Inject constructor(private val _workoutCreation
 
     var workout: LiveData<Workout> = workoutCreationInteractor.latestWorkout.asLiveData()
 
+    fun isWorkoutCreated() = state == STATE.CREATED
 
     fun formatDuration(duration: Float): String {
         val intDuration = duration.toInt()
