@@ -2,13 +2,15 @@ package com.example.workaudio.core.usecases.editing
 
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
+import kotlinx.coroutines.flow.Flow
 
 class WorkoutEditingInteractor(
     override val facade: WorkoutEditingFacade
 ) : EditingServiceBoundary(facade){
 
     override suspend fun getWorkout(id: Int): Workout = facade.getWorkout(id)
-
+    override suspend fun getWorkout(): Workout = facade.getWorkout()
+    override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>> = facade.getWorkoutTracks(workoutId)
     override suspend fun updateWorkoutName(
         id: Int,
         name: String

@@ -23,6 +23,12 @@ interface ApplicationDAO {
     suspend fun insertCurrentPosition(position: CurrentPosition)
 
     //READ
+    @Query("SELECT * FROM WorkoutTracksRoomEntity WHERE playlistId = :workoutId")
+    fun getWorkoutTracksFlow(workoutId: Int): Flow<List<WorkoutTracksRoomEntity>>
+
+    @Query("SELECT * FROM WorkoutRoomEntity WHERE id = :workoutId")
+    fun getWorkoutById(workoutId: Int): Flow<WorkoutRoomEntity>
+
     @Query("SELECT * FROM TokenRoomEntity")
     fun readToken(): Flow<TokenRoomEntity>
 
@@ -31,6 +37,9 @@ interface ApplicationDAO {
 
     @Query("SELECT * FROM WorkoutRoomEntity ORDER BY id DESC LIMIT 1")
     suspend fun getLatestWorkout(): WorkoutRoomEntity
+
+    @Query("SELECT * FROM WorkoutRoomEntity ORDER BY id DESC LIMIT 1")
+    fun getLatestWorkoutAsFlow(): Flow<WorkoutRoomEntity>
 
     @Query("SELECT * FROM WorkoutRoomEntity")
     fun getAllWorkouts(): Flow<List<WorkoutRoomEntity>>

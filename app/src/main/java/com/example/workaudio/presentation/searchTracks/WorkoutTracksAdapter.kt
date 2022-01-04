@@ -1,4 +1,4 @@
-package com.example.workaudio.presentation.creation
+package com.example.workaudio.presentation.searchTracks
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,16 +7,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.workaudio.databinding.ItemTrackBinding
 import com.example.workaudio.core.entities.Track
 
+
 class WorkoutTracksAdapter(
     val tracks: MutableList<Track>,
-    private val addTrack: (Track,Boolean) -> Unit,
+    private val addTrack: (Track) -> Unit = {},
+    private val deleteTrack: (uri: String) -> Unit = {},
     private val fetchImage: (ImageView, String) -> Unit
 
 ) : RecyclerView.Adapter<WorkoutTracksAdapter.TrackListViewHolder>() {
 
     inner class TrackListViewHolder(
         private val binding: ItemTrackBinding,
-        private val addTrack: (Track,Boolean) -> Unit,
+        private val addTrack: (Track) -> Unit,
         private val fetchImage: (ImageView, String) -> Unit
 
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -29,7 +31,7 @@ class WorkoutTracksAdapter(
                 fetchImage(trackImage, track.imageUrl)
                 addButton.apply {
                     setOnClickListener {
-                        addTrack(track,false)
+                        addTrack(track)
                     }
                 }
             }

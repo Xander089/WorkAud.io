@@ -15,6 +15,8 @@ import com.example.workaudio.core.usecases.editing.WorkoutEditingInteractor
 import com.example.workaudio.core.usecases.editing.WorkoutEditingFacade
 import com.example.workaudio.core.usecases.navigation.WorkoutNavigationInteractor
 import com.example.workaudio.core.usecases.navigation.WorkoutNavigationFacade
+import com.example.workaudio.core.usecases.searchTracks.SearchFacade
+import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
 import com.example.workaudio.spotify.SpotifyManager
 import dagger.Module
 import dagger.Provides
@@ -122,6 +124,16 @@ class ApplicationModule {
     @Provides
     fun providePlayer(facade: PlayerFacade) =
         PlayerInteractor(facade)
+
+    @Singleton
+    @Provides
+    fun provideSearchFacade(db: ApplicationDatabase, service: SpotifyWebService) =
+        SearchFacade(db.applicationDao(), service)
+
+    @Singleton
+    @Provides
+    fun provideSearch(facade: SearchFacade) =
+        SearchInteractor(facade)
 
 
 }

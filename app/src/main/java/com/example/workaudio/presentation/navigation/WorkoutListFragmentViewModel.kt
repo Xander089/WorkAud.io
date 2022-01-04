@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WorkoutNavigationViewModel @Inject constructor(private val _workoutNavigationInteractor: WorkoutNavigationInteractor) :
+class WorkoutListFragmentViewModel @Inject constructor(private val _workoutNavigationInteractor: WorkoutNavigationInteractor) :
     ViewModel() {
 
     private val workoutNavigationInteractor: NavigationServiceBoundary

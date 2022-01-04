@@ -3,10 +3,7 @@ package com.example.workaudio.presentation.editing
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import android.widget.Button
-import android.widget.EditText
 import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,20 +12,25 @@ import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutDetailBinding
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.presentation.player.PlayerActivity
-import android.widget.TextView
+import com.example.workaudio.dialogs.EditDurationDialogFragment
+import com.example.workaudio.dialogs.EditNameDialogFragment
+import com.example.workaudio.presentation.NavigationManager
 import com.example.workaudio.presentation.navigation.BottomModalSelectWorkout
-import com.google.android.material.slider.RangeSlider
 
 
 class WorkoutDetailFragment : Fragment() {
 
     companion object {
         const val ID_TAG = "id"
+        private const val DETAIL_TO_EDITING_TRACKS =
+            R.id.action_workoutDetailFragment_to_editingTracksFragment
+        private const val DETAIL_TO_WORKOUTS =
+            R.id.action_workoutDetailFragment_to_workoutListFragment
     }
 
     private lateinit var binding: FragmentWorkoutDetailBinding
-    private lateinit var _adapter: WorkoutDetailTracksAdapter
-    private val viewModel: WorkoutEditingViewModel by activityViewModels()
+    private lateinit var workoutAdapter: WorkoutDetailTracksAdapter
+    private val viewModel: WorkoutDetailFragmentViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,52 +38,48 @@ class WorkoutDetailFragment : Fragment() {
     ): View {
 
         binding = FragmentWorkoutDetailBinding.inflate(inflater, container, false)
-        _adapter = WorkoutDetailTracksAdapter(
+        workoutAdapter = WorkoutDetailTracksAdapter(
             mutableListOf<Track>(),
             fetchImage = { imageView, imageUri ->
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
             },
             deleteTrack = { uri ->
                 showModalBottomFragment(uri)
-            },
-            selectedColorId = resources.getColor(R.color.grey3,null)
+            }
         )
 
-        setupCurrentWorkout()
+        refreshCurrentWorkout()
         setLayoutFunctionality()
         setObservers()
         return binding.root
     }
 
     private fun showModalBottomFragment(trackUri: String) {
-        val modalBottomSheet = BottomModalSelectTrack(trackUri){ uri ->
-            viewModel.deleteTrack(trackUri)
+        val modalBottomSheet = BottomModalSelectTrack(trackUri) { uri ->
+            viewModel.deleteTrack(uri)
         }
         modalBottomSheet.show(parentFragmentManager, BottomModalSelectWorkout.TAG)
     }
 
-    private fun setupCurrentWorkout() {
-        arguments?.getInt(ID_TAG)?.let { workoutId ->
-            viewModel.initializeCurrentWorkout(workoutId)
-        }
+    private fun refreshCurrentWorkout() {
+        val workoutId = getWorkoutId()
+        viewModel.initializeCurrentWorkout(workoutId)
     }
 
     private fun setLayoutFunctionality() {
         binding.apply {
             trackList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
-                adapter = _adapter
+                adapter = workoutAdapter
             }
             playButton.setOnClickListener {
                 startPlayerActivity()
             }
             editTracksButton.setOnClickListener {
-                arguments?.getInt(ID_TAG)?.let { workoutId ->
-                    navigateTo(
-                        R.id.action_workoutDetailFragment_to_editingTracksFragment,
-                        bundleOf(ID_TAG to workoutId)
-                    )
-                }
+                val workoutId = getWorkoutId()
+                val bundle = bundleOf(ID_TAG to workoutId)
+                NavigationManager.navigateTo(findNavController(), DETAIL_TO_EDITING_TRACKS, bundle)
+
             }
             workoutName.setOnClickListener {
                 showEditNameDialogFragment()
@@ -90,9 +88,7 @@ class WorkoutDetailFragment : Fragment() {
                 showEditDurationDialogFragment()
             }
             backButton.setOnClickListener {
-                navigateTo(
-                    R.id.action_workoutDetailFragment_to_workoutListFragment
-                )
+                NavigationManager.navigateTo(findNavController(), DETAIL_TO_WORKOUTS)
             }
         }
     }
@@ -101,49 +97,37 @@ class WorkoutDetailFragment : Fragment() {
         viewModel.selectedWorkout.observe(this, { workout ->
             binding.apply {
                 workoutName.text = workout.name
-                durationText.text = (workout.duration / 60000).toString()
+                durationText.text = viewModel.durationToMinutes(workout.duration)
             }
+            workoutAdapter.tracks.apply {
+                clear()
+                addAll(workout.tracks)
+            }
+            workoutAdapter.notifyDataSetChanged()
+            viewModel.initTracks(workout.id)
         })
 
-        viewModel.tracks.observe(this, { trackList ->
-            _adapter.tracks.apply {
+        viewModel.tracks.observe(this, { tracks ->
+            workoutAdapter.tracks.apply {
                 clear()
-                addAll(trackList)
+                addAll(tracks)
             }
-            _adapter.notifyDataSetChanged()
+            workoutAdapter.notifyDataSetChanged()
         })
+
     }
 
     private fun startPlayerActivity() {
-        arguments?.getInt(ID_TAG)?.let { workoutId ->
-            val intent = PlayerActivity.newIntent(requireContext(), workoutId)
-            startActivity(intent)
-        }
-    }
-
-    private fun navigateTo(
-        action: Int,
-        bundle: Bundle? = null
-    ) {
-        if (bundle == null) {
-            findNavController().navigate(
-                action
-            )
-        } else {
-            findNavController().navigate(
-                action,
-                bundle
-            )
-        }
+        val intent = PlayerActivity.newIntent(requireContext(), getWorkoutId())
+        startActivity(intent)
 
     }
-
 
 
     private fun showEditNameDialogFragment() {
         val dialog = EditNameDialogFragment { name ->
             viewModel.updateWorkoutName(name)
-            setupCurrentWorkout()
+            refreshCurrentWorkout()
         }
 
         dialog.show(parentFragmentManager, EditNameDialogFragment.TAG)
@@ -152,95 +136,12 @@ class WorkoutDetailFragment : Fragment() {
     private fun showEditDurationDialogFragment() {
         val dialog = EditDurationDialogFragment { duration ->
             viewModel.updateWorkoutDuration(duration)
-            setupCurrentWorkout()
+            refreshCurrentWorkout()
         }
 
         dialog.show(parentFragmentManager, EditDurationDialogFragment.TAG)
     }
 
-    class EditNameDialogFragment(
-        val updateWorkout: (name: String) -> Unit
-    ) : DialogFragment() {
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View {
-
-            return inflater.inflate(R.layout.dialog_name, container, false)
-        }
-
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-
-            val layoutParams = WindowManager.LayoutParams()
-            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-            dialog?.window?.attributes = layoutParams
-            val cancelButton = view.findViewById<Button>(R.id.cancelButton)
-            val confirmNameButton = view.findViewById<Button>(R.id.loginButton)
-            val workoutNameText = view.findViewById<EditText>(R.id.workoutNameText)
-
-            cancelButton.setOnClickListener {
-                dialog?.dismiss()
-            }
-            confirmNameButton.setOnClickListener {
-                val newName = workoutNameText.text.toString()
-                updateWorkout(newName)
-                dialog?.dismiss()
-            }
-
-        }
-
-        companion object {
-            const val TAG = "EditNameDialog"
-        }
-    }
-
-    class EditDurationDialogFragment(
-        val updateDuration: (duration: Int) -> Unit
-    ) : DialogFragment() {
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View {
-
-            return inflater.inflate(R.layout.dialog_duration, container, false)
-        }
-
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-
-            val layoutParams = WindowManager.LayoutParams()
-            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-            dialog?.window?.attributes = layoutParams
-            val cancelButton = view.findViewById<Button>(R.id.cancelButton)
-            val confirmButton = view.findViewById<Button>(R.id.continueButton)
-            val durationRangeSlider = view.findViewById<RangeSlider>(R.id.rangeSlider)
-            val timeLabel = view.findViewById<TextView>(R.id.timeLabel)
-
-            cancelButton.setOnClickListener {
-                dialog?.dismiss()
-            }
-            confirmButton.setOnClickListener {
-                val newDuration = (durationRangeSlider.values[0] ?: 0.0f).toInt()
-                updateDuration(newDuration)
-                dialog?.dismiss()
-            }
-            durationRangeSlider.addOnChangeListener { _, value, _ ->
-                timeLabel.text = value.toInt().toString().plus(MINUTES)
-            }
-
-        }
-
-        companion object {
-            const val TAG = "EditDurationDialog"
-            const val MINUTES = " min"
-        }
-    }
+    private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: -1
 
 }

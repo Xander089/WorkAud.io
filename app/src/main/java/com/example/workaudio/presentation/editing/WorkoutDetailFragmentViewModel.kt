@@ -8,11 +8,12 @@ import com.example.workaudio.core.usecases.editing.EditingServiceBoundary
 import com.example.workaudio.core.usecases.editing.WorkoutEditingInteractor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WorkoutEditingViewModel @Inject constructor(private val _editingInteractor: WorkoutEditingInteractor) :
+class WorkoutDetailFragmentViewModel @Inject constructor(private val _editingInteractor: WorkoutEditingInteractor) :
     ViewModel() {
 
     private val editingInteractor: EditingServiceBoundary
@@ -22,21 +23,23 @@ class WorkoutEditingViewModel @Inject constructor(private val _editingInteractor
     }
 
     var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
-    var tracks: LiveData<List<Track>> = MutableLiveData<List<Track>>()
+    var tracks: LiveData<List<Track>> = MutableLiveData()
 
     fun initializeCurrentWorkout(workoutId: Int) {
         selectedWorkout = liveData(Dispatchers.IO) {
             val workout = editingInteractor.getWorkout(workoutId)
             emit(workout)
         }
-        tracks = liveData(Dispatchers.IO) {
-            val workout = editingInteractor.getWorkout(workoutId)
-            emit(workout.tracks)
-        }
+
+    }
+
+    fun initTracks(workoutId: Int) {
+        tracks = editingInteractor.getWorkoutTracks(workoutId).asLiveData()
     }
 
     fun deleteTrack(trackUri: String) {
         val workoutId = selectedWorkout.value?.id ?: -1
+        Log.v("deleting",workoutId.toString())
         viewModelScope.launch(Dispatchers.IO) {
             editingInteractor.deleteTrack(trackUri, workoutId)
         }
@@ -56,4 +59,6 @@ class WorkoutEditingViewModel @Inject constructor(private val _editingInteractor
             editingInteractor.updateWorkoutDuration(workoutId, durationInMillis)
         }
     }
+
+    fun durationToMinutes(duration: Int) = (duration / 60000).toString()
 }

@@ -1,12 +1,16 @@
 package com.example.workaudio.core.usecases.creation
 
+import android.util.Log
 import com.example.workaudio.core.entities.Track
+import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.repository.database.ApplicationDAO
 import com.example.workaudio.repository.database.WorkoutRoomEntity
 import com.example.workaudio.repository.database.WorkoutTracksRoomEntity
 import com.example.workaudio.repository.web.GsonTrack
 import com.example.workaudio.repository.web.SpotifyWebService
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 
 class WorkoutCreationFacade(
     private val dao: ApplicationDAO,
@@ -23,6 +27,11 @@ class WorkoutCreationFacade(
         return tracks
     }
 
+    suspend fun getWorkout() = dao.getLatestWorkout().toWorkout()
+    val latestWorkout = dao.getLatestWorkoutAsFlow().map {
+        it.toWorkout()
+    }
+
     suspend fun insertWorkout(
         name: String,
         duration: Int,
@@ -33,6 +42,14 @@ class WorkoutCreationFacade(
         dao.insertWorkout(workoutRoomEntity)
         delay(500)
         insertWorkoutTracks(tracks)
+    }
+
+    suspend fun insertWorkout(
+        name: String,
+        duration: Int,
+    ) {
+        val workoutRoomEntity = WorkoutRoomEntity(name, duration, null)
+        dao.insertWorkout(workoutRoomEntity)
     }
 
     private suspend fun insertWorkoutTracks(tracks: List<Track>) {
@@ -67,6 +84,16 @@ class WorkoutCreationFacade(
             artist = this.artists[0].name,
             album = this.album.name,
             imageUrl = this.album.images[0].url
+        )
+    }
+
+    private fun WorkoutRoomEntity.toWorkout(): Workout {
+        return Workout(
+            this.id,
+            this.name.orEmpty(),
+            this.duration ?: 0,
+            emptyList(),
+            this.imageUrl.orEmpty()
         )
     }
 

@@ -1,7 +1,6 @@
 package com.example.workaudio.presentation.navigation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,13 +13,21 @@ import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutListBinding
 import com.example.workaudio.core.entities.Workout
+import com.example.workaudio.presentation.NavigationManager
 
 
 class WorkoutListFragment : Fragment() {
 
+    companion object {
+        private const val ID_TAG = "id"
+        private const val WORKOUTS_TO_NAME = R.id.action_workoutListFragment_to_nameFragment
+        private const val WORKOUTS_TO_DETAIL =
+            R.id.action_workoutListFragment_to_workoutDetailFragment
+    }
+
     private lateinit var binding: FragmentWorkoutListBinding
     private lateinit var workoutAdapter: WorkoutAdapter
-    private val viewModel: WorkoutNavigationViewModel by activityViewModels()
+    private val viewModel: WorkoutListFragmentViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +48,7 @@ class WorkoutListFragment : Fragment() {
             }
 
             createWorkoutButton.setOnClickListener {
-                navigateToFragment(R.id.action_workoutListFragment_to_nameFragment)
+                NavigationManager.navigateTo(findNavController(), WORKOUTS_TO_NAME)
             }
         }
     }
@@ -57,10 +64,8 @@ class WorkoutListFragment : Fragment() {
     private fun provideAdapter() = WorkoutAdapter(
         mutableListOf<Workout>(),
         openWorkoutDetail = { workoutId ->
-            navigateToFragment(
-                R.id.action_workoutListFragment_to_workoutDetailFragment,
-                workoutId
-            )
+            val bundle = bundleOf(ID_TAG to workoutId)
+            NavigationManager.navigateTo(findNavController(), WORKOUTS_TO_DETAIL, bundle)
         },
         showBottomModal = { workoutId ->
             showModalBottomFragment(workoutId)
@@ -70,15 +75,6 @@ class WorkoutListFragment : Fragment() {
         }
     )
 
-    private fun navigateToFragment(
-        fragmentId: Int,
-        workoutId: Int = 0
-    ) {
-        findNavController().navigate(
-            fragmentId,
-            bundleOf("id" to workoutId)
-        )
-    }
 
     private fun showModalBottomFragment(workoutId: Int) {
         val modalBottomSheet = BottomModalSelectWorkout(workoutId) { id ->

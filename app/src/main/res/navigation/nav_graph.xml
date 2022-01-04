@@ -11,11 +11,11 @@
         android:label="fragment_workout_list"
         tools:layout="@layout/fragment_workout_list" >
         <action
-            android:id="@+id/action_workoutListFragment_to_workoutDetailFragment"
-            app:destination="@id/workoutDetailFragment" />
-        <action
             android:id="@+id/action_workoutListFragment_to_nameFragment"
             app:destination="@id/nameFragment" />
+        <action
+            android:id="@+id/action_workoutListFragment_to_workoutDetailFragment"
+            app:destination="@id/workoutDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/workoutDetailFragment"
@@ -47,27 +47,19 @@
         android:label="fragment_duration"
         tools:layout="@layout/fragment_duration" >
         <action
-            android:id="@+id/action_durationFragment_to_tracksFragment"
-            app:destination="@id/tracksFragment" />
-        <action
             android:id="@+id/action_durationFragment_to_nameFragment"
             app:destination="@id/nameFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/tracksFragment"
-        android:name="com.example.workaudio.presentation.creation.TracksFragment"
-        android:label="fragment_tracks"
-        tools:layout="@layout/fragment_tracks" >
         <action
-            android:id="@+id/action_tracksFragment_to_workoutListFragment"
-            app:destination="@id/workoutListFragment" />
-        <action
-            android:id="@+id/action_tracksFragment_to_durationFragment2"
-            app:destination="@id/durationFragment" />
+            android:id="@+id/action_durationFragment_to_workoutDetailFragment"
+            app:destination="@id/workoutDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/editingTracksFragment"
-        android:name="com.example.workaudio.presentation.editing.EditingTracksFragment"
+        android:name="com.example.workaudio.presentation.searchTracks.EditingTracksFragment"
         android:label="fragment_editing_tracks"
-        tools:layout="@layout/fragment_editing_tracks" />
+        tools:layout="@layout/fragment_editing_tracks" >
+        <action
+            android:id="@+id/action_editingTracksFragment_to_workoutDetailFragment"
+            app:destination="@id/workoutDetailFragment" />
+    </fragment>
 </navigation>

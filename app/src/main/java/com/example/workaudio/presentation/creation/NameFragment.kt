@@ -12,9 +12,17 @@ import androidx.navigation.fragment.findNavController
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentNameBinding
 import android.text.Editable
+import com.example.workaudio.presentation.NavigationManager
 
 
 class NameFragment : Fragment() {
+
+    companion object {
+        private const val NAME_TO_DURATION = R.id.action_nameFragment_to_durationFragment
+        private const val NAME_TO_WORKOUTS = R.id.action_nameFragment_to_workoutListFragment
+        private const val ENABLED_COLOR = R.color.yellow
+        private const val DISABLED_COLOR = R.color.grey2
+    }
 
     private lateinit var binding: FragmentNameBinding
 
@@ -24,86 +32,54 @@ class NameFragment : Fragment() {
     ): View {
 
         binding = FragmentNameBinding.inflate(inflater, container, false)
-
-        binding.apply {
-
-            confirmNameButton.apply {
-                isEnabled = false
-                setTextColor(
-                    requireActivity()
-                        .resources
-                        .getColor(R.color.grey2, null)
-                )
-                setStrokeColorResource(R.color.grey2)
-                setOnClickListener {
-                    val workoutName = workoutNameText.text.toString()
-                    navigateTo(
-                        R.id.action_nameFragment_to_durationFragment,
-                        bundleOf(DurationFragment.WORKOUT_NAME to workoutName)
-                    )
-                }
-
-                cancelButton.setOnClickListener {
-                    navigateTo(
-                        R.id.action_nameFragment_to_workoutListFragment
-                    )
-                }
-                workoutNameText.addTextChangedListener(object : TextWatcher {
-                    override fun afterTextChanged(s: Editable) {}
-                    override fun beforeTextChanged(
-                        s: CharSequence, start: Int,
-                        count: Int, after: Int
-                    ) {
-                    }
-
-                    override fun onTextChanged(
-                        s: CharSequence, start: Int,
-                        before: Int, count: Int
-                    ) {
-                        if (s.isNotEmpty()) {
-                            confirmNameButton.apply {
-                                isEnabled = true
-                                setTextColor(
-                                    requireActivity()
-                                        .resources
-                                        .getColor(R.color.yellow, null)
-                                )
-                                setStrokeColorResource(R.color.yellow)
-                            }
-                        } else {
-                            confirmNameButton.apply {
-                                isEnabled = false
-                                setTextColor(
-                                    requireActivity()
-                                        .resources
-                                        .getColor(R.color.grey2, null)
-                                )
-                                setStrokeColorResource(R.color.grey2)
-                            }
-                        }
-                    }
-                })
-            }
-        }
-
+        setupLayoutFunctionality()
         return binding.root
     }
 
-    private fun navigateTo(
-        action: Int,
-        bundle: Bundle? = null
-    ) {
-        if (bundle == null) {
-            findNavController().navigate(
-                action
-            )
-        } else {
-            findNavController().navigate(
-                action,
-                bundle
-            )
-        }
+    private fun setupLayoutFunctionality() {
+        binding.apply {
+            confirmNameButton.apply {
+                setOnClickListener {
+                    val workoutName = workoutNameText.text.toString()
+                    val bundle = bundleOf(DurationFragment.WORKOUT_NAME to workoutName)
+                    NavigationManager.navigateTo(findNavController(), NAME_TO_DURATION, bundle)
+                }
+            }
+            cancelButton.setOnClickListener {
+                NavigationManager.navigateTo(findNavController(), NAME_TO_WORKOUTS)
+            }
+            workoutNameText.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable) {}
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int,
+                    count: Int, after: Int
+                ) {
+                }
 
+                override fun onTextChanged(
+                    s: CharSequence, start: Int,
+                    before: Int, count: Int
+                ) {
+                    if (s.isNotEmpty()) {
+                        confirmNameButton.apply {
+                            isEnabled = true
+                            setTextColor(
+                                requireActivity().resources.getColor(ENABLED_COLOR, null)
+                            )
+                            setStrokeColorResource(ENABLED_COLOR)
+                        }
+                    } else {
+                        confirmNameButton.apply {
+                            isEnabled = false
+                            setTextColor(
+                                requireActivity().resources.getColor(DISABLED_COLOR, null)
+                            )
+                            setStrokeColorResource(DISABLED_COLOR)
+                        }
+                    }
+                }
+            })
+        }
     }
 
 }

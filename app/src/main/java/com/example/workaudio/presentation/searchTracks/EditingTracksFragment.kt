@@ -1,4 +1,4 @@
-package com.example.workaudio.presentation.creation
+package com.example.workaudio.presentation.searchTracks
 
 import android.app.SearchManager
 import android.content.Context
@@ -12,41 +12,39 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
-import com.example.workaudio.databinding.FragmentTracksBinding
 import com.example.workaudio.core.entities.Track
+import com.example.workaudio.databinding.FragmentEditingTracksBinding
 
 
-class TracksFragment : Fragment() {
+class EditingTracksFragment : Fragment() {
 
     companion object {
-        private const val WORKOUT_NAME = "workout_name"
-        private const val WORKOUT_DURATION = "workout_duration"
+        private const val ID_TAG = "id"
     }
 
-    private lateinit var binding: FragmentTracksBinding
+    private val viewModel: EditingTracksFragmentViewModel by activityViewModels()
     private lateinit var trackListAdapter: WorkoutTracksAdapter
-    private val viewModel: WorkoutCreationViewModel by activityViewModels()
 
+    private lateinit var binding: FragmentEditingTracksBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentTracksBinding.inflate(layoutInflater, container, false)
-
-        cacheWorkoutInfo()
+        binding = FragmentEditingTracksBinding.inflate(inflater, container, false)
         buildAdapter()
-        initLayout()
-        initObservers()
+        setupLayout()
+        setupObservers()
 
         return binding.root
     }
 
-    private fun buildAdapter(){
+    private fun buildAdapter() {
         trackListAdapter = WorkoutTracksAdapter(
             mutableListOf<Track>(),
-            addTrack = { track, isAdded ->
-                viewModel.addTrack(track)
+            addTrack = { track ->
+                val workoutId = arguments?.getInt(ID_TAG) ?: 0
+                viewModel.addTrack(track, workoutId)
             },
             fetchImage = { imageView, imageUri ->
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
@@ -54,15 +52,13 @@ class TracksFragment : Fragment() {
         )
     }
 
-    private fun initLayout(){
+    private fun setupLayout() {
         binding.apply {
             (activity as AppCompatActivity?)!!.setSupportActionBar(topAppBar)
-            minuteLabel.text = "0/${(arguments?.getInt(WORKOUT_DURATION) ?: 0)} min"
-            saveButton.isEnabled = false
-            saveButton.setOnClickListener {
-                viewModel.createWorkout()
-                findNavController().navigate(R.id.action_tracksFragment_to_workoutListFragment)
-            }
+
+            //DA AGGIORNARE IN OBSERVERS
+            //minuteLabel.text = "0/${(arguments?.getInt(TracksFragment.WORKOUT_DURATION) ?: 0)} min"
+
             trackList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter = trackListAdapter
@@ -70,7 +66,7 @@ class TracksFragment : Fragment() {
         }
     }
 
-    private fun initObservers(){
+    private fun setupObservers() {
         viewModel.searchedTracks.observe(this, { searchedTracks ->
             trackListAdapter.apply {
                 tracks.clear()
@@ -81,18 +77,10 @@ class TracksFragment : Fragment() {
 
         viewModel.currentDuration.observe(this, { duration ->
             binding.apply {
-                saveButton.isEnabled = viewModel.compareDuration()
                 minuteLabel.text = (duration / 60000).toString()
             }
         })
     }
-
-    private fun cacheWorkoutInfo() {
-        val name = arguments?.getString(WORKOUT_NAME).orEmpty()
-        val duration = arguments?.getInt(WORKOUT_DURATION) ?: 0
-        viewModel.cacheWorkoutInfo(name, duration)
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,32 +115,13 @@ class TracksFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
+
         when (item.itemId) {
-            android.R.id.home -> navigateTo(
-                R.id.action_tracksFragment_to_durationFragment2
-            )
+            android.R.id.home -> findNavController().popBackStack()
             else -> {}
         }
 
         return super.onOptionsItemSelected(item)
     }
-
-    private fun navigateTo(
-        action: Int,
-        bundle: Bundle? = null
-    ) {
-        if (bundle == null) {
-            findNavController().navigate(
-                action
-            )
-        } else {
-            findNavController().navigate(
-                action,
-                bundle
-            )
-        }
-
-    }
-
 
 }

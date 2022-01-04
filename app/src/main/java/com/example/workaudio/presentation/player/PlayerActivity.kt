@@ -83,8 +83,7 @@ class PlayerActivity : AppCompatActivity() {
             mutableListOf<Track>(),
             fetchImage = { imageView, imageUrl ->
                 Glide.with(this).load(imageUrl).into(imageView)
-            },
-            selectedColorId = resources.getColor(R.color.grey3, null)
+            }
         )
     }
 

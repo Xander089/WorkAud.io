@@ -13,14 +13,12 @@ class WorkoutDetailTracksAdapter(
     val tracks: MutableList<Track>,
     private val fetchImage: (ImageView, String) -> Unit,
     private val deleteTrack: (String) -> Unit = {},
-    private val selectedColorId: Int
 ) : RecyclerView.Adapter<WorkoutDetailTracksAdapter.TrackListViewHolder>() {
 
     inner class TrackListViewHolder(
         private val binding: ItemDetailTrackBinding,
         private val fetchImage: (ImageView, String) -> Unit,
         private val deleteTrack: (String) -> Unit,
-        private val selectedColorId: Int
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(track: Track) {
@@ -28,22 +26,11 @@ class WorkoutDetailTracksAdapter(
             binding.apply {
                 artistNameText.text = track.artist
                 trackNameText.text = track.title
-                durationTrackText.text = formatTrackTime(track.duration)
                 fetchImage(trackImage, track.imageUrl)
-                root.setOnLongClickListener {
+                settingsButton.setOnClickListener {
                     deleteTrack(track.uri)
-                    trackLayout.setBackgroundColor(selectedColorId)
-                    true
                 }
             }
-        }
-
-        private fun formatTrackTime(duration: Int): String {
-            val seconds = duration / 1000
-            val minutes = seconds / 60
-            val remainderSeconds = seconds % 60
-
-            return "${minutes} m ${remainderSeconds} s"
         }
 
     }
@@ -55,8 +42,7 @@ class WorkoutDetailTracksAdapter(
         return TrackListViewHolder(
             binding,
             this.fetchImage,
-            this.deleteTrack,
-            this.selectedColorId
+            this.deleteTrack
         )
     }
 
