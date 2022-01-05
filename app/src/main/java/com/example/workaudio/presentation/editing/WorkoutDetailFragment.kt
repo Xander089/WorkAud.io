@@ -53,7 +53,7 @@ class WorkoutDetailFragment : Fragment() {
         viewModel.initializeCurrentWorkout(workoutId)
     }
 
-    private fun buildAdapter(){
+    private fun buildAdapter() {
         workoutAdapter = WorkoutDetailTracksAdapter(
             mutableListOf<Track>(),
             fetchImage = { imageView, imageUri ->
@@ -66,12 +66,11 @@ class WorkoutDetailFragment : Fragment() {
     }
 
     private fun showModalBottomFragment(trackUri: String) {
-        val modalBottomSheet = BottomModalSelectTrack(trackUri) { uri ->
+        BottomModalSelectTrack(trackUri) { uri ->
             viewModel.deleteTrack(uri)
         }
-        modalBottomSheet.show(parentFragmentManager, BottomModalSelectWorkout.TAG)
+            .show(parentFragmentManager, BottomModalSelectWorkout.TAG)
     }
-
 
 
     private fun setLayoutFunctionality() {
@@ -123,24 +122,21 @@ class WorkoutDetailFragment : Fragment() {
     private fun startPlayerActivity() {
         val intent = PlayerActivity.newIntent(requireContext(), getWorkoutId())
         startActivity(intent)
-
     }
 
 
     private fun showEditNameDialogFragment() {
-        val dialog = EditNameDialogFragment { name ->
-            viewModel.updateWorkoutName(getWorkoutId(),name)
+        EditNameDialogFragment { name ->
+            viewModel.updateWorkoutName(getWorkoutId(), name)
         }
-
-        dialog.show(parentFragmentManager, EditNameDialogFragment.TAG)
+            .show(parentFragmentManager, EditNameDialogFragment.TAG)
     }
 
     private fun showEditDurationDialogFragment() {
-        val dialog = EditDurationDialogFragment { duration ->
-            viewModel.updateWorkoutDuration(getWorkoutId(),duration)
+        EditDurationDialogFragment { duration ->
+            viewModel.updateWorkoutDuration(getWorkoutId(), duration)
         }
-
-        dialog.show(parentFragmentManager, EditDurationDialogFragment.TAG)
+            .show(parentFragmentManager, EditDurationDialogFragment.TAG)
     }
 
     private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: -1

@@ -1,6 +1,9 @@
 package com.example.workaudio.core.usecases.creation
 
 import android.util.Log
+import com.example.workaudio.core.EntityMapper.toTrack
+import com.example.workaudio.core.EntityMapper.toTrackRoomEntity
+import com.example.workaudio.core.EntityMapper.toWorkout
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.repository.database.ApplicationDAO
@@ -59,42 +62,6 @@ class WorkoutCreationFacade(
             val roomEntityTrack = track.toTrackRoomEntity(workoutId)
             dao.insertWorkoutTrack(roomEntityTrack)
         }
-    }
-
-
-    //MAPPING methods
-
-    private fun Track.toTrackRoomEntity(workoutId: Int): WorkoutTracksRoomEntity {
-        return WorkoutTracksRoomEntity(
-            workoutId,
-            this.uri,
-            this.title,
-            this.duration,
-            this.artist,
-            this.album,
-            this.imageUrl
-        )
-    }
-
-    private fun GsonTrack.toTrack(): Track {
-        return Track(
-            title = this.name,
-            uri = this.uri,
-            duration = this.duration,
-            artist = this.artists[0].name,
-            album = this.album.name,
-            imageUrl = this.album.images[0].url
-        )
-    }
-
-    private fun WorkoutRoomEntity.toWorkout(): Workout {
-        return Workout(
-            this.id,
-            this.name.orEmpty(),
-            this.duration ?: 0,
-            emptyList(),
-            this.imageUrl.orEmpty()
-        )
     }
 
 

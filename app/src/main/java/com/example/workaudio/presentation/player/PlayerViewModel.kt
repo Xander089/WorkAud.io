@@ -26,24 +26,26 @@ class PlayerViewModel @Inject constructor(private val _playerInteractor: PlayerI
         playerInteractor = _playerInteractor
     }
 
-    val playerState = MutableLiveData<Int>(0)
-
-    fun getPlayerState() = playerState.value ?: 0
-    fun setPlayerState(state: Int) {
-        playerState.value = state
+    //PLAYER STATE
+    private var playerState = PlayerState.PLAYING
+    fun getPlayerState() = playerState
+    fun setPlayerState(state: PlayerState) {
+        playerState = state
     }
 
-    var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
+    //TIMER
     lateinit var countDownTimer: Flow<Int>
-    private var _tracks = MutableLiveData<List<Track>>()
-    val tracks: LiveData<List<Track>> = _tracks
-    val currentTrackPlaying = playerInteractor.getCurrentPosition().asLiveData()
+    lateinit var timerJob: Job
     private val _timerText = MutableLiveData<String>()
     val timerText: LiveData<String> = _timerText
-    lateinit var timerJob: Job
+
+    //WORKOUT AND ITS TRACK
+    val currentTrackPlaying = playerInteractor.getCurrentPosition().asLiveData()
+    var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
+    private var _tracks = MutableLiveData<List<Track>>()
+    val tracks: LiveData<List<Track>> = _tracks
 
     fun initTimer(tracks: List<Track>): String {
-
         val currentPlaylistTotalTime = tracks.map { it.duration }.sum() / 1000
         return playerInteractor.toTime(currentPlaylistTotalTime)
     }
@@ -68,7 +70,7 @@ class PlayerViewModel @Inject constructor(private val _playerInteractor: PlayerI
     }
 
     fun startTimer() {
-        playerState.value = 1
+        playerState = PlayerState.PLAYING
         setTracksEndingTime()
         timerJob = viewModelScope.launch {
             playerInteractor.apply {

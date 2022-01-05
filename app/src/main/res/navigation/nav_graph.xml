@@ -55,7 +55,7 @@
     </fragment>
     <fragment
         android:id="@+id/editingTracksFragment"
-        android:name="com.example.workaudio.presentation.searchTracks.EditingTracksFragment"
+        android:name="com.example.workaudio.presentation.searchTracks.SearchTracksFragment"
         android:label="fragment_editing_tracks"
         tools:layout="@layout/fragment_editing_tracks" >
         <action

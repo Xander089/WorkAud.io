@@ -1,5 +1,8 @@
 package com.example.workaudio.core.usecases.editing
 
+import com.example.workaudio.core.EntityMapper.toTrack
+import com.example.workaudio.core.EntityMapper.toTrackRoomEntity
+import com.example.workaudio.core.EntityMapper.toWorkout
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.repository.database.ApplicationDAO
@@ -66,44 +69,4 @@ class WorkoutEditingFacade(
         }
         return workoutRoomEntity.toWorkout(tracks)
     }
-
-
-    //MAPPING methods
-
-    private fun WorkoutRoomEntity.toWorkout(
-        tracks: List<Track>
-    ): Workout {
-        return Workout(
-            this.id,
-            this.name.orEmpty(),
-            this.duration ?: 0,
-            tracks,
-            this.imageUrl.orEmpty()
-        )
-    }
-
-    private fun WorkoutTracksRoomEntity.toTrack(): Track {
-        return Track(
-            this.title.orEmpty(),
-            this.uri.orEmpty(),
-            this.duration ?: 0,
-            this.artist.orEmpty(),
-            this.album.orEmpty(),
-            this.imageUrl.orEmpty()
-        )
-    }
-
-    private fun Track.toTrackRoomEntity(workoutId: Int): WorkoutTracksRoomEntity {
-        return WorkoutTracksRoomEntity(
-            workoutId,
-            this.uri,
-            this.title,
-            this.duration,
-            this.artist,
-            this.album,
-            this.imageUrl
-        )
-    }
-
-
 }

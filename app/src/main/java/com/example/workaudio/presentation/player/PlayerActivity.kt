@@ -19,6 +19,7 @@ import com.example.workaudio.R
 import com.example.workaudio.presentation.editing.WorkoutDetailTracksAdapter
 import com.example.workaudio.databinding.ActivityPlayerBinding
 import com.example.workaudio.core.entities.Track
+import com.example.workaudio.dialogs.StopPlayerDialogFragment
 import com.example.workaudio.presentation.editing.WorkoutDetailFragment
 import com.example.workaudio.spotify.SpotifyManager
 import com.google.android.material.slider.RangeSlider
@@ -39,9 +40,8 @@ class PlayerActivity : AppCompatActivity() {
 
     private val viewModel: PlayerViewModel by viewModels()
     private lateinit var spotify: SpotifyManager
-    private lateinit var _adapter: WorkoutDetailTracksAdapter
+    private lateinit var tracksAdapter: WorkoutDetailTracksAdapter
     private lateinit var binding: ActivityPlayerBinding
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -79,7 +79,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun buildTrackListAdapter() {
-        _adapter = WorkoutDetailTracksAdapter(
+        tracksAdapter = WorkoutDetailTracksAdapter(
             mutableListOf<Track>(),
             fetchImage = { imageView, imageUrl ->
                 Glide.with(this).load(imageUrl).into(imageView)
@@ -99,14 +99,14 @@ class PlayerActivity : AppCompatActivity() {
             timerText.text = resources?.getString(R.string.reset_time).orEmpty()
             playButton.setOnClickListener {
                 val playerState = viewModel.getPlayerState()
-                if (playerState == 1) {
+                if (playerState == PlayerState.PLAYING) {
                     playButton.setBackgroundResource(R.drawable.ic_play)
-                    viewModel.setPlayerState(0)
+                    viewModel.setPlayerState(PlayerState.PAUSED)
                     viewModel.stopTimer()
                     spotify.pausePlayer()
                 } else {
                     playButton.setBackgroundResource(R.drawable.ic_pause)
-                    viewModel.setPlayerState(1)
+                    viewModel.setPlayerState(PlayerState.PLAYING)
                     viewModel.restartTimer(timerText.text.toString())
                 }
             }
@@ -116,7 +116,7 @@ class PlayerActivity : AppCompatActivity() {
             }
             trackList.apply {
                 layoutManager = LinearLayoutManager(this@PlayerActivity)
-                adapter = _adapter
+                adapter = tracksAdapter
             }
         }
     }
@@ -138,18 +138,18 @@ class PlayerActivity : AppCompatActivity() {
             })
 
             tracks.observe(this@PlayerActivity, { trackList ->
-                _adapter.tracks.apply {
+                tracksAdapter.tracks.apply {
                     clear()
                     addAll(trackList)
                 }
-                _adapter.notifyDataSetChanged()
+                tracksAdapter.notifyDataSetChanged()
                 binding.timerText.text = viewModel.initTimer(trackList.toList())
                 startTimer()
             })
 
             currentTrackPlaying.observe(this@PlayerActivity, { newSongPosition ->
-                val state = viewModel.playerState.value ?: 0
-                if (state != 0) {
+                val state = viewModel.getPlayerState()
+                if (state != PlayerState.PAUSED) {
                     val trackUri = getTrackUri(newSongPosition.position)
                     spotify.play(trackUri)
                 }
@@ -167,44 +167,5 @@ class PlayerActivity : AppCompatActivity() {
         }
             .show(supportFragmentManager, StopPlayerDialogFragment.TAG)
     }
-
-    class StopPlayerDialogFragment(
-        val finish: () -> Unit
-    ) : DialogFragment() {
-
-        override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View {
-
-            return inflater.inflate(R.layout.dialog_stop_player, container, false)
-        }
-
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-
-            val layoutParams = WindowManager.LayoutParams()
-            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-            dialog?.window?.attributes = layoutParams
-            val cancelButton = view.findViewById<Button>(R.id.cancelButton)
-            val confirmButton = view.findViewById<Button>(R.id.continueButton)
-
-            cancelButton.setOnClickListener {
-                dialog?.dismiss()
-            }
-            confirmButton.setOnClickListener {
-                finish()
-                dialog?.dismiss()
-            }
-
-        }
-
-        companion object {
-            const val TAG = "StopPlayerDialog"
-        }
-    }
-
 
 }

@@ -10,7 +10,7 @@ import com.example.workaudio.core.entities.Track
 
 
 class WorkoutDetailTracksAdapter(
-    val tracks: MutableList<Track>,
+    val tracks: MutableList<Track> = mutableListOf(),
     private val fetchImage: (ImageView, String) -> Unit,
     private val deleteTrack: (String) -> Unit = {},
 ) : RecyclerView.Adapter<WorkoutDetailTracksAdapter.TrackListViewHolder>() {

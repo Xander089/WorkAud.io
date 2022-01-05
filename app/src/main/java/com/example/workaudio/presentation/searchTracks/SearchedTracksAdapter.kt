@@ -8,13 +8,21 @@ import com.example.workaudio.databinding.ItemTrackBinding
 import com.example.workaudio.core.entities.Track
 
 
-class WorkoutTracksAdapter(
-    val tracks: MutableList<Track>,
+class SearchedTracksAdapter(
+    val tracks: MutableList<Track> = mutableListOf(),
     private val addTrack: (Track) -> Unit = {},
-    private val deleteTrack: (uri: String) -> Unit = {},
     private val fetchImage: (ImageView, String) -> Unit
 
-) : RecyclerView.Adapter<WorkoutTracksAdapter.TrackListViewHolder>() {
+) : RecyclerView.Adapter<SearchedTracksAdapter.TrackListViewHolder>() {
+
+    companion object {
+
+        fun newInstance(
+            addTrack: (Track) -> Unit = {},
+            fetchImage: (ImageView, String) -> Unit
+        ) = SearchedTracksAdapter(addTrack = addTrack, fetchImage = fetchImage)
+    }
+
 
     inner class TrackListViewHolder(
         private val binding: ItemTrackBinding,
@@ -42,7 +50,7 @@ class WorkoutTracksAdapter(
             val minutes = seconds / 60
             val remainderSeconds = seconds % 60
 
-            return "${minutes} m ${remainderSeconds} s"
+            return "$minutes m $remainderSeconds s"
         }
 
     }

@@ -16,6 +16,7 @@ class DurationFragmentViewModel @Inject constructor(private val _workoutCreation
 
     companion object {
         private const val MIN = " min"
+        private const val MILLIS_IN_A_MINUTE = 60000
         enum class STATE{CREATED,NOT_CREATED}
     }
 
@@ -41,7 +42,7 @@ class DurationFragmentViewModel @Inject constructor(private val _workoutCreation
     ) {
         this.state = STATE.CREATED
         viewModelScope.launch(Dispatchers.IO) {
-            val durationInMillis = duration * 60 * 1000
+            val durationInMillis = duration * MILLIS_IN_A_MINUTE
             workoutCreationInteractor.createWorkout(
                 name,
                 durationInMillis
