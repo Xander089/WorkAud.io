@@ -21,8 +21,7 @@ class WorkoutListFragment : Fragment() {
     companion object {
         private const val ID_TAG = "id"
         private const val WORKOUTS_TO_NAME = R.id.action_workoutListFragment_to_nameFragment
-        private const val WORKOUTS_TO_DETAIL =
-            R.id.action_workoutListFragment_to_workoutDetailFragment
+        private const val WORKOUTS_TO_DETAIL = R.id.action_workoutListFragment_to_workoutDetailFragment
     }
 
     private lateinit var binding: FragmentWorkoutListBinding
@@ -35,12 +34,12 @@ class WorkoutListFragment : Fragment() {
     ): View {
         binding = FragmentWorkoutListBinding.inflate(inflater, container, false)
         workoutAdapter = provideAdapter()
-        initLayoutFunctionality()
-        initObservers()
+        setupLayoutFunctionality()
+        setupObservers()
         return binding.root
     }
 
-    private fun initLayoutFunctionality() {
+    private fun setupLayoutFunctionality() {
         binding.apply {
             workoutList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
@@ -53,7 +52,7 @@ class WorkoutListFragment : Fragment() {
         }
     }
 
-    private fun initObservers() {
+    private fun setupObservers() {
         viewModel.workouts.observe(this, { workouts ->
             workouts?.let {
                 workoutAdapter.updateWorkouts(it)

@@ -27,6 +27,10 @@ class SearchFacade(
         dao.insertWorkoutTrack(roomEntityTrack)
     }
 
+    suspend fun updateWorkoutDefaultImage(imageUrl: String, workoutId: Int) {
+        dao.updateWorkoutImageUrl(imageUrl,workoutId)
+    }
+
 
     //MAPPING methods
 

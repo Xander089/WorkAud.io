@@ -5,6 +5,7 @@ import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.repository.database.ApplicationDAO
 import com.example.workaudio.repository.database.WorkoutRoomEntity
 import com.example.workaudio.repository.database.WorkoutTracksRoomEntity
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class WorkoutEditingFacade(
@@ -17,7 +18,17 @@ class WorkoutEditingFacade(
         }
     }
 
-    fun getWorkoutAsFlow(workoutId: Int) = dao.getWorkoutById(workoutId)
+    fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> = dao.getWorkoutById(workoutId).map {
+        it.toWorkout(emptyList())
+    }
+
+    fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =
+        dao.getWorkoutTracksFlow(workoutId).map {
+            it.map { entity ->
+                entity.toTrack()
+            }
+        }
+
 
     suspend fun updateWorkoutName(name: String, id: Int) {
         dao.updateWorkoutName(name, id)

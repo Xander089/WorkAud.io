@@ -8,7 +8,7 @@ abstract class EditingServiceBoundary(
     open val facade: WorkoutEditingFacade
 ) {
 
-    abstract suspend fun getWorkout(id: Int): Workout
+    abstract fun getWorkout(id: Int): Flow<Workout>
     abstract suspend fun getWorkout(): Workout
     abstract fun getWorkoutTracks(workoutId:Int): Flow<List<Track>>
     abstract suspend fun updateWorkoutName(

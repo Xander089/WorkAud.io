@@ -7,4 +7,5 @@ abstract class SearchServiceBoundary(
 ) {
     abstract suspend fun searchTracks(queryText: String): List<Track>
     abstract suspend fun addTrack(track: Track, workoutId: Int)
+    abstract suspend fun updateWorkoutDefaultImage(imageUrl: String, workoutId: Int)
 }

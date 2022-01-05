@@ -45,6 +45,7 @@ class EditingTracksFragment : Fragment() {
             addTrack = { track ->
                 val workoutId = arguments?.getInt(ID_TAG) ?: 0
                 viewModel.addTrack(track, workoutId)
+                viewModel.updateWorkoutDefaultImage(track.imageUrl,workoutId)
             },
             fetchImage = { imageView, imageUri ->
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
@@ -117,7 +118,9 @@ class EditingTracksFragment : Fragment() {
 
 
         when (item.itemId) {
-            android.R.id.home -> findNavController().popBackStack()
+            android.R.id.home -> {
+                findNavController().popBackStack()
+            }
             else -> {}
         }
 

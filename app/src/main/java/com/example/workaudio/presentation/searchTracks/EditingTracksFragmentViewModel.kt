@@ -57,6 +57,12 @@ class EditingTracksFragmentViewModel @Inject constructor(private val useCaseInte
         _currentDuration.value = _currentDuration.value?.plus(duration)
     }
 
+    fun updateWorkoutDefaultImage(imageUrl: String, workoutId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            searchInteractor.updateWorkoutDefaultImage(imageUrl,workoutId)
+        }
+    }
+
     /*    fun compareDuration(): Boolean {
         val current = currentDuration.value ?: 0
         val workoutDuration = workoutDuration.value ?: 0

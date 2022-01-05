@@ -67,6 +67,9 @@ interface ApplicationDAO {
     @Query("UPDATE WorkoutRoomEntity SET name = :name WHERE id = :id")
     suspend fun updateWorkoutName(name: String, id: Int)
 
+    @Query("UPDATE WorkoutRoomEntity SET imageUrl = :imageUrl WHERE id = :id")
+    suspend fun updateWorkoutImageUrl(imageUrl: String, id: Int)
+
     //INSERT
 
 

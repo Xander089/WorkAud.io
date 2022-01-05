@@ -10,4 +10,8 @@ class SearchInteractor(
 
     override suspend fun addTrack(track: Track, workoutId: Int) =
         facade.insertTrack(track, workoutId)
+
+    override suspend fun updateWorkoutDefaultImage(imageUrl: String, workoutId: Int) {
+        facade.updateWorkoutDefaultImage(imageUrl,workoutId)
+    }
 }

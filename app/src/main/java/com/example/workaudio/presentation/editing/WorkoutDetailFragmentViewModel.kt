@@ -26,39 +26,34 @@ class WorkoutDetailFragmentViewModel @Inject constructor(private val _editingInt
     var tracks: LiveData<List<Track>> = MutableLiveData()
 
     fun initializeCurrentWorkout(workoutId: Int) {
-        selectedWorkout = liveData(Dispatchers.IO) {
-            val workout = editingInteractor.getWorkout(workoutId)
-            emit(workout)
-        }
-
-    }
-
-    fun initTracks(workoutId: Int) {
+        selectedWorkout = editingInteractor.getWorkout(workoutId).asLiveData()
         tracks = editingInteractor.getWorkoutTracks(workoutId).asLiveData()
     }
 
     fun deleteTrack(trackUri: String) {
         val workoutId = selectedWorkout.value?.id ?: -1
-        Log.v("deleting",workoutId.toString())
         viewModelScope.launch(Dispatchers.IO) {
             editingInteractor.deleteTrack(trackUri, workoutId)
         }
     }
 
-    fun updateWorkoutName(name: String) {
+    fun updateWorkoutName(workoutId: Int, name: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val workoutId = selectedWorkout.value?.id ?: 0
             editingInteractor.updateWorkoutName(workoutId, name)
         }
     }
 
-    fun updateWorkoutDuration(duration: Int) {
-        val workoutId = selectedWorkout.value?.id ?: -1
+    fun updateWorkoutDuration(workoutId: Int, duration: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val durationInMillis = duration * 60 * 1000
+            val durationInMillis = duration * MILLISECONDS_IN_A_MINUTE
             editingInteractor.updateWorkoutDuration(workoutId, durationInMillis)
         }
     }
 
-    fun durationToMinutes(duration: Int) = (duration / 60000).toString()
+    fun durationToMinutes(duration: Int) = "${(duration / MILLISECONDS_IN_A_MINUTE)}$MIN"
+
+    companion object {
+        private const val MIN = " min"
+        private const val MILLISECONDS_IN_A_MINUTE = 60000
+    }
 }

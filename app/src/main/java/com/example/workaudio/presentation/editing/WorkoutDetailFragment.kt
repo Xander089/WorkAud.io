@@ -1,6 +1,7 @@
 package com.example.workaudio.presentation.editing
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.core.os.bundleOf
@@ -38,6 +39,21 @@ class WorkoutDetailFragment : Fragment() {
     ): View {
 
         binding = FragmentWorkoutDetailBinding.inflate(inflater, container, false)
+
+        buildAdapter()
+        refreshCurrentWorkout()
+        setLayoutFunctionality()
+        setObservers()
+
+        return binding.root
+    }
+
+    private fun refreshCurrentWorkout() {
+        val workoutId = getWorkoutId()
+        viewModel.initializeCurrentWorkout(workoutId)
+    }
+
+    private fun buildAdapter(){
         workoutAdapter = WorkoutDetailTracksAdapter(
             mutableListOf<Track>(),
             fetchImage = { imageView, imageUri ->
@@ -47,11 +63,6 @@ class WorkoutDetailFragment : Fragment() {
                 showModalBottomFragment(uri)
             }
         )
-
-        refreshCurrentWorkout()
-        setLayoutFunctionality()
-        setObservers()
-        return binding.root
     }
 
     private fun showModalBottomFragment(trackUri: String) {
@@ -61,10 +72,7 @@ class WorkoutDetailFragment : Fragment() {
         modalBottomSheet.show(parentFragmentManager, BottomModalSelectWorkout.TAG)
     }
 
-    private fun refreshCurrentWorkout() {
-        val workoutId = getWorkoutId()
-        viewModel.initializeCurrentWorkout(workoutId)
-    }
+
 
     private fun setLayoutFunctionality() {
         binding.apply {
@@ -95,16 +103,11 @@ class WorkoutDetailFragment : Fragment() {
 
     private fun setObservers() {
         viewModel.selectedWorkout.observe(this, { workout ->
+
             binding.apply {
                 workoutName.text = workout.name
                 durationText.text = viewModel.durationToMinutes(workout.duration)
             }
-            workoutAdapter.tracks.apply {
-                clear()
-                addAll(workout.tracks)
-            }
-            workoutAdapter.notifyDataSetChanged()
-            viewModel.initTracks(workout.id)
         })
 
         viewModel.tracks.observe(this, { tracks ->
@@ -126,8 +129,7 @@ class WorkoutDetailFragment : Fragment() {
 
     private fun showEditNameDialogFragment() {
         val dialog = EditNameDialogFragment { name ->
-            viewModel.updateWorkoutName(name)
-            refreshCurrentWorkout()
+            viewModel.updateWorkoutName(getWorkoutId(),name)
         }
 
         dialog.show(parentFragmentManager, EditNameDialogFragment.TAG)
@@ -135,8 +137,7 @@ class WorkoutDetailFragment : Fragment() {
 
     private fun showEditDurationDialogFragment() {
         val dialog = EditDurationDialogFragment { duration ->
-            viewModel.updateWorkoutDuration(duration)
-            refreshCurrentWorkout()
+            viewModel.updateWorkoutDuration(getWorkoutId(),duration)
         }
 
         dialog.show(parentFragmentManager, EditDurationDialogFragment.TAG)

@@ -8,7 +8,7 @@ class WorkoutEditingInteractor(
     override val facade: WorkoutEditingFacade
 ) : EditingServiceBoundary(facade){
 
-    override suspend fun getWorkout(id: Int): Workout = facade.getWorkout(id)
+    override fun getWorkout(id: Int): Flow<Workout> = facade.getWorkoutAsFlow(id)
     override suspend fun getWorkout(): Workout = facade.getWorkout()
     override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>> = facade.getWorkoutTracks(workoutId)
     override suspend fun updateWorkoutName(
