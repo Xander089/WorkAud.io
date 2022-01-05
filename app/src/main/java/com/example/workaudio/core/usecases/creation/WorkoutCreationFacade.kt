@@ -8,12 +8,9 @@ import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.repository.database.ApplicationDAO
 import com.example.workaudio.repository.database.WorkoutRoomEntity
-import com.example.workaudio.repository.database.WorkoutTracksRoomEntity
-import com.example.workaudio.repository.web.GsonTrack
 import com.example.workaudio.repository.web.SpotifyWebService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 
 class WorkoutCreationFacade(
     private val dao: ApplicationDAO,
@@ -22,17 +19,28 @@ class WorkoutCreationFacade(
 
     suspend fun searchTracks(queryText: String): List<Track> {
         val token = dao.getToken().token.orEmpty()
-        val GsonResponse = service.fetchTracks(token, queryText)
-        val tracks = mutableListOf<Track>()
-        GsonResponse.tracks.items.forEach {
-            tracks.add(it.toTrack())
-        }
-        return tracks
+        val gsonResponse = service.fetchTracks(token, queryText)
+        return gsonResponse.tracks.items.map { it.toTrack() }
     }
 
-    suspend fun getWorkout() = dao.getLatestWorkout().toWorkout()
-    val latestWorkout = dao.getLatestWorkoutAsFlow().map {
-        it.toWorkout()
+    suspend fun getWorkout(): Workout? {
+
+        val latestWorkout = dao.getLatestWorkout()
+        return if (latestWorkout != null) {
+            toWorkout(latestWorkout)
+        } else {
+            null
+        }
+
+    }
+
+    val latestWorkout = dao.getLatestWorkoutAsFlow().map { roomEntity ->
+        if(roomEntity == null){
+            null
+        }
+        else {
+            toWorkout(roomEntity)
+        }
     }
 
     suspend fun insertWorkout(

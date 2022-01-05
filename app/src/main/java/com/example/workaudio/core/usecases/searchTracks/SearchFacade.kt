@@ -39,7 +39,7 @@ class SearchFacade(
 
 
     fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> = dao.getWorkoutById(workoutId).map {
-        it.toWorkout(emptyList())
+        toWorkout(it, emptyList())
     }
 
     fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =

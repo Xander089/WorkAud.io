@@ -24,7 +24,7 @@ class PlayerFacade(
         val tracks = tracksRoomEntity.map { trackEntity ->
             trackEntity.toTrack()
         }
-        return workoutRoomEntity.toWorkout(tracks)
+        return toWorkout(workoutRoomEntity,tracks)
     }
 
 }

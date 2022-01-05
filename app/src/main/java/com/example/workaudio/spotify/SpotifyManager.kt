@@ -47,19 +47,13 @@ class SpotifyManager() {
 
     fun play(uri: String) {
 
-        if(uri.isEmpty()){
+        if (uri.isEmpty()) {
             return
         }
 
-        mSpotifyAppRemote?.let {
-            it.playerApi.apply {
-                play(uri)
-                this.subscribeToPlayerState()
-                    .setEventCallback { playerState: PlayerState ->
-
-                    }
-            }
-        }
+        val playerApi = mSpotifyAppRemote?.playerApi
+        playerApi?.play(uri)
+        playerApi?.subscribeToPlayerState()?.setEventCallback { playerState: PlayerState -> }
     }
 
 
@@ -68,7 +62,9 @@ class SpotifyManager() {
     }
 
     fun pausePlayer() = mSpotifyAppRemote?.playerApi?.pause()
+    fun resumePlayer() = mSpotifyAppRemote?.playerApi?.resume()
     fun stopSpotifyPlayer(timerText: String) {
+
         val resetTimeText = RESET_TIME
         if (timerText == resetTimeText) {
             mSpotifyAppRemote?.playerApi?.pause()

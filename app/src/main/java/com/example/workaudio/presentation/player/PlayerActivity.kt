@@ -61,6 +61,7 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        spotify.pausePlayer()
         showStopPlayerDialogFragment()
     }
 
@@ -96,7 +97,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun initializeLayout() {
         binding.apply {
 
-            timerText.text = resources?.getString(R.string.reset_time).orEmpty()
+            timerText.text = ""//resources?.getString(R.string.reset_time).orEmpty()
             playButton.setOnClickListener {
                 val playerState = viewModel.getPlayerState()
                 if (playerState == PlayerState.PLAYING) {
@@ -108,10 +109,12 @@ class PlayerActivity : AppCompatActivity() {
                     playButton.setBackgroundResource(R.drawable.ic_pause)
                     viewModel.setPlayerState(PlayerState.PLAYING)
                     viewModel.restartTimer(timerText.text.toString())
+                    spotify.resumePlayer()
                 }
             }
             stopButton.setOnClickListener {
-                //DIALOG
+                viewModel.stopTimer()
+                spotify.pausePlayer()
                 showStopPlayerDialogFragment()
             }
             trackList.apply {
@@ -163,9 +166,12 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun showStopPlayerDialogFragment() {
         StopPlayerDialogFragment {
+            spotify.spotifyDisconnect()
             finish()
-        }
-            .show(supportFragmentManager, StopPlayerDialogFragment.TAG)
+        }.show(
+            supportFragmentManager,
+            StopPlayerDialogFragment.TAG
+        )
     }
 
 }

@@ -8,10 +8,10 @@ class WorkoutCreationInteractor(
     override val facade: WorkoutCreationFacade
     ) : CreationServiceBoundary(facade){
 
-    override val latestWorkout: Flow<Workout>
+    override val latestWorkout: Flow<Workout?>
         get() = facade.latestWorkout
     override suspend fun searchTracks(queryText : String) = facade.searchTracks(queryText)
-    override suspend fun getWorkout(): Workout = facade.getWorkout()
+    override suspend fun getWorkout(): Workout? = facade.getWorkout()
 
     override suspend fun createWorkout(
         name: String,

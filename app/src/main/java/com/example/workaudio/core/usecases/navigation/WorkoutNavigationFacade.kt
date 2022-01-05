@@ -15,7 +15,7 @@ class WorkoutNavigationFacade(
 
     val workouts = dao.getAllWorkouts().map { workoutRoomEntities ->
         workoutRoomEntities.map { workoutRoomEntity ->
-            workoutRoomEntity.toWorkout(emptyList<Track>())
+            toWorkout(workoutRoomEntity,emptyList<Track>())
         }
     }
 

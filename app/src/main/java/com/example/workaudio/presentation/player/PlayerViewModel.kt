@@ -27,7 +27,7 @@ class PlayerViewModel @Inject constructor(private val _playerInteractor: PlayerI
     }
 
     //PLAYER STATE
-    private var playerState = PlayerState.PLAYING
+    private var playerState = PlayerState.PAUSED
     fun getPlayerState() = playerState
     fun setPlayerState(state: PlayerState) {
         playerState = state
@@ -44,7 +44,7 @@ class PlayerViewModel @Inject constructor(private val _playerInteractor: PlayerI
     var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
     private var _tracks = MutableLiveData<List<Track>>()
     val tracks: LiveData<List<Track>> = _tracks
-
+    fun getTrackUri(position: Int) = tracks.value?.get(position)?.uri.orEmpty()
     fun initTimer(tracks: List<Track>): String {
         val currentPlaylistTotalTime = tracks.map { it.duration }.sum() / 1000
         return playerInteractor.toTime(currentPlaylistTotalTime)
@@ -117,11 +117,9 @@ class PlayerViewModel @Inject constructor(private val _playerInteractor: PlayerI
         _tracks.value = currentTracks
     }
 
-    fun getTrackUri(position: Int) = tracks.value?.get(position)?.uri.orEmpty()
-
     fun initializeCurrentWorkout(workoutId: Int) {
         selectedWorkout = liveData(Dispatchers.IO) {
-            delay(2000)
+            delay(1000)
             playerInteractor.apply {
                 val workout = getWorkout(workoutId)
                 clearCurrentPosition()

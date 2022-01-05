@@ -22,7 +22,7 @@ class WorkoutEditingFacade(
     }
 
     fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> = dao.getWorkoutById(workoutId).map {
-        it.toWorkout(emptyList())
+        toWorkout(it, emptyList())
     }
 
     fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =
@@ -58,7 +58,7 @@ class WorkoutEditingFacade(
         val tracks = tracksRoomEntity.map { trackEntity ->
             trackEntity.toTrack()
         }
-        return workoutRoomEntity.toWorkout(tracks)
+        return toWorkout(workoutRoomEntity,tracks)
     }
 
     suspend fun getWorkout(): Workout {
@@ -67,6 +67,6 @@ class WorkoutEditingFacade(
         val tracks = tracksRoomEntity.map { trackEntity ->
             trackEntity.toTrack()
         }
-        return workoutRoomEntity.toWorkout(tracks)
+        return toWorkout(workoutRoomEntity,tracks)
     }
 }

@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 abstract class CreationServiceBoundary(
     open val facade: WorkoutCreationFacade
 ) {
-    abstract val latestWorkout: Flow<Workout>
+    abstract val latestWorkout: Flow<Workout?>
     abstract suspend fun searchTracks(queryText: String): List<Track>
-    abstract suspend fun getWorkout(): Workout
+    abstract suspend fun getWorkout(): Workout?
 
     abstract suspend fun createWorkout(
         name: String,
