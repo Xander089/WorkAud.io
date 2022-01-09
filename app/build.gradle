@@ -16,7 +16,8 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.example.workaudio.HiltTestRunner"
     }
 
     buildTypes {
@@ -35,6 +36,12 @@ android {
     viewBinding {
         enabled = true
     }
+
+
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
 dependencies {
@@ -49,12 +56,20 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     
     //HILT
-    implementation 'com.google.dagger:hilt-android:2.40'
-    kapt 'com.google.dagger:hilt-compiler:2.40'
-    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.40'
-    kaptAndroidTest 'com.google.dagger:hilt-compiler:2.40'
-    testImplementation 'com.google.dagger:hilt-android-testing:2.40'
-    kaptTest 'com.google.dagger:hilt-compiler:2.40'
+
+    implementation 'com.google.dagger:hilt-android:2.40.5'
+    kapt 'com.google.dagger:hilt-compiler:2.40.5'
+    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.40.5'
+    kaptAndroidTest 'com.google.dagger:hilt-compiler:2.40.5'
+    testImplementation 'com.google.dagger:hilt-android-testing:2.40.5'
+    kaptTest 'com.google.dagger:hilt-compiler:2.40.5'
+
+//    implementation 'com.google.dagger:hilt-android:2.40'
+//    kapt 'com.google.dagger:hilt-compiler:2.40'
+//    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.40'
+//    kaptAndroidTest 'com.google.dagger:hilt-compiler:2.40'
+//    testImplementation 'com.google.dagger:hilt-android-testing:2.40'
+//    kaptTest 'com.google.dagger:hilt-compiler:2.40'
 
     //ROOM
     implementation("androidx.room:room-runtime:2.4.0")

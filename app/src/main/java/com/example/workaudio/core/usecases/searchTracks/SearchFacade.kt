@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.map
 class SearchFacade(
     private val dao: ApplicationDAO,
     private val service: SpotifyWebService,
-) {
+) : SearchDataAccessInterface{
 
     suspend fun searchTracks(queryText: String): List<Track> {
 

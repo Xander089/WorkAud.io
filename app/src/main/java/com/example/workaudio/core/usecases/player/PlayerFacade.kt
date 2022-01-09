@@ -11,7 +11,7 @@ import com.example.workaudio.repository.database.WorkoutTracksRoomEntity
 
 class PlayerFacade(
     private val dao: ApplicationDAO
-) {
+) : PlayerDataAccessInterface{
 
     fun getCurrentPosition() = dao.getCurrentPosition()
     suspend fun clearCurrentPosition() = dao.clearCurrentPosition()

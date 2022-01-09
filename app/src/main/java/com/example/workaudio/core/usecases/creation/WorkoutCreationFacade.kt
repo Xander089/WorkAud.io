@@ -15,15 +15,15 @@ import kotlinx.coroutines.flow.map
 class WorkoutCreationFacade(
     private val dao: ApplicationDAO,
     private val service: SpotifyWebService,
-) {
+) : CreationDataAccessInterface {
 
-    suspend fun searchTracks(queryText: String): List<Track> {
+    override suspend fun searchTracks(queryText: String): List<Track> {
         val token = dao.getToken().token.orEmpty()
         val gsonResponse = service.fetchTracks(token, queryText)
         return gsonResponse.tracks.items.map { it.toTrack() }
     }
 
-    suspend fun getWorkout(): Workout? {
+    override suspend fun getWorkout(): Workout? {
 
         val latestWorkout = dao.getLatestWorkout()
         return if (latestWorkout != null) {
@@ -34,16 +34,15 @@ class WorkoutCreationFacade(
 
     }
 
-    val latestWorkout = dao.getLatestWorkoutAsFlow().map { roomEntity ->
-        if(roomEntity == null){
+    override fun getLatestWorkoutAsFlow() = dao.getLatestWorkoutAsFlow().map { roomEntity ->
+        if (roomEntity == null) {
             null
-        }
-        else {
+        } else {
             toWorkout(roomEntity)
         }
     }
 
-    suspend fun insertWorkout(
+    override suspend fun insertWorkout(
         name: String,
         duration: Int,
         tracks: List<Track>,
@@ -55,7 +54,7 @@ class WorkoutCreationFacade(
         insertWorkoutTracks(tracks)
     }
 
-    suspend fun insertWorkout(
+    override suspend fun insertWorkout(
         name: String,
         duration: Int,
     ) {
@@ -63,7 +62,7 @@ class WorkoutCreationFacade(
         dao.insertWorkout(workoutRoomEntity)
     }
 
-    private suspend fun insertWorkoutTracks(tracks: List<Track>) {
+    override suspend fun insertWorkoutTracks(tracks: List<Track>) {
         val currentWorkout = dao.getLatestWorkout()
         val workoutId = currentWorkout.id
         tracks.forEach { track ->

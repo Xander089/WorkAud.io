@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 
 class WorkoutEditingFacade(
     private val dao: ApplicationDAO
-) {
+) : EditingDataAccessInterface {
 
     fun getWorkoutTracks(workoutId: Int) = dao.getWorkoutTracksFlow(workoutId).map {
         it.map { trackRoomEntity ->

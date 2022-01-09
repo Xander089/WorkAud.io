@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 class WorkoutNavigationFacade(
     private val dao: ApplicationDAO
-) {
+) : NavigationDataAccessInterface{
 
     val workouts = dao.getAllWorkouts().map { workoutRoomEntities ->
         workoutRoomEntities.map { workoutRoomEntity ->

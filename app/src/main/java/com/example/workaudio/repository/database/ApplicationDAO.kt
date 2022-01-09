@@ -51,7 +51,7 @@ interface ApplicationDAO {
     fun getFlowWorkoutTracks(id: Int): Flow<List<WorkoutTracksRoomEntity>>
 
     @Query("SELECT * FROM WorkoutTracksRoomEntity WHERE playlistId = :id LIMIT 1")
-    fun getWorkoutTrack(id: Int): WorkoutTracksRoomEntity
+    suspend fun getWorkoutTrack(id: Int): WorkoutTracksRoomEntity
 
 
     @Query("SELECT * FROM WorkoutRoomEntity WHERE id = :id")
@@ -91,5 +91,11 @@ interface ApplicationDAO {
 
     @Query("DELETE FROM TokenRoomEntity")
     suspend fun clearToken()
+
+    @Query("DELETE FROM WorkoutRoomEntity")
+    suspend fun clearWorkouts()
+
+    @Query("DELETE FROM WorkoutTracksRoomEntity")
+    suspend fun clearWorkoutsTracks()
 
 }
