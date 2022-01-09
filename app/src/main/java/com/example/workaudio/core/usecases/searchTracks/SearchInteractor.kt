@@ -5,20 +5,20 @@ import com.example.workaudio.core.entities.Workout
 import kotlinx.coroutines.flow.Flow
 
 class SearchInteractor(
-    override val facade: SearchFacade
-) : SearchServiceBoundary(facade) {
+    private val dataAccess: SearchDataAccessInterface
+) : SearchServiceBoundary {
 
 
-    override fun getWorkout(id: Int): Flow<Workout> = facade.getWorkoutAsFlow(id)
-    override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>> = facade.getWorkoutTracksAsFlow(workoutId)
+    override fun getWorkout(id: Int): Flow<Workout> = dataAccess.getWorkoutAsFlow(id)
+    override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>> = dataAccess.getWorkoutTracksAsFlow(workoutId)
 
     override suspend fun searchTracks(queryText: String): List<Track> =
-        facade.searchTracks(queryText)
+        dataAccess.searchTracks(queryText)
 
     override suspend fun addTrack(track: Track, workoutId: Int) =
-        facade.insertTrack(track, workoutId)
+        dataAccess.insertTrack(track, workoutId)
 
     override suspend fun updateWorkoutDefaultImage(imageUrl: String, workoutId: Int) {
-        facade.updateWorkoutDefaultImage(imageUrl,workoutId)
+        dataAccess.updateWorkoutDefaultImage(imageUrl,workoutId)
     }
 }

@@ -1,6 +1,5 @@
 package com.example.workaudio.core.usecases.player
 
-import android.util.Log
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.repository.database.CurrentPosition
@@ -9,21 +8,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class PlayerInteractor(
-    override val facade: PlayerFacade
-) : PlayerServiceBoundary(facade) {
+    private val dataAccess: PlayerDataAccessInterface
+) : PlayerServiceBoundary {
 
     companion object {
         private const val RESET_TIME = "00:00:00"
     }
 
-    override fun getCurrentPosition() = facade.getCurrentPosition()
-    override suspend fun clearCurrentPosition() = facade.clearCurrentPosition()
+    override fun getCurrentPosition() = dataAccess.getCurrentPosition()
+    override suspend fun clearCurrentPosition() = dataAccess.clearCurrentPosition()
     override suspend fun insertCurrentPosition(position: Int) =
-        facade.insertCurrentPosition(CurrentPosition(position))
+        dataAccess.insertCurrentPosition(CurrentPosition(position))
 
-    override suspend fun updateCurrentPosition(pos: Int) = facade.updateCurrentPosition(pos)
+    override suspend fun updateCurrentPosition(pos: Int) = dataAccess.updateCurrentPosition(pos)
 
-    override suspend fun getWorkout(id: Int): Workout = facade.getWorkout(id)
+    override suspend fun getWorkout(id: Int): Workout = dataAccess.getWorkout(id)
 
     override fun toTime(seconds: Int): String {
 

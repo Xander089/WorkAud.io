@@ -12,7 +12,7 @@ import com.example.workaudio.repository.web.SpotifyWebService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 
-class WorkoutCreationFacade(
+class CreationDataAccess(
     private val dao: ApplicationDAO,
     private val service: SpotifyWebService,
 ) : CreationDataAccessInterface {

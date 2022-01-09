@@ -6,18 +6,17 @@ import com.example.workaudio.repository.database.ApplicationDatabase
 import com.example.workaudio.repository.web.SpotifyRestApi
 import com.example.workaudio.repository.web.SpotifyWebService
 import com.example.workaudio.core.usecases.login.LoginInteractor
-import com.example.workaudio.core.usecases.login.LoginFacade
+import com.example.workaudio.core.usecases.login.LoginDataAccess
 import com.example.workaudio.core.usecases.player.PlayerInteractor
-import com.example.workaudio.core.usecases.player.PlayerFacade
-import com.example.workaudio.core.usecases.creation.WorkoutCreationInteractor
-import com.example.workaudio.core.usecases.creation.WorkoutCreationFacade
-import com.example.workaudio.core.usecases.editing.WorkoutEditingInteractor
-import com.example.workaudio.core.usecases.editing.WorkoutEditingFacade
-import com.example.workaudio.core.usecases.navigation.WorkoutNavigationInteractor
-import com.example.workaudio.core.usecases.navigation.WorkoutNavigationFacade
-import com.example.workaudio.core.usecases.searchTracks.SearchFacade
+import com.example.workaudio.core.usecases.player.PlayerDataAccess
+import com.example.workaudio.core.usecases.creation.CreationInteractor
+import com.example.workaudio.core.usecases.creation.CreationDataAccess
+import com.example.workaudio.core.usecases.editing.EditingInteractor
+import com.example.workaudio.core.usecases.editing.EditingDataAccess
+import com.example.workaudio.core.usecases.navigation.NavigationInteractor
+import com.example.workaudio.core.usecases.navigation.NavigationDataAccess
+import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
-import com.example.workaudio.spotify.SpotifyManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -76,64 +75,64 @@ class ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideWorkoutNavigationFacade(db: ApplicationDatabase) =
-        WorkoutNavigationFacade(db.applicationDao())
+    fun provideNavigationDataAccess(db: ApplicationDatabase) =
+        NavigationDataAccess(db.applicationDao())
 
     @Singleton
     @Provides
-    fun provideWorkoutNavigation(facade: WorkoutNavigationFacade) =
-        WorkoutNavigationInteractor(facade)
+    fun provideNavigation(dataAccess: NavigationDataAccess) =
+        NavigationInteractor(dataAccess)
 
     @Singleton
     @Provides
-    fun provideWorkoutEditingFacade(db: ApplicationDatabase) =
-        WorkoutEditingFacade(db.applicationDao())
+    fun provideEditingDataAccess(db: ApplicationDatabase) =
+        EditingDataAccess(db.applicationDao())
 
     @Singleton
     @Provides
-    fun provideWorkoutEditing(facade: WorkoutEditingFacade) =
-        WorkoutEditingInteractor(facade)
+    fun provideEditing(dataAccess: EditingDataAccess) =
+        EditingInteractor(dataAccess)
 
     @Singleton
     @Provides
-    fun provideWorkoutCreationFacade(db: ApplicationDatabase, service: SpotifyWebService) =
-        WorkoutCreationFacade(db.applicationDao(), service)
+    fun provideCreationDataAccessImpl(db: ApplicationDatabase, service: SpotifyWebService) =
+        CreationDataAccess(db.applicationDao(), service)
 
     @Singleton
     @Provides
-    fun provideWorkoutCreation(facade: WorkoutCreationFacade) =
-        WorkoutCreationInteractor(facade)
+    fun provideCreationInteractor(dataAccess: CreationDataAccess) =
+        CreationInteractor(dataAccess)
 
 
     @Singleton
     @Provides
-    fun provideLoginFacade(db: ApplicationDatabase) =
-        LoginFacade(db.applicationDao())
+    fun provideLoginDataAccess(db: ApplicationDatabase) =
+        LoginDataAccess(db.applicationDao())
 
     @Singleton
     @Provides
-    fun provideLogin(facade: LoginFacade) =
-        LoginInteractor(facade)
+    fun provideLogin(dataAccess: LoginDataAccess) =
+        LoginInteractor(dataAccess)
 
     @Singleton
     @Provides
-    fun providePlayerFacade(db: ApplicationDatabase) =
-        PlayerFacade(db.applicationDao())
+    fun providePlayerDataAccess(db: ApplicationDatabase) =
+        PlayerDataAccess(db.applicationDao())
 
     @Singleton
     @Provides
-    fun providePlayer(facade: PlayerFacade) =
-        PlayerInteractor(facade)
+    fun providePlayer(dataAccess: PlayerDataAccess) =
+        PlayerInteractor(dataAccess)
 
     @Singleton
     @Provides
-    fun provideSearchFacade(db: ApplicationDatabase, service: SpotifyWebService) =
-        SearchFacade(db.applicationDao(), service)
+    fun provideSearchDataAccess(db: ApplicationDatabase, service: SpotifyWebService) =
+        SearchDataAccess(db.applicationDao(), service)
 
     @Singleton
     @Provides
-    fun provideSearch(facade: SearchFacade) =
-        SearchInteractor(facade)
+    fun provideSearch(dataAccess: SearchDataAccess) =
+        SearchInteractor(dataAccess)
 
 
 }

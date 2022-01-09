@@ -4,13 +4,13 @@ import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import kotlinx.coroutines.flow.Flow
 
-class WorkoutNavigationInteractor(
-    override val facade: WorkoutNavigationFacade
-) : NavigationServiceBoundary(facade) {
+class NavigationInteractor(
+    private val dataAccess: NavigationDataAccessInterface
+) : NavigationServiceBoundary {
 
-    override suspend fun deleteWorkout(workoutId: Int) = facade.deleteWorkout(workoutId)
-    override fun getWorkouts(): Flow<List<Workout>> = facade.workouts
-    override suspend fun getWorkoutTrack(id: Int): JoinedTrack = facade.getWorkoutTrack(id).toJoinedTrack(id)
+    override suspend fun deleteWorkout(workoutId: Int) = dataAccess.deleteWorkout(workoutId)
+    override fun getWorkouts(): Flow<List<Workout>> = dataAccess.getWorkouts()
+    override suspend fun getWorkoutTrack(id: Int): JoinedTrack = dataAccess.getWorkoutTrack(id).toJoinedTrack(id)
 
     inner class JoinedTrack(
         val workoutId: Int,

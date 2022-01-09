@@ -9,16 +9,16 @@ import com.example.workaudio.repository.database.CurrentPosition
 import com.example.workaudio.repository.database.WorkoutRoomEntity
 import com.example.workaudio.repository.database.WorkoutTracksRoomEntity
 
-class PlayerFacade(
+class PlayerDataAccess(
     private val dao: ApplicationDAO
 ) : PlayerDataAccessInterface{
 
-    fun getCurrentPosition() = dao.getCurrentPosition()
-    suspend fun clearCurrentPosition() = dao.clearCurrentPosition()
-    suspend fun insertCurrentPosition(position: CurrentPosition) = dao.insertCurrentPosition(position)
-    suspend fun updateCurrentPosition(pos: Int) = dao.updateCurrentPosition(pos)
+    override fun getCurrentPosition() = dao.getCurrentPosition()
+    override suspend fun clearCurrentPosition() = dao.clearCurrentPosition()
+    override suspend fun insertCurrentPosition(position: CurrentPosition) = dao.insertCurrentPosition(position)
+    override suspend fun updateCurrentPosition(pos: Int) = dao.updateCurrentPosition(pos)
 
-    suspend fun getWorkout(id: Int): Workout {
+    override suspend fun getWorkout(id: Int): Workout {
         val tracksRoomEntity = dao.getWorkoutTracks(id)
         val workoutRoomEntity = dao.getWorkout(id)
         val tracks = tracksRoomEntity.map { trackEntity ->

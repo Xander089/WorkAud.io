@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchTracksFragmentViewModel @Inject constructor(private val useCaseInteractor: SearchInteractor) :
+class SearchTracksFragmentViewModel @Inject constructor(private val searchInteractor: SearchServiceBoundary) :
     ViewModel() {
 
 
@@ -20,9 +20,6 @@ class SearchTracksFragmentViewModel @Inject constructor(private val useCaseInter
         private const val MILLISECONDS_IN_A_MINUTE = 60000
         private const val MIN = " min"
     }
-
-    private val searchInteractor: SearchServiceBoundary
-
 
     private val _searchedTracks = MutableLiveData<List<Track>>()
     val searchedTracks: LiveData<List<Track>> = _searchedTracks
@@ -35,9 +32,7 @@ class SearchTracksFragmentViewModel @Inject constructor(private val useCaseInter
         workoutTracks = searchInteractor.getWorkoutTracks(workoutId).asLiveData()
     }
 
-    init {
-        searchInteractor = useCaseInteractor
-    }
+
 
     fun setTargetDuration(workout: Workout) {
         targetDuration = workout.duration

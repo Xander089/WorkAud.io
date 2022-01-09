@@ -17,14 +17,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PlayerViewModel @Inject constructor(private val _playerInteractor: PlayerInteractor) :
+class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerServiceBoundary) :
     ViewModel() {
 
-    private val playerInteractor: PlayerServiceBoundary
 
-    init {
-        playerInteractor = _playerInteractor
-    }
 
     //PLAYER STATE
     private var playerState = PlayerState.PAUSED

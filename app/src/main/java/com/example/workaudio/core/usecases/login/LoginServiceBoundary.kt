@@ -1,8 +1,6 @@
 package com.example.workaudio.core.usecases.login
 
-abstract class LoginServiceBoundary(
-    open val facade: LoginFacade
-) {
-    abstract suspend fun insertToken(token: String)
+interface LoginServiceBoundary{
+     suspend fun insertToken(token: String)
 
 }

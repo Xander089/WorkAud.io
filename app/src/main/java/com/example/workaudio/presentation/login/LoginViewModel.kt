@@ -10,18 +10,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val _loginInteractor: LoginInteractor) :
+class LoginViewModel @Inject constructor(private val useCaseInteractor: LoginServiceBoundary) :
     ViewModel() {
 
-    private val loginInteractor: LoginServiceBoundary
-
-    init {
-        loginInteractor = _loginInteractor
-    }
 
     fun cacheSpotifyAuthToken(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            loginInteractor.insertToken(token)
+            useCaseInteractor.insertToken(token)
         }
     }
 

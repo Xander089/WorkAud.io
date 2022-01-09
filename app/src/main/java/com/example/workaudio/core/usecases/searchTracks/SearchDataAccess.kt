@@ -12,12 +12,12 @@ import com.example.workaudio.repository.web.SpotifyWebService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class SearchFacade(
+class SearchDataAccess(
     private val dao: ApplicationDAO,
     private val service: SpotifyWebService,
 ) : SearchDataAccessInterface{
 
-    suspend fun searchTracks(queryText: String): List<Track> {
+    override suspend fun searchTracks(queryText: String): List<Track> {
 
         val token = dao.getToken().token.orEmpty()
         val gsonResponse = service.fetchTracks(token, queryText)
@@ -27,22 +27,22 @@ class SearchFacade(
     }
 
 
-    suspend fun insertTrack(track: Track, workoutId: Int) {
+    override suspend fun insertTrack(track: Track, workoutId: Int) {
 
         val roomEntityTrack = track.toTrackRoomEntity(workoutId)
         dao.insertWorkoutTrack(roomEntityTrack)
 
     }
 
-    suspend fun updateWorkoutDefaultImage(imageUrl: String, workoutId: Int) =
+    override suspend fun updateWorkoutDefaultImage(imageUrl: String, workoutId: Int) =
         dao.updateWorkoutImageUrl(imageUrl, workoutId)
 
 
-    fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> = dao.getWorkoutById(workoutId).map {
+    override fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> = dao.getWorkoutById(workoutId).map {
         toWorkout(it, emptyList())
     }
 
-    fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =
+    override fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =
         dao.getWorkoutTracksFlow(workoutId).map {
             it.map { entity ->
                 entity.toTrack()

@@ -5,17 +5,15 @@ import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.repository.database.CurrentPosition
 import kotlinx.coroutines.flow.Flow
 
-abstract class PlayerServiceBoundary(
-    open val facade: PlayerFacade
-) {
+interface PlayerServiceBoundary {
 
-    abstract fun getCurrentPosition() : Flow<CurrentPosition>
-    abstract suspend fun clearCurrentPosition()
-    abstract suspend fun insertCurrentPosition(position: Int)
-    abstract suspend fun updateCurrentPosition(pos: Int)
-    abstract suspend fun getWorkout(id: Int): Workout
-    abstract fun toTime(seconds: Int): String
-    abstract fun buildCountDownTimer(tracks: List<Track>): Flow<Int>
-    abstract fun buildCountDownTimer(time: String): Flow<Int>
+     fun getCurrentPosition() : Flow<CurrentPosition>
+     suspend fun clearCurrentPosition()
+     suspend fun insertCurrentPosition(position: Int)
+     suspend fun updateCurrentPosition(pos: Int)
+     suspend fun getWorkout(id: Int): Workout
+     fun toTime(seconds: Int): String
+     fun buildCountDownTimer(tracks: List<Track>): Flow<Int>
+     fun buildCountDownTimer(time: String): Flow<Int>
 
 }
