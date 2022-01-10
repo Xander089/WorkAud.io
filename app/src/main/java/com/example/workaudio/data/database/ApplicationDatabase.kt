@@ -1,4 +1,4 @@
-package com.example.workaudio.repository.database
+package com.example.workaudio.data.database
 
 import androidx.room.*
 

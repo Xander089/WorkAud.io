@@ -1,7 +1,7 @@
 package com.example.workaudio
 
-import com.example.workaudio.repository.web.SpotifyRestApi
-import com.example.workaudio.repository.web.SpotifyWebService
+import com.example.workaudio.data.web.SpotifyRestApi
+import com.example.workaudio.data.web.SpotifyWebService
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -9,11 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 import retrofit2.Retrofit
 
-import okhttp3.Interceptor
-
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 
 
 /**

@@ -2,12 +2,9 @@ package com.example.workaudio.core.usecases.player
 
 import com.example.workaudio.core.EntityMapper.toTrack
 import com.example.workaudio.core.EntityMapper.toWorkout
-import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
-import com.example.workaudio.repository.database.ApplicationDAO
-import com.example.workaudio.repository.database.CurrentPosition
-import com.example.workaudio.repository.database.WorkoutRoomEntity
-import com.example.workaudio.repository.database.WorkoutTracksRoomEntity
+import com.example.workaudio.data.database.ApplicationDAO
+import com.example.workaudio.data.database.CurrentPosition
 
 class PlayerDataAccess(
     private val dao: ApplicationDAO

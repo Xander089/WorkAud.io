@@ -80,4 +80,6 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
         return current > workoutDuration
     }*/
 
+    fun formatSnackBarText(title: String, decoration: String) = "$title $decoration"
+
 }

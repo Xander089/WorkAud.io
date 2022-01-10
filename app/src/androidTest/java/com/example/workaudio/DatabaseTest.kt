@@ -1,6 +1,6 @@
 package com.example.workaudio
 
-import com.example.workaudio.repository.database.*
+import com.example.workaudio.data.database.*
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking

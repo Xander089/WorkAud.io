@@ -2,7 +2,7 @@ package com.example.workaudio
 
 import android.content.Context
 import androidx.room.Room
-import com.example.workaudio.repository.database.ApplicationDatabase
+import com.example.workaudio.data.database.ApplicationDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

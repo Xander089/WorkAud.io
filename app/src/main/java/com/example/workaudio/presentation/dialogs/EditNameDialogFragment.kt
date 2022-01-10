@@ -1,4 +1,4 @@
-package com.example.workaudio.dialogs
+package com.example.workaudio.presentation.dialogs
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -40,6 +40,7 @@ class SearchedTracksAdapter(
                 addButton.apply {
                     setOnClickListener {
                         addTrack(track)
+
                     }
                 }
             }
@@ -69,4 +70,15 @@ class SearchedTracksAdapter(
     }
 
     override fun getItemCount(): Int = tracks.size
+
+    fun refreshTrackList(searchedTracks: List<Track>) {
+        this.tracks.clear()
+        this.tracks.addAll(searchedTracks)
+        notifyDataSetChanged()
+    }
+
+    fun removeAddedTrack(track: Track) {
+        tracks.remove(track)
+        notifyDataSetChanged()
+    }
 }

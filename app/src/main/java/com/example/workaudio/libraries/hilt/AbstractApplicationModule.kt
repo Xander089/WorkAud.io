@@ -1,4 +1,4 @@
-package com.example.workaudio.hilt
+package com.example.workaudio.libraries.hilt
 
 import com.example.workaudio.core.usecases.creation.CreationDataAccess
 import com.example.workaudio.core.usecases.creation.CreationDataAccessInterface

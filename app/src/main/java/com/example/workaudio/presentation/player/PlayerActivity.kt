@@ -4,27 +4,16 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.Button
-import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.presentation.editing.WorkoutDetailTracksAdapter
 import com.example.workaudio.databinding.ActivityPlayerBinding
 import com.example.workaudio.core.entities.Track
-import com.example.workaudio.dialogs.StopPlayerDialogFragment
-import com.example.workaudio.presentation.editing.WorkoutDetailFragment
-import com.example.workaudio.spotify.SpotifyManager
-import com.google.android.material.slider.RangeSlider
+import com.example.workaudio.presentation.dialogs.StopPlayerDialogFragment
+import com.example.workaudio.libraries.spotify.SpotifyManager
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class PlayerActivity : AppCompatActivity() {

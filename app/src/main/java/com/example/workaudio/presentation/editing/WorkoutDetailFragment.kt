@@ -1,7 +1,6 @@
 package com.example.workaudio.presentation.editing
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.core.os.bundleOf
@@ -13,8 +12,8 @@ import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutDetailBinding
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.presentation.player.PlayerActivity
-import com.example.workaudio.dialogs.EditDurationDialogFragment
-import com.example.workaudio.dialogs.EditNameDialogFragment
+import com.example.workaudio.presentation.dialogs.EditDurationDialogFragment
+import com.example.workaudio.presentation.dialogs.EditNameDialogFragment
 import com.example.workaudio.presentation.NavigationManager
 import com.example.workaudio.presentation.navigation.BottomModalSelectWorkout
 
@@ -41,21 +40,15 @@ class WorkoutDetailFragment : Fragment() {
         binding = FragmentWorkoutDetailBinding.inflate(inflater, container, false)
 
         buildAdapter()
-        refreshCurrentWorkout()
+        viewModel.initializeCurrentWorkout(getWorkoutId())
         setLayoutFunctionality()
         setObservers()
 
         return binding.root
     }
 
-    private fun refreshCurrentWorkout() {
-        val workoutId = getWorkoutId()
-        viewModel.initializeCurrentWorkout(workoutId)
-    }
-
     private fun buildAdapter() {
         workoutAdapter = WorkoutDetailTracksAdapter(
-            mutableListOf<Track>(),
             fetchImage = { imageView, imageUri ->
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
             },
@@ -110,11 +103,7 @@ class WorkoutDetailFragment : Fragment() {
         })
 
         viewModel.tracks.observe(this, { tracks ->
-            workoutAdapter.tracks.apply {
-                clear()
-                addAll(tracks)
-            }
-            workoutAdapter.notifyDataSetChanged()
+            workoutAdapter.refreshTrackList(tracks)
         })
 
     }

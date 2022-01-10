@@ -1,4 +1,4 @@
-package com.example.workaudio.repository.web
+package com.example.workaudio.data.web
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,10 +1,10 @@
-package com.example.workaudio.hilt
+package com.example.workaudio.libraries.hilt
 
 import android.content.Context
 import androidx.room.Room
-import com.example.workaudio.repository.database.ApplicationDatabase
-import com.example.workaudio.repository.web.SpotifyRestApi
-import com.example.workaudio.repository.web.SpotifyWebService
+import com.example.workaudio.data.database.ApplicationDatabase
+import com.example.workaudio.data.web.SpotifyRestApi
+import com.example.workaudio.data.web.SpotifyWebService
 import com.example.workaudio.core.usecases.login.LoginInteractor
 import com.example.workaudio.core.usecases.login.LoginDataAccess
 import com.example.workaudio.core.usecases.player.PlayerInteractor

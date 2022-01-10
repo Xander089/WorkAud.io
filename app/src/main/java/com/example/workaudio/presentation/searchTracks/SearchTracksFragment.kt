@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentEditingTracksBinding
+import com.google.android.material.snackbar.Snackbar
 
 
 class SearchTracksFragment : Fragment() {
@@ -60,7 +61,7 @@ class SearchTracksFragment : Fragment() {
 
         val searchView = provideSearchView(menu.findItem(R.id.action_search))
         val searchManager = provideSearchManager()
-        setupSearchView(searchView,searchManager)
+        setupSearchView(searchView, searchManager)
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -82,12 +83,27 @@ class SearchTracksFragment : Fragment() {
             addTrack = { track ->
                 viewModel.addTrack(track, getWorkoutId())
                 viewModel.updateWorkoutDefaultImage(track.imageUrl, getWorkoutId())
+                trackListAdapter.removeAddedTrack(track)
+                showAddedTrackSnackBar(track.title)
             },
             fetchImage = { imageView, imageUri ->
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
             }
         )
     }
+
+    private fun showAddedTrackSnackBar(titleTrack: String) = Snackbar.make(
+        binding.root,
+        viewModel.formatSnackBarText(
+            titleTrack,
+            getResourceString(R.string.added_to_playlist)),
+        Snackbar.LENGTH_SHORT
+    ).setBackgroundTint(resources.getColor(R.color.black_light2, null))
+        .show()
+
+
+    private fun getResourceString(resId: Int) = requireActivity().resources.getString(resId)
+
 
     private fun setupLayout() {
         binding.apply {
@@ -101,24 +117,19 @@ class SearchTracksFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.searchedTracks.observe(this, { searchedTracks ->
-            trackListAdapter.apply {
-                tracks.clear()
-                tracks.addAll(searchedTracks)
-                notifyDataSetChanged()
-            }
+            trackListAdapter.refreshTrackList(searchedTracks)
         })
 
-        viewModel.workoutTracks.observe(this,{ tracks ->
+        viewModel.workoutTracks.observe(this, { tracks ->
             binding.currentMinuteLabel.text = viewModel.formatCurrentDuration(tracks)
             binding.progressBar.progress = viewModel.updateProgressBar(tracks)
         })
 
-        viewModel.currentWorkout.observe(this,{ workout ->
+        viewModel.currentWorkout.observe(this, { workout ->
             binding.minuteLabel.text = viewModel.formatDuration(workout.duration)
             viewModel.setTargetDuration(workout)
         })
     }
-
 
 
     private fun provideSearchView(menuItem: MenuItem): SearchView =
@@ -127,7 +138,7 @@ class SearchTracksFragment : Fragment() {
     private fun provideSearchManager(): SearchManager =
         requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
-    private fun setupSearchView(searchView: SearchView, searchManager: SearchManager){
+    private fun setupSearchView(searchView: SearchView, searchManager: SearchManager) {
         searchView.apply {
             setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
             setOnQueryTextListener(searchTracksQueryTextListener)

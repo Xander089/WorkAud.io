@@ -9,4 +9,5 @@
     <string name="ok">Ok</string>
     <string name="minutes"> min</string>
     <string name="edit_duration">Set the Workout Duration</string>
+    <string name="added_to_playlist"> added to playlist</string>
 </resources>

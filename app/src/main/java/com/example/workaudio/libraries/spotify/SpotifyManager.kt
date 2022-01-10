@@ -1,7 +1,6 @@
-package com.example.workaudio.spotify
+package com.example.workaudio.libraries.spotify
 
 import android.content.Context
-import com.example.workaudio.R
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector.ConnectionListener
 import com.spotify.android.appremote.api.SpotifyAppRemote

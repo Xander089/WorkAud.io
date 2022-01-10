@@ -53,4 +53,10 @@ class WorkoutDetailTracksAdapter(
     }
 
     override fun getItemCount(): Int = tracks.size
+
+    fun refreshTrackList(_tracks: List<Track>) {
+        this.tracks.clear()
+        this.tracks.addAll(_tracks)
+        notifyDataSetChanged()
+    }
 }

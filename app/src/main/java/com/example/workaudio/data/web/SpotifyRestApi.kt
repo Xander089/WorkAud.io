@@ -1,8 +1,7 @@
-package com.example.workaudio.repository.web
+package com.example.workaudio.data.web
 
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface SpotifyRestApi {
