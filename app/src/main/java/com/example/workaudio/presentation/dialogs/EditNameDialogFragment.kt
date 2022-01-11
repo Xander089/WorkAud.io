@@ -44,8 +44,4 @@ class EditNameDialogFragment(
         }
 
     }
-
-    companion object {
-        const val TAG = "EditNameDialog"
-    }
 }

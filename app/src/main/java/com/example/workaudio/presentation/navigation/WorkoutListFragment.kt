@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutListBinding
 import com.example.workaudio.core.entities.Workout
+import com.example.workaudio.presentation.Constants.TAG
 import com.example.workaudio.presentation.NavigationManager
 
 
@@ -79,7 +80,7 @@ class WorkoutListFragment : Fragment() {
         val modalBottomSheet = BottomModalSelectWorkout(workoutId) { id ->
             viewModel.deleteWorkout(id)
         }
-        modalBottomSheet.show(parentFragmentManager, BottomModalSelectWorkout.TAG)
+        modalBottomSheet.show(parentFragmentManager, TAG)
     }
 
 }

@@ -1,7 +1,9 @@
 package com.example.workaudio.presentation.editing
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
@@ -10,18 +12,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutDetailBinding
-import com.example.workaudio.core.entities.Track
+import com.example.workaudio.presentation.Constants.DURATION_TAG
+import com.example.workaudio.presentation.Constants.ID_TAG
+import com.example.workaudio.presentation.Constants.NAME_TAG
+import com.example.workaudio.presentation.Constants.TAG
 import com.example.workaudio.presentation.player.PlayerActivity
 import com.example.workaudio.presentation.dialogs.EditDurationDialogFragment
 import com.example.workaudio.presentation.dialogs.EditNameDialogFragment
 import com.example.workaudio.presentation.NavigationManager
-import com.example.workaudio.presentation.navigation.BottomModalSelectWorkout
 
 
-class WorkoutDetailFragment : Fragment() {
+class DetailFragment : Fragment() {
 
     companion object {
-        const val ID_TAG = "id"
         private const val DETAIL_TO_EDITING_TRACKS =
             R.id.action_workoutDetailFragment_to_editingTracksFragment
         private const val DETAIL_TO_WORKOUTS =
@@ -29,8 +32,8 @@ class WorkoutDetailFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentWorkoutDetailBinding
-    private lateinit var workoutAdapter: WorkoutDetailTracksAdapter
-    private val viewModel: WorkoutDetailFragmentViewModel by activityViewModels()
+    private lateinit var workoutAdapter: DetailTracksAdapter
+    private val viewModel: DetailFragmentViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +51,7 @@ class WorkoutDetailFragment : Fragment() {
     }
 
     private fun buildAdapter() {
-        workoutAdapter = WorkoutDetailTracksAdapter(
+        workoutAdapter = DetailTracksAdapter(
             fetchImage = { imageView, imageUri ->
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
             },
@@ -62,7 +65,7 @@ class WorkoutDetailFragment : Fragment() {
         BottomModalSelectTrack(trackUri) { uri ->
             viewModel.deleteTrack(uri)
         }
-            .show(parentFragmentManager, BottomModalSelectWorkout.TAG)
+            .show(parentFragmentManager, TAG)
     }
 
 
@@ -90,6 +93,15 @@ class WorkoutDetailFragment : Fragment() {
             backButton.setOnClickListener {
                 NavigationManager.navigateTo(findNavController(), DETAIL_TO_WORKOUTS)
             }
+
+            infoButton.setOnClickListener {
+                Toast.makeText(
+                    activity,
+                    "you need to match at least the target duration to start the playlist",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
         }
     }
 
@@ -103,14 +115,35 @@ class WorkoutDetailFragment : Fragment() {
         })
 
         viewModel.tracks.observe(this, { tracks ->
+            handlePlayButton(viewModel.tracksDurationCheck(tracks))
+            binding.durationText.text = viewModel.getTracksDuration(tracks)
             workoutAdapter.refreshTrackList(tracks)
         })
 
     }
 
+    private fun handlePlayButton(enabled: Boolean) {
+        binding.playButton.isEnabled = enabled
+        if (enabled) {
+            binding.playButton.setStrokeColorResource(R.color.yellow)
+            binding.playButton.setTextColor(getColor(R.color.yellow))
+        } else {
+            binding.playButton.setStrokeColorResource(R.color.grey2)
+            binding.playButton.setTextColor(getColor(R.color.grey2))
+        }
+
+    }
+
+    private fun getColor(id: Int) = requireActivity().resources.getColor(id, null)
+
     private fun startPlayerActivity() {
-        val intent = PlayerActivity.newIntent(requireContext(), getWorkoutId())
-        startActivity(intent)
+        startActivity(
+            PlayerActivity
+                .newIntent(
+                    requireContext(),
+                    getWorkoutId()
+                )
+        )
     }
 
 
@@ -118,14 +151,14 @@ class WorkoutDetailFragment : Fragment() {
         EditNameDialogFragment { name ->
             viewModel.updateWorkoutName(getWorkoutId(), name)
         }
-            .show(parentFragmentManager, EditNameDialogFragment.TAG)
+            .show(parentFragmentManager, NAME_TAG)
     }
 
     private fun showEditDurationDialogFragment() {
         EditDurationDialogFragment { duration ->
             viewModel.updateWorkoutDuration(getWorkoutId(), duration)
         }
-            .show(parentFragmentManager, EditDurationDialogFragment.TAG)
+            .show(parentFragmentManager, DURATION_TAG)
     }
 
     private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: -1

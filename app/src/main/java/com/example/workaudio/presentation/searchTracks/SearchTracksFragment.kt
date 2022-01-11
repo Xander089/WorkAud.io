@@ -13,14 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentEditingTracksBinding
+import com.example.workaudio.presentation.Constants.ID_TAG
 import com.google.android.material.snackbar.Snackbar
 
 
 class SearchTracksFragment : Fragment() {
 
-    companion object {
-        private const val ID_TAG = "id"
-    }
 
     private val viewModel: SearchTracksFragmentViewModel by activityViewModels()
     private lateinit var trackListAdapter: SearchedTracksAdapter

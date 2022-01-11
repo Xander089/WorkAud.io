@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.workaudio.databinding.ModalBottomLayoutBinding
+import com.example.workaudio.presentation.Constants.LABEL
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class BottomModalSelectWorkout(
@@ -31,13 +32,6 @@ class BottomModalSelectWorkout(
 
         return binding.root
     }
-
-
-    companion object {
-        private const val LABEL = "Delete Selected Workout"
-        const val TAG = "ModalBottomSheet"
-    }
-
 
 }
 

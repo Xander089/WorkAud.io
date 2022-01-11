@@ -11,13 +11,14 @@
         android:id="@+id/workoutName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
         android:fontFamily="@font/hammersmith_one"
         android:text="My Workout"
         android:textColor="@color/grey"
         android:textSize="34sp"
-        app:layout_constraintStart_toStartOf="@+id/backButton"
-        app:layout_constraintTop_toBottomOf="@+id/backButton" />
+        app:layout_constraintBottom_toBottomOf="@+id/backButton"
+        app:layout_constraintStart_toEndOf="@+id/backButton"
+        app:layout_constraintTop_toTopOf="@+id/backButton" />
 
     <TextView
         android:id="@+id/durationText"
@@ -27,7 +28,7 @@
         android:fontFamily="@font/hammersmith_one"
         android:text="30 min"
         android:textColor="@color/grey"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/workoutName"
         app:layout_constraintTop_toBottomOf="@+id/workoutName" />
 
@@ -35,41 +36,48 @@
         android:id="@+id/trackList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/playButton"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTracksButton" />
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/playButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
-        android:text="Start"
-        app:backgroundTint="@color/yellow"
-        app:icon="@drawable/ic_play"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/editTracksButton"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="@font/hammersmith_one"
-        android:text="Add Tracks"
+        android:text="Tracks"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/playButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/durationText"
         app:rippleColor="@color/grey2"
         app:strokeColor="@color/white" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/playButton"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:enabled="false"
+        android:fontFamily="@font/hammersmith_one"
+        android:text="Play"
+        android:textAllCaps="false"
+        android:textColor="@color/yellow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/editTracksButton"
+        app:layout_constraintTop_toTopOf="@+id/editTracksButton"
+        app:rippleColor="@color/grey2"
+        app:strokeColor="@color/yellow" />
 
     <Button
         android:id="@+id/backButton"
@@ -82,5 +90,18 @@
         app:iconTint="@color/grey3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/infoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:alpha="0.6"
+        android:backgroundTint="@color/transparent"
+        android:tint="@color/yellow"
+        app:layout_constraintBottom_toBottomOf="@+id/playButton"
+        app:layout_constraintStart_toEndOf="@+id/playButton"
+        app:layout_constraintTop_toTopOf="@+id/playButton"
+        app:srcCompat="@drawable/ic_info" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

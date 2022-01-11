@@ -3,7 +3,8 @@ package com.example.workaudio.presentation.creation
 import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.creation.CreationServiceBoundary
-import com.example.workaudio.core.usecases.creation.CreationInteractor
+import com.example.workaudio.presentation.Constants.MILLIS_IN_A_MINUTE
+import com.example.workaudio.presentation.Constants.MIN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,15 +15,10 @@ class DurationFragmentViewModel @Inject constructor(private val useCaseBoundary:
     ViewModel() {
 
     companion object {
-        private const val MIN = " min"
-        private const val MILLIS_IN_A_MINUTE = 60000
         enum class STATE{CREATED,NOT_CREATED}
     }
 
-
     var state = STATE.NOT_CREATED
-
-
 
     var workout: LiveData<Workout?> = useCaseBoundary.getLatestWorkout().asLiveData()
 

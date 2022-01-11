@@ -42,7 +42,4 @@ class StopPlayerDialogFragment(
 
     }
 
-    companion object {
-        const val TAG = "StopPlayerDialog"
-    }
 }

@@ -29,11 +29,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class ApplicationModule {
+object ApplicationModule {
 
-    companion object {
-        private const val ENDPOINT = "https://api.spotify.com/v1/"
-    }
+    private const val ENDPOINT = "https://api.spotify.com/v1/"
 
     @Singleton
     @Provides

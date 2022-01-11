@@ -1,27 +1,24 @@
 package com.example.workaudio.presentation.creation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentDurationBinding
+import com.example.workaudio.presentation.Constants.DEFAULT_DURATION
+import com.example.workaudio.presentation.Constants.ID_TAG
+import com.example.workaudio.presentation.Constants.WORKOUT_NAME
 import com.example.workaudio.presentation.NavigationManager
 
 
 class DurationFragment : Fragment() {
 
     companion object {
-        const val ID_TAG = "id"
-        const val WORKOUT_NAME = "workout_name"
-        const val WORKOUT_DURATION = "workout_duration"
-        private const val DEFAULT_DURATION = 30.0f
         private const val DURATION_TO_NAME = R.id.action_durationFragment_to_nameFragment
         private const val DURATION_TO_DETAIL = R.id.action_durationFragment_to_workoutDetailFragment
     }
@@ -40,11 +37,14 @@ class DurationFragment : Fragment() {
         return binding.root
     }
 
-    private fun setupObserver(){
-        viewModel.workout.observe(this,{ workout ->
-            if(viewModel.isWorkoutCreated()){
-                val bundle = bundleOf(ID_TAG to workout?.id)
-                NavigationManager.navigateTo(findNavController(),DURATION_TO_DETAIL,bundle)
+    private fun setupObserver() {
+        viewModel.workout.observe(this, { workout ->
+            if (viewModel.isWorkoutCreated()) {
+                NavigationManager.navigateTo(
+                    findNavController(),
+                    DURATION_TO_DETAIL,
+                    bundleOf(ID_TAG to workout?.id)
+                )
             }
         })
     }
@@ -54,12 +54,16 @@ class DurationFragment : Fragment() {
         binding.apply {
 
             cancelButton.setOnClickListener {
-                NavigationManager.navigateTo(findNavController(), DURATION_TO_NAME)
+                NavigationManager.navigateTo(
+                    findNavController(),
+                    DURATION_TO_NAME
+                )
             }
             continueButton.setOnClickListener {
-                val workoutName = arguments?.getString(WORKOUT_NAME).orEmpty()
-                val duration = binding.rangeSlider.values[0].toInt()
-                viewModel.insertWorkout(workoutName, duration)
+                viewModel.insertWorkout(
+                    getWorkoutName(),
+                    getRangeSliderDuration()
+                )
             }
 
             timeLabel.text = requireActivity().resources.getString(R.string.default_duration)
@@ -73,5 +77,8 @@ class DurationFragment : Fragment() {
 
         }
     }
+
+    private fun getWorkoutName() = arguments?.getString(WORKOUT_NAME).orEmpty()
+    private fun getRangeSliderDuration() = binding.rangeSlider.values[0].toInt()
 
 }

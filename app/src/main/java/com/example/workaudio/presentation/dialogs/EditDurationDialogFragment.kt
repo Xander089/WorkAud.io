@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.workaudio.R
 import com.google.android.material.slider.RangeSlider
+import javax.xml.datatype.DatatypeConstants.MINUTES
 
 class EditDurationDialogFragment(
     val updateDuration: (duration: Int) -> Unit
@@ -48,10 +49,5 @@ class EditDurationDialogFragment(
             timeLabel.text = value.toInt().toString().plus(MINUTES)
         }
 
-    }
-
-    companion object {
-        const val TAG = "EditDurationDialog"
-        const val MINUTES = " min"
     }
 }

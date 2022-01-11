@@ -4,16 +4,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.workaudio.R
 import com.example.workaudio.databinding.ItemDetailTrackBinding
 import com.example.workaudio.core.entities.Track
 
 
-class WorkoutDetailTracksAdapter(
+class DetailTracksAdapter(
     val tracks: MutableList<Track> = mutableListOf(),
     private val fetchImage: (ImageView, String) -> Unit,
     private val deleteTrack: (String) -> Unit = {},
-) : RecyclerView.Adapter<WorkoutDetailTracksAdapter.TrackListViewHolder>() {
+) : RecyclerView.Adapter<DetailTracksAdapter.TrackListViewHolder>() {
 
     inner class TrackListViewHolder(
         private val binding: ItemDetailTrackBinding,

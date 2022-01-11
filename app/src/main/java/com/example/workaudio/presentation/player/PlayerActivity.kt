@@ -8,18 +8,19 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
-import com.example.workaudio.presentation.editing.WorkoutDetailTracksAdapter
+import com.example.workaudio.presentation.editing.DetailTracksAdapter
 import com.example.workaudio.databinding.ActivityPlayerBinding
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.presentation.dialogs.StopPlayerDialogFragment
 import com.example.workaudio.libraries.spotify.SpotifyManager
+import com.example.workaudio.presentation.Constants.STOP_TAG
+import com.example.workaudio.presentation.Constants.WORKOUT_ID
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PlayerActivity : AppCompatActivity() {
 
     companion object {
-        private const val WORKOUT_ID = "WORKOUT_ID"
         fun newIntent(context: Context, workoutId: Int): Intent {
             val intent = Intent(context, PlayerActivity::class.java)
             intent.putExtra(WORKOUT_ID, workoutId)
@@ -29,7 +30,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private val viewModel: PlayerViewModel by viewModels()
     private lateinit var spotify: SpotifyManager
-    private lateinit var tracksAdapter: WorkoutDetailTracksAdapter
+    private lateinit var tracksAdapter: DetailTracksAdapter
     private lateinit var binding: ActivityPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +70,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun buildTrackListAdapter() {
-        tracksAdapter = WorkoutDetailTracksAdapter(
+        tracksAdapter = DetailTracksAdapter(
             mutableListOf<Track>(),
             fetchImage = { imageView, imageUrl ->
                 Glide.with(this).load(imageUrl).into(imageView)
@@ -159,7 +160,7 @@ class PlayerActivity : AppCompatActivity() {
             finish()
         }.show(
             supportFragmentManager,
-            StopPlayerDialogFragment.TAG
+            STOP_TAG
         )
     }
 

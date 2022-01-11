@@ -6,6 +6,8 @@ import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
 import com.example.workaudio.core.usecases.searchTracks.SearchServiceBoundary
+import com.example.workaudio.presentation.Constants.MILLISECONDS_IN_A_MINUTE
+import com.example.workaudio.presentation.Constants.MIN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,11 +17,6 @@ import javax.inject.Inject
 class SearchTracksFragmentViewModel @Inject constructor(private val searchInteractor: SearchServiceBoundary) :
     ViewModel() {
 
-
-    companion object {
-        private const val MILLISECONDS_IN_A_MINUTE = 60000
-        private const val MIN = " min"
-    }
 
     private val _searchedTracks = MutableLiveData<List<Track>>()
     val searchedTracks: LiveData<List<Track>> = _searchedTracks

@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/workoutDetailFragment"
-        android:name="com.example.workaudio.presentation.editing.WorkoutDetailFragment"
+        android:name="com.example.workaudio.presentation.editing.DetailFragment"
         android:label="fragment_workout_detail"
         tools:layout="@layout/fragment_workout_detail" >
         <action
