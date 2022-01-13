@@ -1,25 +1,28 @@
 package com.example.workaudio.presentation.editing
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutDetailBinding
-import com.example.workaudio.presentation.Constants.DURATION_TAG
-import com.example.workaudio.presentation.Constants.ID_TAG
-import com.example.workaudio.presentation.Constants.NAME_TAG
-import com.example.workaudio.presentation.Constants.TAG
+import com.example.workaudio.Constants.DURATION_TAG
+import com.example.workaudio.Constants.ID_TAG
+import com.example.workaudio.Constants.NAME_TAG
+import com.example.workaudio.Constants.TAG
 import com.example.workaudio.presentation.player.PlayerActivity
 import com.example.workaudio.presentation.dialogs.EditDurationDialogFragment
 import com.example.workaudio.presentation.dialogs.EditNameDialogFragment
-import com.example.workaudio.presentation.NavigationManager
+import com.example.workaudio.presentation.utils.NavigationManager
+import com.example.workaudio.presentation.utils.SwipeHelperCallback
+import com.google.android.material.snackbar.Snackbar
 
 
 class DetailFragment : Fragment() {
@@ -33,6 +36,7 @@ class DetailFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkoutDetailBinding
     private lateinit var workoutAdapter: DetailTracksAdapter
+    private var mItemTouchHelper: ItemTouchHelper? = null
     private val viewModel: DetailFragmentViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -43,11 +47,35 @@ class DetailFragment : Fragment() {
         binding = FragmentWorkoutDetailBinding.inflate(inflater, container, false)
 
         buildAdapter()
+        addOnScrollListener()
         viewModel.initializeCurrentWorkout(getWorkoutId())
         setLayoutFunctionality()
         setObservers()
 
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.detail_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                findNavController().popBackStack()
+            }
+            R.id.action_edit -> {
+                showEditNameDialogFragment()
+            }
+            else -> {}
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun buildAdapter() {
@@ -57,8 +85,33 @@ class DetailFragment : Fragment() {
             },
             deleteTrack = { uri ->
                 showModalBottomFragment(uri)
+            },
+            onSwipe = { uri ->
+                showModalBottomFragment(uri)
             }
         )
+        mItemTouchHelper = ItemTouchHelper(SwipeHelperCallback(workoutAdapter))
+        mItemTouchHelper?.attachToRecyclerView(binding.trackList)
+    }
+
+    private fun addOnScrollListener() {
+        binding.trackList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                viewModel.scrollState = newState
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (dy > 0 && (viewModel.scrollState in listOf(0, 2))) {
+                    binding.topAppBar.visibility = View.GONE
+                } else {
+                    binding.topAppBar.visibility = View.VISIBLE
+                }
+            }
+
+        })
     }
 
     private fun showModalBottomFragment(trackUri: String) {
@@ -71,6 +124,9 @@ class DetailFragment : Fragment() {
 
     private fun setLayoutFunctionality() {
         binding.apply {
+
+            (activity as AppCompatActivity?)!!.setSupportActionBar(topAppBar)
+
             trackList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter = workoutAdapter
@@ -82,23 +138,20 @@ class DetailFragment : Fragment() {
                 val workoutId = getWorkoutId()
                 val bundle = bundleOf(ID_TAG to workoutId)
                 NavigationManager.navigateTo(findNavController(), DETAIL_TO_EDITING_TRACKS, bundle)
+            }
 
-            }
-            workoutName.setOnClickListener {
-                showEditNameDialogFragment()
-            }
             durationText.setOnClickListener {
                 showEditDurationDialogFragment()
             }
-            backButton.setOnClickListener {
-                NavigationManager.navigateTo(findNavController(), DETAIL_TO_WORKOUTS)
+            targetDurationText.setOnClickListener {
+                showEditDurationDialogFragment()
             }
 
             infoButton.setOnClickListener {
-                Toast.makeText(
-                    activity,
-                    "you need to match at least the target duration to start the playlist",
-                    Toast.LENGTH_SHORT
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.snackbar_duration_info),
+                    Snackbar.LENGTH_SHORT
                 )
                     .show()
             }
@@ -109,7 +162,7 @@ class DetailFragment : Fragment() {
         viewModel.selectedWorkout.observe(this, { workout ->
 
             binding.apply {
-                workoutName.text = workout.name
+                topAppBar.title = workout.name
                 durationText.text = viewModel.durationToMinutes(workout.duration)
             }
         })

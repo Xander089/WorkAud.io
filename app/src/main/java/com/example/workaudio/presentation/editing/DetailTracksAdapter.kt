@@ -6,13 +6,15 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.workaudio.databinding.ItemDetailTrackBinding
 import com.example.workaudio.core.entities.Track
+import com.example.workaudio.presentation.utils.ItemTouchHelperAdapter
 
 
 class DetailTracksAdapter(
     val tracks: MutableList<Track> = mutableListOf(),
     private val fetchImage: (ImageView, String) -> Unit,
     private val deleteTrack: (String) -> Unit = {},
-) : RecyclerView.Adapter<DetailTracksAdapter.TrackListViewHolder>() {
+    val onSwipe : (String) -> Unit = {}
+) : RecyclerView.Adapter<DetailTracksAdapter.TrackListViewHolder>(), ItemTouchHelperAdapter {
 
     inner class TrackListViewHolder(
         private val binding: ItemDetailTrackBinding,
@@ -57,5 +59,11 @@ class DetailTracksAdapter(
         this.tracks.clear()
         this.tracks.addAll(_tracks)
         notifyDataSetChanged()
+    }
+
+    override fun onItemDismiss(position: Int) {
+        onSwipe(tracks[position].uri)
+        tracks.removeAt(position)
+        notifyItemRemoved(position)
     }
 }

@@ -43,15 +43,20 @@ class WorkoutAdapter(
             binding.apply {
 
                 fetchImage(imageView, workout.imageUrl)
-                root.apply {
-                    setOnLongClickListener {
-                        showBottomModal(workout.id)
-                        true
-                    }
-                    setOnClickListener {
-                        openWorkoutDetail(workout.id)
-                    }
+                settingsButton.setOnClickListener {
+                    showBottomModal(workout.id)
+                    true
                 }
+                imageView.setOnClickListener {
+                    openWorkoutDetail(workout.id)
+                }
+                playlistNameText.setOnClickListener {
+                    openWorkoutDetail(workout.id)
+                }
+                durationPlaylistText.setOnClickListener {
+                    openWorkoutDetail(workout.id)
+                }
+
                 playlistNameText.text = workout.name
 
             }

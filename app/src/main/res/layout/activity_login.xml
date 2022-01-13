@@ -9,13 +9,14 @@
 
     <TextView
         android:id="@+id/infoText"
-        android:layout_width="0dp"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:text="You need a premium Spotify Account to use this app"
+        android:text="You need a premium Spotify Account to run this app"
         android:textAlignment="center"
         android:textColor="@color/grey2"
+        android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,6 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:rippleColor="@color/dark_yellow"
         app:strokeColor="@color/yellow" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

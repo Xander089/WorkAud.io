@@ -10,10 +10,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentDurationBinding
-import com.example.workaudio.presentation.Constants.DEFAULT_DURATION
-import com.example.workaudio.presentation.Constants.ID_TAG
-import com.example.workaudio.presentation.Constants.WORKOUT_NAME
-import com.example.workaudio.presentation.NavigationManager
+import com.example.workaudio.Constants.DEFAULT_DURATION
+import com.example.workaudio.Constants.ID_TAG
+import com.example.workaudio.Constants.WORKOUT_NAME
+import com.example.workaudio.presentation.utils.NavigationManager
 
 
 class DurationFragment : Fragment() {

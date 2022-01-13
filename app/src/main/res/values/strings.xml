@@ -10,4 +10,7 @@
     <string name="minutes"> min</string>
     <string name="edit_duration">Set the Workout Duration</string>
     <string name="added_to_playlist"> added to playlist</string>
+    <string name="description">description</string>
+    <string name="edit">Edit</string>
+    <string name="snackbar_duration_info">You need to match at least the target duration to start the playlist</string>
 </resources>

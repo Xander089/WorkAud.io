@@ -5,8 +5,8 @@ import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.editing.EditingServiceBoundary
-import com.example.workaudio.presentation.Constants.MILLIS_IN_A_MINUTE
-import com.example.workaudio.presentation.Constants.MIN
+import com.example.workaudio.Constants.MILLIS_IN_A_MINUTE
+import com.example.workaudio.Constants.MIN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,6 +16,7 @@ import javax.inject.Inject
 class DetailFragmentViewModel @Inject constructor(private val useCaseInteractor: EditingServiceBoundary) :
     ViewModel() {
 
+    var scrollState = 0
 
     var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
     var tracks: LiveData<List<Track>> = MutableLiveData()

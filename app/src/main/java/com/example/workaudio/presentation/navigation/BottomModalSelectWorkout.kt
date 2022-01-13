@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.workaudio.databinding.ModalBottomLayoutBinding
-import com.example.workaudio.presentation.Constants.LABEL
+import com.example.workaudio.Constants.LABEL
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class BottomModalSelectWorkout(

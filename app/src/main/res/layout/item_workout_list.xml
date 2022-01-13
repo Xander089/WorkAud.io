@@ -8,50 +8,72 @@
     android:layout_marginTop="16dp"
     android:layout_marginEnd="16dp"
     app:cardBackgroundColor="@color/transparent"
-    app:cardCornerRadius="6dp"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="0dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:rippleColor="@color/grey2">
+    app:layout_constraintTop_toTopOf="parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black_light2">
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/settingsButton"
+            android:layout_width="20dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_settings"
+            app:tint="@color/grey" />
 
         <TextView
             android:id="@+id/playlistNameText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="name"
-            android:textAllCaps="true"
-            android:textColor="@color/grey"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="2dp"
+            android:fontFamily="@font/hammersmith_one"
+            android:text="My custom playlist"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/durationPlaylistText"
+            app:layout_constraintEnd_toStartOf="@+id/settingsButton"
             app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/durationPlaylistText"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="duration"
-            android:textColor="@color/grey"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/hammersmith_one"
+            android:letterSpacing="0.01"
+            android:text="30 min, 20 songs"
+            android:textColor="@color/grey3"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/playlistNameText"
             app:layout_constraintStart_toStartOf="@+id/playlistNameText"
             app:layout_constraintTop_toBottomOf="@+id/playlistNameText" />
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/durationPlaylistText"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/description"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/playlistNameText"
-            tools:srcCompat="@tools:sample/avatars" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_music" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

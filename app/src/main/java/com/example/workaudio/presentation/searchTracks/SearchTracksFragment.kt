@@ -10,10 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentEditingTracksBinding
-import com.example.workaudio.presentation.Constants.ID_TAG
+import com.example.workaudio.Constants.ID_TAG
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -42,6 +43,7 @@ class SearchTracksFragment : Fragment() {
 
         viewModel.setupCurrentWorkout(getWorkoutId())
         buildAdapter()
+        addOnScrollListener()
         setupLayout()
         setupObservers()
 
@@ -90,11 +92,32 @@ class SearchTracksFragment : Fragment() {
         )
     }
 
+    private fun addOnScrollListener() {
+        binding.trackList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                viewModel.scrollState = newState
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (dy > 0 && (viewModel.scrollState in listOf(0, 2))) {
+                    binding.topAppBar.visibility = View.GONE
+                } else {
+                    binding.topAppBar.visibility = View.VISIBLE
+                }
+            }
+
+        })
+    }
+
     private fun showAddedTrackSnackBar(titleTrack: String) = Snackbar.make(
         binding.root,
         viewModel.formatSnackBarText(
             titleTrack,
-            getResourceString(R.string.added_to_playlist)),
+            getResourceString(R.string.added_to_playlist)
+        ),
         Snackbar.LENGTH_SHORT
     ).setBackgroundTint(resources.getColor(R.color.black_light2, null))
         .show()

@@ -5,44 +5,66 @@
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    >
+    android:background="@color/black">
 
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/createWorkoutButton"
-        android:layout_width="wrap_content"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/main_card_view"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/black_light"
-        android:clickable="true"
-        android:src="@drawable/ic_add"
-        android:theme="@style/Theme.Fab"
-        app:backgroundTint="@color/black_light"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:backgroundTint="@color/transparent"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toTopOf="@id/workoutList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/workoutLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/hammersmith_one"
+                android:text="Your Playlists"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/createWorkoutButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/transparent"
+                app:layout_constraintBottom_toBottomOf="@+id/workoutLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/workoutLabel"
+                app:srcCompat="@drawable/ic_add_medium"
+                app:tint="@color/white" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/workoutList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/workoutLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/main_card_view" />
 
-    <TextView
-        android:id="@+id/workoutLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/hammersmith_one"
-        android:text="Your Playlists:"
-        android:textColor="@color/grey"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

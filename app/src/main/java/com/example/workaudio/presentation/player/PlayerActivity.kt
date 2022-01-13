@@ -13,8 +13,8 @@ import com.example.workaudio.databinding.ActivityPlayerBinding
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.presentation.dialogs.StopPlayerDialogFragment
 import com.example.workaudio.libraries.spotify.SpotifyManager
-import com.example.workaudio.presentation.Constants.STOP_TAG
-import com.example.workaudio.presentation.Constants.WORKOUT_ID
+import com.example.workaudio.Constants.STOP_TAG
+import com.example.workaudio.Constants.WORKOUT_ID
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

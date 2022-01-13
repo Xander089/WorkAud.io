@@ -5,7 +5,10 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/ic_info.xml" value="0.26145833333333335" />
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.2824074074074074" />
+        <entry key="app/src/main/res/drawable/ic_add_medium.xml" value="0.2548717948717949" />
         <entry key="app/src/main/res/drawable/ic_circle_add.xml" value="0.2824074074074074" />
+        <entry key="app/src/main/res/drawable/ic_music.xml" value="0.2548717948717949" />
+        <entry key="app/src/main/res/drawable/main_gradient.xml" value="0.2548717948717949" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/activity_player.xml" value="0.27291666666666664" />
@@ -20,8 +23,9 @@
         <entry key="app/src/main/res/layout/fragment_workout_list.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/item_detail_track.xml" value="0.27291666666666664" />
         <entry key="app/src/main/res/layout/item_track.xml" value="0.37604166666666666" />
-        <entry key="app/src/main/res/layout/item_workout_list.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/item_workout_list.xml" value="0.45" />
         <entry key="app/src/main/res/layout/modal_bottom_layout.xml" value="0.37604166666666666" />
+        <entry key="app/src/main/res/menu/detail_menu.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/menu/search_menu.xml" value="0.2203125" />
       </map>
     </option>

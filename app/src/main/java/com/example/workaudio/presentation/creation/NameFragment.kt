@@ -7,13 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentNameBinding
 import android.text.Editable
-import com.example.workaudio.presentation.Constants.WORKOUT_NAME
-import com.example.workaudio.presentation.NavigationManager
+import com.example.workaudio.Constants.WORKOUT_NAME
+import com.example.workaudio.presentation.utils.NavigationManager
 
 
 class NameFragment : Fragment() {
@@ -61,7 +60,7 @@ class NameFragment : Fragment() {
                     s: CharSequence, start: Int,
                     before: Int, count: Int
                 ) {
-                    if (s.isNotEmpty()) {
+                    if (s.length > 4) {
                         confirmNameButton.apply {
                             isEnabled = true
                             setTextColor(
@@ -82,7 +81,4 @@ class NameFragment : Fragment() {
             })
         }
     }
-
-    fun getColor() = binding.confirmNameButton.textColors.defaultColor
-
 }

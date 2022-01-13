@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -13,8 +14,8 @@ import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutListBinding
 import com.example.workaudio.core.entities.Workout
-import com.example.workaudio.presentation.Constants.TAG
-import com.example.workaudio.presentation.NavigationManager
+import com.example.workaudio.Constants.TAG
+import com.example.workaudio.presentation.utils.NavigationManager
 
 
 class WorkoutListFragment : Fragment() {
@@ -71,9 +72,16 @@ class WorkoutListFragment : Fragment() {
             showModalBottomFragment(workoutId)
         },
         fetchImage = { imageView, imageUri ->
-            Glide.with(requireActivity()).load(imageUri).into(imageView)
+            fetchImage(imageView,imageUri)
         }
     )
+
+    private fun fetchImage(imageView: ImageView, imageUri: String){
+        if(imageUri.isEmpty()){
+            return
+        }
+        Glide.with(requireActivity()).load(imageUri).into(imageView)
+    }
 
 
     private fun showModalBottomFragment(workoutId: Int) {

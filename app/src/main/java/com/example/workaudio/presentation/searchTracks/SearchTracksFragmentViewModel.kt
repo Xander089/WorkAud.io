@@ -1,13 +1,11 @@
 package com.example.workaudio.presentation.searchTracks
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
-import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
 import com.example.workaudio.core.usecases.searchTracks.SearchServiceBoundary
-import com.example.workaudio.presentation.Constants.MILLISECONDS_IN_A_MINUTE
-import com.example.workaudio.presentation.Constants.MIN
+import com.example.workaudio.Constants.MILLISECONDS_IN_A_MINUTE
+import com.example.workaudio.Constants.MIN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,6 +15,8 @@ import javax.inject.Inject
 class SearchTracksFragmentViewModel @Inject constructor(private val searchInteractor: SearchServiceBoundary) :
     ViewModel() {
 
+
+    var scrollState = 0
 
     private val _searchedTracks = MutableLiveData<List<Track>>()
     val searchedTracks: LiveData<List<Track>> = _searchedTracks
@@ -60,8 +60,6 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
     fun updateProgressBar(tracks: List<Track>): Int {
         val target = targetDuration.toFloat()
         val current = tracks.map { it.duration }.sum().toFloat()
-        Log.v("search__t", target.toString())
-        Log.v("search__c", current.toString())
         return (current / target * 100).toInt()
     }
 

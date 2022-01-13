@@ -8,18 +8,21 @@
     <color name="teal">#00ECE9</color>
     <color name="sky">#129FDF</color>
     <color name="turquoise">#6A90F9</color>
-    <color name="green">#00DF00</color>
+    <color name="green">#1DD55E</color>
     <color name="lime">#CFFD00</color>
     <color name="lime2">#CEFE00</color>
     <color name="yellow">#FFD700</color>
+    <color name="dark_yellow">#786600</color>
     <color name="grey">#AEAEC2</color>
     <color name="grey2">#545360</color>
-    <color name="grey3">#696871</color>
+    <color name="grey3">#79797E</color>
     <color name="black">#15141C</color>
+    <color name="black_gradient_end">#232225</color>
     <color name="black_bkg_txt">#1D1B26</color>
     <color name="black_text">#14111C</color>
     <color name="black_light">#1F1E29</color>
     <color name="black_light2">#292832</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="transparent_black">#EE15141C</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
