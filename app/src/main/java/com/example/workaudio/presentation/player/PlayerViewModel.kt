@@ -21,7 +21,6 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerSe
     ViewModel() {
 
 
-
     //PLAYER STATE
     private var playerState = PlayerState.PAUSED
     fun getPlayerState() = playerState
@@ -30,20 +29,34 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerSe
     }
 
     //TIMER
-    lateinit var countDownTimer: Flow<Int>
-    lateinit var timerJob: Job
+    private lateinit var countDownTimer: Flow<Int>
+    private lateinit var timerJob: Job
     private val _timerText = MutableLiveData<String>()
     val timerText: LiveData<String> = _timerText
 
-    //WORKOUT AND ITS TRACK
+    private lateinit var songTimer: Flow<Int>
+    private lateinit var songJob: Job
+    private val _playingTrackText = MutableLiveData<String>()
+    val playingTrackText: LiveData<String> = _playingTrackText
+
+    //WORKOUT AND TRACKS
     val currentTrackPlaying = playerInteractor.getCurrentPosition().asLiveData()
     var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
-    private var _tracks = MutableLiveData<List<Track>>()
-    val tracks: LiveData<List<Track>> = _tracks
+    private var _tracks = MutableLiveData<List<PlayingTrack>>()
+    val tracks: LiveData<List<PlayingTrack>> = _tracks
     fun getTrackUri(position: Int) = tracks.value?.get(position)?.uri.orEmpty()
-    fun initTimer(tracks: List<Track>): String {
+
+    fun initTimer(tracks: List<PlayingTrack>): String {
         val currentPlaylistTotalTime = tracks.map { it.duration }.sum() / 1000
         return playerInteractor.toTime(currentPlaylistTotalTime)
+    }
+
+    fun formatTrackDuration(position: Int): String {
+        val seconds = ((tracks.value?.get(position)?.duration) ?: 0) / 1000
+        val minutes = seconds / 60
+        val remainder = seconds % 60
+        val r = if(remainder < 10) "0$remainder" else "$remainder"
+        return "$minutes:$r"
     }
 
     private fun handlePlayer(currentTime: Int, currentSongEndingTime: Int) {
@@ -110,7 +123,9 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerSe
     }
 
     fun initializeWorkoutTracks(currentTracks: List<Track>) {
-        _tracks.value = currentTracks
+        _tracks.value = currentTracks.map {
+            it.toPlayingTrack()
+        }
     }
 
     fun initializeCurrentWorkout(workoutId: Int) {
@@ -126,5 +141,26 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerSe
             }
         }
     }
+
+    data class PlayingTrack(
+        val title: String,
+        val uri: String,
+        val duration: Int,
+        val artist: String,
+        val album: String,
+        val imageUrl: String,
+        var endingTime: Int = 0,
+        var isPlaying: Boolean = false
+    )
+
+    private fun Track.toPlayingTrack() = PlayingTrack(
+        this.title,
+        this.uri,
+        this.duration,
+        this.artist,
+        this.album,
+        this.imageUrl,
+        this.endingTime
+    )
 
 }

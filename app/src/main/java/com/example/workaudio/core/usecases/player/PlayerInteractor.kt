@@ -54,6 +54,18 @@ class PlayerInteractor(
         }
     }
 
+    fun buildTrackTimer(duration: Int): Flow<Int> {
+        val totSeconds = duration / 1000
+        return flow<Int> {
+            var currentTime = 0
+            while (currentTime <= totSeconds) {
+                delay(1000)
+                currentTime++
+                emit(currentTime)
+            }
+        }
+    }
+
     override fun buildCountDownTimer(time: String): Flow<Int> {
         val timeList = time.split(":").map {
             it.toInt()

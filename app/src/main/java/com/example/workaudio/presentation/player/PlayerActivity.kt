@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -30,7 +32,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private val viewModel: PlayerViewModel by viewModels()
     private lateinit var spotify: SpotifyManager
-    private lateinit var tracksAdapter: DetailTracksAdapter
+    private lateinit var tracksAdapter: PlayerTracksAdapter
     private lateinit var binding: ActivityPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,8 +72,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun buildTrackListAdapter() {
-        tracksAdapter = DetailTracksAdapter(
-            mutableListOf<Track>(),
+        tracksAdapter = PlayerTracksAdapter(
             fetchImage = { imageView, imageUrl ->
                 Glide.with(this).load(imageUrl).into(imageView)
             }
@@ -87,7 +88,6 @@ class PlayerActivity : AppCompatActivity() {
     private fun initializeLayout() {
         binding.apply {
 
-            timerText.text = ""//resources?.getString(R.string.reset_time).orEmpty()
             playButton.setOnClickListener {
                 val playerState = viewModel.getPlayerState()
                 if (playerState == PlayerState.PLAYING) {
@@ -108,7 +108,8 @@ class PlayerActivity : AppCompatActivity() {
                 showStopPlayerDialogFragment()
             }
             trackList.apply {
-                layoutManager = LinearLayoutManager(this@PlayerActivity)
+                layoutManager =
+                    LinearLayoutManager(this@PlayerActivity, LinearLayoutManager.HORIZONTAL, false)
                 adapter = tracksAdapter
             }
         }
@@ -131,11 +132,7 @@ class PlayerActivity : AppCompatActivity() {
             })
 
             tracks.observe(this@PlayerActivity, { trackList ->
-                tracksAdapter.tracks.apply {
-                    clear()
-                    addAll(trackList)
-                }
-                tracksAdapter.notifyDataSetChanged()
+                tracksAdapter.refreshTrackList(trackList)
                 binding.timerText.text = viewModel.initTimer(trackList.toList())
                 startTimer()
             })
@@ -143,8 +140,12 @@ class PlayerActivity : AppCompatActivity() {
             currentTrackPlaying.observe(this@PlayerActivity, { newSongPosition ->
                 val state = viewModel.getPlayerState()
                 if (state != PlayerState.PAUSED) {
+                    tracksAdapter.refreshPlayingTrack(newSongPosition.position)
                     val trackUri = getTrackUri(newSongPosition.position)
                     spotify.play(trackUri)
+                    binding.trackProgressBar.progress = 0
+                    binding.currentTimeText.text = getString(R.string.reset_song_time)
+                    binding.songTotTimeText.text = formatTrackDuration(newSongPosition.position)
                 }
 
             })

@@ -1,5 +1,6 @@
 package com.example.workaudio.presentation.editing
 
+import android.R.attr
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -7,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.workaudio.databinding.ItemDetailTrackBinding
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.presentation.utils.ItemTouchHelperAdapter
+import android.R.attr.data
+import java.util.*
 
 
 class DetailTracksAdapter(
@@ -65,5 +68,18 @@ class DetailTracksAdapter(
         onSwipe(tracks[position].uri)
         tracks.removeAt(position)
         notifyItemRemoved(position)
+    }
+
+    override fun onRowMoved(fromPosition: Int, toPosition: Int) {
+        if (fromPosition < toPosition) {
+            for (i in fromPosition until toPosition) {
+                Collections.swap(tracks, i, i + 1)
+            }
+        } else {
+            for (i in fromPosition downTo toPosition + 1) {
+                Collections.swap(tracks, i, i - 1)
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition)
     }
 }
