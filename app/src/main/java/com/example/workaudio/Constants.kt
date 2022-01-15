@@ -12,10 +12,7 @@ object Constants {
     const val RESET_TIME = "00:00:00"
     const val MILLIS_IN_A_MINUTE = 60000
     const val MILLISECONDS_IN_A_MINUTE = 60000
-    const val CLIENT_ID = "522adc8dc0d643bea4200d7e3721dbc5"
-    const val REDIRECT_URI = "http://10.0.2.2:8090/callback"
     const val REQUEST_CODE = 1337
-    const val SCOPES = "user-read-recently-played,user-library-modify,user-read-email,user-read-"
     const val WORKOUT_ID = "WORKOUT_ID"
     const val NAME_TAG = "EditNameDialog"
     const val DURATION_TAG = "EditDurationDialog"

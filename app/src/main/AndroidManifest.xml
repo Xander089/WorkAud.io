@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.navigation.MainActivity"
+            android:name=".presentation.workoutMainList.MainActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
     </application>

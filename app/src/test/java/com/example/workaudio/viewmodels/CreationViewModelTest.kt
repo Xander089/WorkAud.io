@@ -1,6 +1,6 @@
 package com.example.workaudio.viewmodels
 
-import com.example.workaudio.presentation.creation.DurationFragmentViewModel
+import com.example.workaudio.presentation.workoutCreation.DurationFragmentViewModel
 import com.example.workaudio.viewmodels.fakeservice.FakeCreationService
 import org.junit.Before
 import org.junit.Test

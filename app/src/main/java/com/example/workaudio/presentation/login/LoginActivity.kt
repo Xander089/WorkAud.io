@@ -4,7 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.example.workaudio.presentation.navigation.MainActivity
+import com.example.workaudio.Constants.REQUEST_CODE
+import com.example.workaudio.R
+import com.example.workaudio.presentation.workoutMainList.MainActivity
 import com.example.workaudio.databinding.ActivityLoginBinding
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
@@ -13,16 +15,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
-
-    companion object {
-
-        private const val CLIENT_ID = "522adc8dc0d643bea4200d7e3721dbc5"
-        private const val REDIRECT_URI = "http://10.0.2.2:8090/callback"
-        private const val REQUEST_CODE = 1337
-        const val SCOPES =
-            "user-read-recently-played,user-library-modify,user-read-email,user-read-private"
-
-    }
 
     private val viewModel: LoginViewModel by viewModels()
     private lateinit var binding: ActivityLoginBinding
@@ -35,17 +27,16 @@ class LoginActivity : AppCompatActivity() {
             authenticateSpotify()
         }
 
-
     }
 
     private fun authenticateSpotify() {
 
         val builder: AuthorizationRequest.Builder = AuthorizationRequest.Builder(
-            CLIENT_ID,
+            getString(R.string.client_id),
             AuthorizationResponse.Type.TOKEN,
-            REDIRECT_URI
+            getString(R.string.callback)
         )
-        builder.setScopes(arrayOf<String>(SCOPES))
+        builder.setScopes(arrayOf(getString(R.string.scopes)))
         val request: AuthorizationRequest = builder.build()
 
         AuthorizationClient.openLoginActivity(

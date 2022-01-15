@@ -14,4 +14,7 @@
     <string name="description">description</string>
     <string name="edit">Edit</string>
     <string name="snackbar_duration_info">You need to match at least the target duration to start the playlist</string>
+    <string name="scopes">user-read-recently-played,user-library-modify,user-read-email,user-read-private</string>
+    <string name="callback">http://10.0.2.2:8090/callback</string>
+    <string name="client_id">522adc8dc0d643bea4200d7e3721dbc5</string>
 </resources>

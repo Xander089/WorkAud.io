@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class SearchInteractor(
     private val dataAccess: SearchDataAccessInterface
-) : SearchServiceBoundary {
+) : SearchBoundary {
 
 
     override fun getWorkout(id: Int): Flow<Workout> = dataAccess.getWorkoutAsFlow(id)

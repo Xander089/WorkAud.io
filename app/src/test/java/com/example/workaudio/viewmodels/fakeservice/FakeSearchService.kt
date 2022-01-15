@@ -2,10 +2,10 @@ package com.example.workaudio.viewmodels.fakeservice
 
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
-import com.example.workaudio.core.usecases.searchTracks.SearchServiceBoundary
+import com.example.workaudio.core.usecases.searchTracks.SearchBoundary
 import kotlinx.coroutines.flow.Flow
 
-class FakeSearchService: SearchServiceBoundary {
+class FakeSearchService: SearchBoundary {
     override fun getWorkout(id: Int): Flow<Workout> {
         TODO("Not yet implemented")
     }

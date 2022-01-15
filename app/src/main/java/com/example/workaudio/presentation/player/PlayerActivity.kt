@@ -4,19 +4,18 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.R
-import com.example.workaudio.presentation.editing.DetailTracksAdapter
 import com.example.workaudio.databinding.ActivityPlayerBinding
-import com.example.workaudio.core.entities.Track
-import com.example.workaudio.presentation.dialogs.StopPlayerDialogFragment
+import com.example.workaudio.presentation.utils.dialogs.StopPlayerDialogFragment
 import com.example.workaudio.libraries.spotify.SpotifyManager
 import com.example.workaudio.Constants.STOP_TAG
 import com.example.workaudio.Constants.WORKOUT_ID
+import com.example.workaudio.presentation.utils.adapter.AdapterFactory
+import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
+import com.example.workaudio.presentation.utils.adapter.PlayerTracksAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -74,11 +73,11 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun buildTrackListAdapter() {
-        tracksAdapter = PlayerTracksAdapter(
+        tracksAdapter = AdapterFactory.create(AdapterFlavour.PLAYER,
             fetchImage = { imageView, imageUrl ->
                 Glide.with(this).load(imageUrl).into(imageView)
             }
-        )
+        ) as PlayerTracksAdapter
     }
 
     private fun setupCurrentWorkout() {
@@ -91,8 +90,11 @@ class PlayerActivity : AppCompatActivity() {
         binding.apply {
 
             playButton.setOnClickListener {
-                if (viewModel.getPlayerState() == PlayerState.PLAYING) { pause() }
-                else { play() }
+                if (viewModel.getPlayerState() == PlayerState.PLAYING) {
+                    pause()
+                } else {
+                    play()
+                }
             }
             stopButton.setOnClickListener {
                 pause()
@@ -106,14 +108,14 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun pause(){
+    private fun pause() {
         binding.playButton.setBackgroundResource(R.drawable.ic_play)
         viewModel.setPlayerState(PlayerState.PAUSED)
         viewModel.stopTimer()
         spotify.pausePlayer()
     }
 
-    private fun play(){
+    private fun play() {
         binding.playButton.setBackgroundResource(R.drawable.ic_pause)
         viewModel.setPlayerState(PlayerState.PLAYING)
         viewModel.restartTimer(
@@ -172,7 +174,7 @@ class PlayerActivity : AppCompatActivity() {
             ok = {
                 spotify.spotifyDisconnect()
                 finish()
-            } ,
+            },
             cancel = { play() }
         ).show(
             supportFragmentManager,

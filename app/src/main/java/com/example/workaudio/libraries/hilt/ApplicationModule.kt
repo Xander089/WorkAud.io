@@ -11,10 +11,10 @@ import com.example.workaudio.core.usecases.player.PlayerInteractor
 import com.example.workaudio.core.usecases.player.PlayerDataAccess
 import com.example.workaudio.core.usecases.creation.CreationInteractor
 import com.example.workaudio.core.usecases.creation.CreationDataAccess
-import com.example.workaudio.core.usecases.editing.EditingInteractor
-import com.example.workaudio.core.usecases.editing.EditingDataAccess
-import com.example.workaudio.core.usecases.navigation.NavigationInteractor
-import com.example.workaudio.core.usecases.navigation.NavigationDataAccess
+import com.example.workaudio.core.usecases.detail.DetailInteractor
+import com.example.workaudio.core.usecases.detail.DetailDataAccess
+import com.example.workaudio.core.usecases.workoutList.ListInteractor
+import com.example.workaudio.core.usecases.workoutList.ListDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
 import com.example.workaudio.libraries.spotify.SpotifyManager
@@ -80,22 +80,22 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun provideNavigationDataAccess(db: ApplicationDatabase) =
-        NavigationDataAccess(db.applicationDao())
+        ListDataAccess(db.applicationDao())
 
     @Singleton
     @Provides
-    fun provideNavigation(dataAccess: NavigationDataAccess) =
-        NavigationInteractor(dataAccess)
+    fun provideNavigation(dataAccess: ListDataAccess) =
+        ListInteractor(dataAccess)
 
     @Singleton
     @Provides
     fun provideEditingDataAccess(db: ApplicationDatabase) =
-        EditingDataAccess(db.applicationDao())
+        DetailDataAccess(db.applicationDao())
 
     @Singleton
     @Provides
-    fun provideEditing(dataAccess: EditingDataAccess) =
-        EditingInteractor(dataAccess)
+    fun provideEditing(dataAccess: DetailDataAccess) =
+        DetailInteractor(dataAccess)
 
     @Singleton
     @Provides

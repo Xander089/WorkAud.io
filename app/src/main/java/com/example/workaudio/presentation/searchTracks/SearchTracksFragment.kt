@@ -15,6 +15,9 @@ import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentEditingTracksBinding
 import com.example.workaudio.Constants.ID_TAG
+import com.example.workaudio.presentation.utils.adapter.AdapterFactory
+import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
+import com.example.workaudio.presentation.utils.adapter.SearchedTracksAdapter
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -79,7 +82,8 @@ class SearchTracksFragment : Fragment() {
     private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: 0
 
     private fun buildAdapter() {
-        trackListAdapter = SearchedTracksAdapter.newInstance(
+        trackListAdapter = AdapterFactory.create(
+            AdapterFlavour.SEARCHED,
             addTrack = { track ->
                 viewModel.addTrack(track, getWorkoutId())
                 viewModel.updateWorkoutDefaultImage(track.imageUrl, getWorkoutId())
@@ -89,7 +93,7 @@ class SearchTracksFragment : Fragment() {
             fetchImage = { imageView, imageUri ->
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
             }
-        )
+        ) as SearchedTracksAdapter
     }
 
     private fun addOnScrollListener() {

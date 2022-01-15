@@ -1,12 +1,10 @@
 package com.example.workaudio.presentation.player
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.workaudio.DataHelper
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
-import com.example.workaudio.core.usecases.player.PlayerInteractor
-import com.example.workaudio.core.usecases.player.PlayerServiceBoundary
+import com.example.workaudio.core.usecases.player.PlayerBoundary
 import com.example.workaudio.presentation.utils.timer.TimerFactoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerServiceBoundary) :
+class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBoundary) :
     ViewModel() {
 
 

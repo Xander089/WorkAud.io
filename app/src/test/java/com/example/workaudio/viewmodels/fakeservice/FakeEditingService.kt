@@ -2,10 +2,10 @@ package com.example.workaudio.viewmodels.fakeservice
 
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
-import com.example.workaudio.core.usecases.editing.EditingServiceBoundary
+import com.example.workaudio.core.usecases.detail.DetailBoundary
 import kotlinx.coroutines.flow.Flow
 
-class FakeEditingService: EditingServiceBoundary {
+class FakeEditingService: DetailBoundary {
     override fun getWorkout(id: Int): Flow<Workout> {
         TODO("Not yet implemented")
     }

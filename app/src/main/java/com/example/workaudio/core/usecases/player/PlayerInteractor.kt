@@ -1,15 +1,11 @@
 package com.example.workaudio.core.usecases.player
 
-import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.data.database.CurrentPosition
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class PlayerInteractor(
     private val dataAccess: PlayerDataAccessInterface
-) : PlayerServiceBoundary {
+) : PlayerBoundary {
 
     override fun getCurrentPosition() = dataAccess.getCurrentPosition()
     override suspend fun clearCurrentPosition() = dataAccess.clearCurrentPosition()

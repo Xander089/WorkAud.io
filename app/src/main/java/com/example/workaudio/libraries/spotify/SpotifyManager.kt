@@ -1,6 +1,7 @@
 package com.example.workaudio.libraries.spotify
 
 import android.content.Context
+import com.example.workaudio.R
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector.ConnectionListener
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -10,11 +11,8 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 class SpotifyManager() {
 
     companion object {
-        const val CLIENT_ID = "522adc8dc0d643bea4200d7e3721dbc5"
-        const val REDIRECT_URI = "http://10.0.2.2:8090/callback"
         private const val RESET_TIME = "00:00:00"
     }
-
 
     var mSpotifyAppRemote: SpotifyAppRemote? = null
 
@@ -25,8 +23,8 @@ class SpotifyManager() {
 
     fun spotifyConnect(context: Context) {
 
-        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
-            .setRedirectUri(REDIRECT_URI)
+        val connectionParams = ConnectionParams.Builder(context.getString(R.string.client_id))
+            .setRedirectUri(context.getString(R.string.callback))
             .showAuthView(true)
             .build()
 
@@ -36,7 +34,6 @@ class SpotifyManager() {
                     if (mSpotifyAppRemote == null) {
                         mSpotifyAppRemote = spotifyAppRemote
                     }
-
                 }
 
                 override fun onFailure(throwable: Throwable) {}

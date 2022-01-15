@@ -3,7 +3,7 @@ package com.example.workaudio.presentation.searchTracks
 import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
-import com.example.workaudio.core.usecases.searchTracks.SearchServiceBoundary
+import com.example.workaudio.core.usecases.searchTracks.SearchBoundary
 import com.example.workaudio.Constants.MILLISECONDS_IN_A_MINUTE
 import com.example.workaudio.Constants.MIN
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchTracksFragmentViewModel @Inject constructor(private val searchInteractor: SearchServiceBoundary) :
+class SearchTracksFragmentViewModel @Inject constructor(private val searchInteractor: SearchBoundary) :
     ViewModel() {
 
 

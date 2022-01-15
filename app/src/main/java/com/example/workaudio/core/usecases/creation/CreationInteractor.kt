@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class CreationInteractor(
     private val dataAccess: CreationDataAccessInterface
-    ) : CreationServiceBoundary{
+    ) : CreationBoundary{
 
     override fun getLatestWorkout(): Flow<Workout?>
          = dataAccess.getLatestWorkoutAsFlow()

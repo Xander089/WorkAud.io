@@ -1,6 +1,6 @@
 package com.example.workaudio.viewmodels
 
-import com.example.workaudio.presentation.editing.DetailFragmentViewModel
+import com.example.workaudio.presentation.workoutDetail.DetailFragmentViewModel
 import com.example.workaudio.viewmodels.fakeservice.FakeEditingService
 import org.junit.Before
 import org.junit.Test
