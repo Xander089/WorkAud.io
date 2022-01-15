@@ -10,7 +10,7 @@ import com.example.workaudio.databinding.ItemDetailTrackHorizontalBinding
 
 
 class PlayerTracksAdapter(
-    val tracks: MutableList<PlayerViewModel.PlayingTrack> = mutableListOf(),
+    val tracks: MutableList<PlayingTrack> = mutableListOf(),
     private val fetchImage: (ImageView, String) -> Unit,
 ) : RecyclerView.Adapter<PlayerTracksAdapter.TrackListViewHolder>() {
 
@@ -19,7 +19,7 @@ class PlayerTracksAdapter(
         private val fetchImage: (ImageView, String) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(track: PlayerViewModel.PlayingTrack) {
+        fun bind(track: PlayingTrack) {
 
             binding.apply {
                 artistNameText.text = track.artist
@@ -64,7 +64,7 @@ class PlayerTracksAdapter(
         notifyItemChanged(position)
     }
 
-    fun refreshTrackList(_tracks: List<PlayerViewModel.PlayingTrack>) {
+    fun refreshTrackList(_tracks: List<PlayingTrack>) {
         this.tracks.clear()
         this.tracks.addAll(_tracks)
         notifyDataSetChanged()

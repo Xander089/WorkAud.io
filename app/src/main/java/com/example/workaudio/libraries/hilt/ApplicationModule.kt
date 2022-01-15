@@ -17,6 +17,7 @@ import com.example.workaudio.core.usecases.navigation.NavigationInteractor
 import com.example.workaudio.core.usecases.navigation.NavigationDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
+import com.example.workaudio.libraries.spotify.SpotifyManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +33,11 @@ import javax.inject.Singleton
 object ApplicationModule {
 
     private const val ENDPOINT = "https://api.spotify.com/v1/"
+
+    @Singleton
+    @Provides
+    fun provideManager() = SpotifyManager()
+
 
     @Singleton
     @Provides

@@ -9,6 +9,7 @@ object Constants {
     const val WORKOUT_DURATION = "workout_duration"
     const val DEFAULT_DURATION = 30.0f
     const val MIN = " min"
+    const val RESET_TIME = "00:00:00"
     const val MILLIS_IN_A_MINUTE = 60000
     const val MILLISECONDS_IN_A_MINUTE = 60000
     const val CLIENT_ID = "522adc8dc0d643bea4200d7e3721dbc5"

@@ -63,7 +63,6 @@ class SpotifyManager() {
     fun pausePlayer() = mSpotifyAppRemote?.playerApi?.pause()
     fun resumePlayer() = mSpotifyAppRemote?.playerApi?.resume()
     fun stopSpotifyPlayer(timerText: String) {
-
         val resetTimeText = RESET_TIME
         if (timerText == resetTimeText) {
             mSpotifyAppRemote?.playerApi?.pause()

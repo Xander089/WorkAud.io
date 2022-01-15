@@ -18,6 +18,7 @@ import com.example.workaudio.libraries.spotify.SpotifyManager
 import com.example.workaudio.Constants.STOP_TAG
 import com.example.workaudio.Constants.WORKOUT_ID
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PlayerActivity : AppCompatActivity() {
@@ -31,7 +32,10 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private val viewModel: PlayerViewModel by viewModels()
-    private lateinit var spotify: SpotifyManager
+
+    @Inject
+    lateinit var spotify: SpotifyManager
+
     private lateinit var tracksAdapter: PlayerTracksAdapter
     private lateinit var binding: ActivityPlayerBinding
 
@@ -39,7 +43,6 @@ class PlayerActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-        spotify = SpotifyManager()
         spotify.spotifyConnect(this)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -52,8 +55,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        spotify.pausePlayer()
+        pause()
         showStopPlayerDialogFragment()
     }
 
@@ -89,22 +91,11 @@ class PlayerActivity : AppCompatActivity() {
         binding.apply {
 
             playButton.setOnClickListener {
-                val playerState = viewModel.getPlayerState()
-                if (playerState == PlayerState.PLAYING) {
-                    playButton.setBackgroundResource(R.drawable.ic_play)
-                    viewModel.setPlayerState(PlayerState.PAUSED)
-                    viewModel.stopTimer()
-                    spotify.pausePlayer()
-                } else {
-                    playButton.setBackgroundResource(R.drawable.ic_pause)
-                    viewModel.setPlayerState(PlayerState.PLAYING)
-                    viewModel.restartTimer(timerText.text.toString())
-                    spotify.resumePlayer()
-                }
+                if (viewModel.getPlayerState() == PlayerState.PLAYING) { pause() }
+                else { play() }
             }
             stopButton.setOnClickListener {
-                viewModel.stopTimer()
-                spotify.pausePlayer()
+                pause()
                 showStopPlayerDialogFragment()
             }
             trackList.apply {
@@ -113,6 +104,23 @@ class PlayerActivity : AppCompatActivity() {
                 adapter = tracksAdapter
             }
         }
+    }
+
+    private fun pause(){
+        binding.playButton.setBackgroundResource(R.drawable.ic_play)
+        viewModel.setPlayerState(PlayerState.PAUSED)
+        viewModel.stopTimer()
+        spotify.pausePlayer()
+    }
+
+    private fun play(){
+        binding.playButton.setBackgroundResource(R.drawable.ic_pause)
+        viewModel.setPlayerState(PlayerState.PLAYING)
+        viewModel.restartTimer(
+            binding.timerText.text.toString(),
+            binding.currentTimeText.text.toString()
+        )
+        spotify.resumePlayer()
     }
 
     private fun initializeViewModelObservers() {
@@ -138,28 +146,35 @@ class PlayerActivity : AppCompatActivity() {
             })
 
             currentTrackPlaying.observe(this@PlayerActivity, { newSongPosition ->
-                val state = viewModel.getPlayerState()
-                if (state != PlayerState.PAUSED) {
+                if (viewModel.getPlayerState() != PlayerState.PAUSED) {
                     tracksAdapter.refreshPlayingTrack(newSongPosition.position)
-                    val trackUri = getTrackUri(newSongPosition.position)
-                    spotify.play(trackUri)
-                    binding.trackProgressBar.progress = 0
-                    binding.currentTimeText.text = getString(R.string.reset_song_time)
-                    binding.songTotTimeText.text = formatTrackDuration(newSongPosition.position)
+                    spotify.play(getTrackUri(newSongPosition.position))
+                    binding.apply {
+                        trackProgressBar.progress = 0
+                        currentTimeText.text = getString(R.string.reset_song_time)
+                        songTotTimeText.text = formatTrackDuration(newSongPosition.position)
+                    }
+                    viewModel.resetSongTimer(newSongPosition.position)
                 }
-
             })
 
-
+            playingTrackText.observe(this@PlayerActivity, { songCurrentTime ->
+                binding.currentTimeText.text = songCurrentTime
+                binding.trackProgressBar.progress = getProgress(songCurrentTime)
+            })
         }
+
 
     }
 
     private fun showStopPlayerDialogFragment() {
-        StopPlayerDialogFragment {
-            spotify.spotifyDisconnect()
-            finish()
-        }.show(
+        StopPlayerDialogFragment(
+            ok = {
+                spotify.spotifyDisconnect()
+                finish()
+            } ,
+            cancel = { play() }
+        ).show(
             supportFragmentManager,
             STOP_TAG
         )

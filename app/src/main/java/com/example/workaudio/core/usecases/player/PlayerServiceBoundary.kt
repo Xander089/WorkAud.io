@@ -12,8 +12,5 @@ interface PlayerServiceBoundary {
      suspend fun insertCurrentPosition(position: Int)
      suspend fun updateCurrentPosition(pos: Int)
      suspend fun getWorkout(id: Int): Workout
-     fun toTime(seconds: Int): String
-     fun buildCountDownTimer(tracks: List<Track>): Flow<Int>
-     fun buildCountDownTimer(time: String): Flow<Int>
 
 }

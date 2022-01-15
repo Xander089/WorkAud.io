@@ -10,7 +10,8 @@ import androidx.fragment.app.DialogFragment
 import com.example.workaudio.R
 
 class StopPlayerDialogFragment(
-    val finish: () -> Unit
+    val ok: () -> Unit,
+    val cancel: () -> Unit = {}
 ) : DialogFragment() {
 
     override fun onCreateView(
@@ -33,10 +34,11 @@ class StopPlayerDialogFragment(
         val confirmButton = view.findViewById<Button>(R.id.continueButton)
 
         cancelButton.setOnClickListener {
+            cancel()
             dialog?.dismiss()
         }
         confirmButton.setOnClickListener {
-            finish()
+            ok()
             dialog?.dismiss()
         }
 
