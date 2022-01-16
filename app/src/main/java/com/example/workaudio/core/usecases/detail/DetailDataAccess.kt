@@ -13,17 +13,19 @@ class DetailDataAccess(
     private val dao: ApplicationDAO
 ) : DetailDataAccessInterface {
 
-    override fun getWorkoutTracks(workoutId: Int) = dao.getWorkoutTracksFlow(workoutId).map {
-        it.map { trackRoomEntity ->
-            trackRoomEntity.toTrack()
+    override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>> =
+        dao.getWorkoutTracksFlow(workoutId).map {
+            it.map { trackRoomEntity ->
+                trackRoomEntity.toTrack()
+            }
         }
-    }
 
-    override fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> = dao.getWorkoutById(workoutId).map {
-        toWorkout(it, emptyList())
-    }
+    override fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> =
+        dao.getWorkoutById(workoutId).map {
+            it.toWorkout(emptyList())
+        }
 
-    override  fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =
+    override fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =
         dao.getWorkoutTracksFlow(workoutId).map {
             it.map { entity ->
                 entity.toTrack()
@@ -31,7 +33,7 @@ class DetailDataAccess(
         }
 
 
-    override  suspend fun updateWorkoutName(name: String, id: Int) {
+    override suspend fun updateWorkoutName(name: String, id: Int) {
         dao.updateWorkoutName(name, id)
     }
 
@@ -46,7 +48,7 @@ class DetailDataAccess(
         )
     }
 
-    override  suspend fun deleteTrack(uri: String, id: Int) {
+    override suspend fun deleteTrack(uri: String, id: Int) {
         dao.deleteWorkoutTrack(uri, id)
     }
 
@@ -56,7 +58,7 @@ class DetailDataAccess(
         val tracks = tracksRoomEntity.map { trackEntity ->
             trackEntity.toTrack()
         }
-        return toWorkout(workoutRoomEntity,tracks)
+        return workoutRoomEntity.toWorkout(tracks)
     }
 
     override suspend fun getWorkout(): Workout {
@@ -65,6 +67,6 @@ class DetailDataAccess(
         val tracks = tracksRoomEntity.map { trackEntity ->
             trackEntity.toTrack()
         }
-        return toWorkout(workoutRoomEntity,tracks)
+        return workoutRoomEntity.toWorkout(tracks)
     }
 }

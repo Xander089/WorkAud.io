@@ -8,6 +8,7 @@ import com.example.workaudio.core.usecases.detail.DetailBoundary
 import com.example.workaudio.Constants.MILLIS_IN_A_MINUTE
 import com.example.workaudio.Constants.MIN
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,6 +16,11 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailFragmentViewModel @Inject constructor(private val useCaseInteractor: DetailBoundary) :
     ViewModel() {
+
+    private var dispatcher: CoroutineDispatcher = Dispatchers.IO
+    fun setDispatcher(dispatcher: CoroutineDispatcher){
+        this.dispatcher = dispatcher
+    }
 
     var scrollState = 0
 
@@ -28,19 +34,19 @@ class DetailFragmentViewModel @Inject constructor(private val useCaseInteractor:
 
     fun deleteTrack(trackUri: String) {
         val workoutId = selectedWorkout.value?.id ?: -1
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             useCaseInteractor.deleteTrack(trackUri, workoutId)
         }
     }
 
     fun updateWorkoutName(workoutId: Int, name: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             useCaseInteractor.updateWorkoutName(workoutId, name)
         }
     }
 
     fun updateWorkoutDuration(workoutId: Int, duration: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             val durationInMillis = duration * MILLIS_IN_A_MINUTE
             useCaseInteractor.updateWorkoutDuration(workoutId, durationInMillis)
         }
@@ -52,8 +58,6 @@ class DetailFragmentViewModel @Inject constructor(private val useCaseInteractor:
         durationToMinutes(tracks.map { it.duration }.sum())
 
     fun tracksDurationCheck(tracks: List<Track>): Boolean {
-        Log.v("target duration",targetDuration().toString())
-        Log.v("target duration",(tracks.map { it.duration }.sum() ).toString())
         return tracks.map { it.duration }.sum() >= targetDuration()
     }
 

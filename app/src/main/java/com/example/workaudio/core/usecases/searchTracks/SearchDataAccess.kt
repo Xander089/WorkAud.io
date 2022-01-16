@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 class SearchDataAccess(
     private val dao: ApplicationDAO,
     private val service: SpotifyWebService,
-) : SearchDataAccessInterface{
+) : SearchDataAccessInterface {
 
     override suspend fun searchTracks(queryText: String): List<Track> {
 
@@ -36,9 +36,10 @@ class SearchDataAccess(
         dao.updateWorkoutImageUrl(imageUrl, workoutId)
 
 
-    override fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> = dao.getWorkoutById(workoutId).map {
-        toWorkout(it, emptyList())
-    }
+    override fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> =
+        dao.getWorkoutById(workoutId).map {
+            it.toWorkout(emptyList())
+        }
 
     override fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =
         dao.getWorkoutTracksFlow(workoutId).map {

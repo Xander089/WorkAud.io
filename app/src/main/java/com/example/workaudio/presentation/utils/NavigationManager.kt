@@ -1,4 +1,4 @@
-package com.example.workaudio.presentation.utils.itemTouchHelper
+package com.example.workaudio.presentation.utils
 
 import android.os.Bundle
 import androidx.navigation.NavController

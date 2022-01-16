@@ -1,7 +1,7 @@
 package com.example.workaudio.viewmodels
 
 import com.example.workaudio.presentation.player.PlayerViewModel
-import com.example.workaudio.viewmodels.fakeservice.FakePlayerService
+import com.example.workaudio.viewmodels.fakeBoundary.FakePlayerBoundary
 import org.junit.Before
 import org.junit.Test
 
@@ -11,7 +11,7 @@ class PlayerViewModelTest {
 
     @Before
     fun setup() {
-        playerViewModel = PlayerViewModel(FakePlayerService())
+        playerViewModel = PlayerViewModel(FakePlayerBoundary())
     }
 
 

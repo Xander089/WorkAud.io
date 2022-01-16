@@ -1,7 +1,12 @@
 package com.example.workaudio
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.example.workaudio.Constants.RESET_TIME
 import com.example.workaudio.core.usecases.player.PlayerInteractor
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 object DataHelper {
 
@@ -18,6 +23,11 @@ object DataHelper {
             it.toInt()
         }
         return timeList[0] * 60 + timeList[1]
+    }
+
+    fun formatDuration(duration: Float): String {
+        val intDuration = duration.toInt()
+        return "$intDuration${Constants.MIN}"
     }
 
     fun formatTrackDuration(seconds: Int): String {
@@ -43,6 +53,30 @@ object DataHelper {
         val s = if (remainderSeconds < 10) "0$remainderSeconds" else "$remainderSeconds"
 
         return "$h:$m:$s"
+    }
+
+    fun <T> LiveData<T>.getOrAwaitValue(
+        time: Long = 2,
+        timeUnit: TimeUnit = TimeUnit.SECONDS
+    ): T {
+        var data: T? = null
+        val latch = CountDownLatch(1)
+        val observer = object : Observer<T> {
+            override fun onChanged(o: T?) {
+                data = o
+                latch.countDown()
+                this@getOrAwaitValue.removeObserver(this)
+            }
+        }
+
+        this.observeForever(observer)
+
+        if (!latch.await(time, timeUnit)) {
+            throw TimeoutException("LiveData value was never set.")
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return data as T
     }
 
 }

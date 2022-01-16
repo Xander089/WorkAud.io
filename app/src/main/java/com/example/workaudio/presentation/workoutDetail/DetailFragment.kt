@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.workaudio.Constants
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutDetailBinding
 import com.example.workaudio.Constants.DURATION_TAG
@@ -20,12 +21,16 @@ import com.example.workaudio.Constants.TAG
 import com.example.workaudio.presentation.utils.dialogs.DialogFactory
 import com.example.workaudio.presentation.utils.dialogs.DialogFlavour
 import com.example.workaudio.presentation.player.PlayerActivity
-import com.example.workaudio.presentation.utils.itemTouchHelper.NavigationManager
+import com.example.workaudio.presentation.utils.NavigationManager
 import com.example.workaudio.presentation.utils.itemTouchHelper.SwipeHelperCallback
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
 import com.example.workaudio.presentation.utils.adapter.DetailTracksAdapter
+import com.example.workaudio.presentation.utils.modal.BottomModalDialog
+import com.example.workaudio.presentation.utils.modal.ModalAction
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 
 class DetailFragment : Fragment() {
@@ -71,7 +76,7 @@ class DetailFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                findNavController().popBackStack()
+                NavigationManager.navigateTo(findNavController(),DETAIL_TO_WORKOUTS)
             }
             R.id.action_edit -> {
                 showEditNameDialogFragment()
@@ -119,10 +124,14 @@ class DetailFragment : Fragment() {
     }
 
     private fun showModalBottomFragment(trackUri: String) {
-        BottomModalSelectTrack(trackUri) { uri ->
-            viewModel.deleteTrack(uri)
-        }
-            .show(parentFragmentManager, TAG)
+        val action: (String, Int) -> Unit = { uri, _ -> viewModel.deleteTrack(uri) }
+        val bundle = bundleOf(
+            Constants.MODAL_ACTION to ModalAction(trackUri, 0, action),
+            Constants.MODAL_TITLE to getString(R.string.delete_selected_track)
+        )
+        val modalBottomSheet = BottomModalDialog()
+        modalBottomSheet.arguments = bundle
+        modalBottomSheet.show(parentFragmentManager, TAG)
     }
 
 

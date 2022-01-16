@@ -12,7 +12,7 @@ import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentNameBinding
 import android.text.Editable
 import com.example.workaudio.Constants.WORKOUT_NAME
-import com.example.workaudio.presentation.utils.itemTouchHelper.NavigationManager
+import com.example.workaudio.presentation.utils.NavigationManager
 
 
 class NameFragment : Fragment() {

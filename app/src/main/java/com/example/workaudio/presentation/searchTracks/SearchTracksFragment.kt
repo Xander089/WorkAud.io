@@ -19,12 +19,16 @@ import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
 import com.example.workaudio.presentation.utils.adapter.SearchedTracksAdapter
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class SearchTracksFragment : Fragment() {
 
 
-    private val viewModel: SearchTracksFragmentViewModel by activityViewModels()
+    @Inject
+    lateinit var viewModel: SearchTracksFragmentViewModel
+
     private lateinit var trackListAdapter: SearchedTracksAdapter
     private lateinit var binding: FragmentEditingTracksBinding
 
@@ -79,6 +83,20 @@ class SearchTracksFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun provideSearchView(menuItem: MenuItem): SearchView =
+        menuItem.actionView as SearchView
+
+    private fun provideSearchManager(): SearchManager =
+        requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
+
+    private fun setupSearchView(searchView: SearchView, searchManager: SearchManager) {
+        searchView.apply {
+            setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
+            setOnQueryTextListener(searchTracksQueryTextListener)
+        }
+    }
+
+    private fun getResourceString(resId: Int) = requireActivity().resources.getString(resId)
     private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: 0
 
     private fun buildAdapter() {
@@ -126,48 +144,42 @@ class SearchTracksFragment : Fragment() {
     ).setBackgroundTint(resources.getColor(R.color.black_light2, null))
         .show()
 
-
-    private fun getResourceString(resId: Int) = requireActivity().resources.getString(resId)
-
-
     private fun setupLayout() {
-        binding.apply {
-            (activity as AppCompatActivity?)!!.setSupportActionBar(topAppBar)
-            trackList.apply {
-                layoutManager = LinearLayoutManager(requireContext())
-                adapter = trackListAdapter
-            }
+        setTopAppBar()
+        binding.trackList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = trackListAdapter
         }
     }
 
+    private fun setTopAppBar() {
+        (activity as AppCompatActivity?)!!.setSupportActionBar(binding.topAppBar)
+    }
+
     private fun setupObservers() {
-        viewModel.searchedTracks.observe(this, { searchedTracks ->
-            trackListAdapter.refreshTrackList(searchedTracks)
-        })
+        setupSearchedTracksObserver()
+        setupWorkoutTracksObserver()
+        setupWorkoutObserver()
+    }
 
-        viewModel.workoutTracks.observe(this, { tracks ->
-            binding.currentMinuteLabel.text = viewModel.formatCurrentDuration(tracks)
-            binding.progressBar.progress = viewModel.updateProgressBar(tracks)
-        })
-
+    private fun setupWorkoutObserver() {
         viewModel.currentWorkout.observe(this, { workout ->
             binding.minuteLabel.text = viewModel.formatDuration(workout.duration)
             viewModel.setTargetDuration(workout)
         })
     }
 
+    private fun setupWorkoutTracksObserver() {
+        viewModel.workoutTracks.observe(this, { tracks ->
+            binding.currentMinuteLabel.text = viewModel.formatCurrentDuration(tracks)
+            binding.progressBar.progress = viewModel.updateProgressBar(tracks)
+        })
+    }
 
-    private fun provideSearchView(menuItem: MenuItem): SearchView =
-        menuItem.actionView as SearchView
-
-    private fun provideSearchManager(): SearchManager =
-        requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
-
-    private fun setupSearchView(searchView: SearchView, searchManager: SearchManager) {
-        searchView.apply {
-            setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
-            setOnQueryTextListener(searchTracksQueryTextListener)
-        }
+    private fun setupSearchedTracksObserver() {
+        viewModel.searchedTracks.observe(this, { searchedTracks ->
+            trackListAdapter.refreshTrackList(searchedTracks)
+        })
     }
 
 }

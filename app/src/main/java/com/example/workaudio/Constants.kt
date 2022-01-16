@@ -3,6 +3,10 @@ package com.example.workaudio
 object Constants {
 
     const val LABEL = "Delete Selected Track"
+    const val BEARER = "Bearer"
+    const val SEARCH_TYPE = "track"
+    const val MODAL_TITLE = "title"
+    const val MODAL_ACTION = "action"
     const val TAG = "ModalBottomSheet"
     const val ID_TAG = "id"
     const val WORKOUT_NAME = "workout_name"

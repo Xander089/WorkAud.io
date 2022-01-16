@@ -21,7 +21,7 @@ class PlayerDataAccess(
         val tracks = tracksRoomEntity.map { trackEntity ->
             trackEntity.toTrack()
         }
-        return toWorkout(workoutRoomEntity,tracks)
+        return workoutRoomEntity.toWorkout(tracks)
     }
 
 }

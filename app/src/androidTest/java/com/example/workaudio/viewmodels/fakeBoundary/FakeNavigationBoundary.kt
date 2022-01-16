@@ -1,11 +1,11 @@
-package com.example.workaudio.viewmodels.fakeservice
+package com.example.workaudio.viewmodels.fakeBoundary
 
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.workoutList.ListInteractor
 import com.example.workaudio.core.usecases.workoutList.ListBoundary
 import kotlinx.coroutines.flow.Flow
 
-class FakeNavigationService: ListBoundary {
+class FakeNavigationBoundary: ListBoundary {
     override suspend fun deleteWorkout(workoutId: Int) {
 
     }

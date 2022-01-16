@@ -1,11 +1,11 @@
-package com.example.workaudio.viewmodels.fakeservice
+package com.example.workaudio.viewmodels.fakeBoundary
 
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.player.PlayerBoundary
 import com.example.workaudio.data.database.CurrentPosition
 import kotlinx.coroutines.flow.Flow
 
-class FakePlayerService: PlayerBoundary {
+class FakePlayerBoundary: PlayerBoundary {
     override fun getCurrentPosition(): Flow<CurrentPosition> {
         TODO("Not yet implemented")
     }

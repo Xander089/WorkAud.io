@@ -1,6 +1,7 @@
 package com.example.workaudio.libraries.spotify
 
 import android.content.Context
+import com.example.workaudio.Constants.RESET_TIME
 import com.example.workaudio.R
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector.ConnectionListener
@@ -10,16 +11,10 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 
 class SpotifyManager() {
 
-    companion object {
-        private const val RESET_TIME = "00:00:00"
-    }
-
     var mSpotifyAppRemote: SpotifyAppRemote? = null
 
-    fun spotifyDisconnect() {
-        SpotifyAppRemote.disconnect(mSpotifyAppRemote)
-    }
-
+    fun spotifyDisconnect() = SpotifyAppRemote.disconnect(mSpotifyAppRemote)
+    fun logOut(context: Context) = AuthorizationClient.clearCookies(context)
 
     fun spotifyConnect(context: Context) {
 
@@ -35,34 +30,32 @@ class SpotifyManager() {
                         mSpotifyAppRemote = spotifyAppRemote
                     }
                 }
-
                 override fun onFailure(throwable: Throwable) {}
             })
     }
 
 
+    private fun getPlayer() = mSpotifyAppRemote?.playerApi
+
+    //with the track uri as input, this method triggers spotify app to play the related song
     fun play(uri: String) {
-
-        if (uri.isEmpty()) {
-            return
+        if(uri.isNotEmpty()){
+            getPlayer()?.play(uri)
         }
-
-        val playerApi = mSpotifyAppRemote?.playerApi
-        playerApi?.play(uri)
-        playerApi?.subscribeToPlayerState()?.setEventCallback { playerState: PlayerState -> }
     }
 
-
-    fun logOut(context: Context) {
-        AuthorizationClient.clearCookies(context)
+    private fun getTrackInfo(){
+        getPlayer()?.subscribeToPlayerState()?.setEventCallback { playerState: PlayerState -> }
     }
 
-    fun pausePlayer() = mSpotifyAppRemote?.playerApi?.pause()
-    fun resumePlayer() = mSpotifyAppRemote?.playerApi?.resume()
+    fun pausePlayer() = getPlayer()?.pause()
+
+    fun resumePlayer() = getPlayer()?.resume()
+
     fun stopSpotifyPlayer(timerText: String) {
         val resetTimeText = RESET_TIME
         if (timerText == resetTimeText) {
-            mSpotifyAppRemote?.playerApi?.pause()
+            pausePlayer()
         }
     }
 

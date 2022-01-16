@@ -13,11 +13,15 @@ import com.example.workaudio.core.usecases.creation.CreationInteractor
 import com.example.workaudio.core.usecases.creation.CreationDataAccess
 import com.example.workaudio.core.usecases.detail.DetailInteractor
 import com.example.workaudio.core.usecases.detail.DetailDataAccess
+import com.example.workaudio.core.usecases.player.PlayerBoundary
+import com.example.workaudio.core.usecases.searchTracks.SearchBoundary
 import com.example.workaudio.core.usecases.workoutList.ListInteractor
 import com.example.workaudio.core.usecases.workoutList.ListDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
 import com.example.workaudio.libraries.spotify.SpotifyManager
+import com.example.workaudio.presentation.player.PlayerViewModel
+import com.example.workaudio.presentation.searchTracks.SearchTracksFragmentViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -137,6 +141,11 @@ object ApplicationModule {
     @Provides
     fun provideSearch(dataAccess: SearchDataAccess) =
         SearchInteractor(dataAccess)
+
+    @Provides
+    fun provideSearchViewModel(boundary: SearchBoundary) =
+        SearchTracksFragmentViewModel(boundary)
+
 
 
 }

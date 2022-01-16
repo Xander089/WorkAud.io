@@ -8,8 +8,7 @@ class CreationInteractor(
     private val dataAccess: CreationDataAccessInterface
     ) : CreationBoundary{
 
-    override fun getLatestWorkout(): Flow<Workout?>
-         = dataAccess.getLatestWorkoutAsFlow()
+    override fun getLatestWorkout(): Flow<Workout?> = dataAccess.getLatestWorkoutAsFlow()
     override suspend fun searchTracks(queryText : String) = dataAccess.searchTracks(queryText)
     override suspend fun getWorkout(): Workout? = dataAccess.getWorkout()
 

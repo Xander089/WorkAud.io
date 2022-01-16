@@ -30,20 +30,22 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun authenticateSpotify() {
+        val request: AuthorizationRequest = getAuthorizationBuilder().build()
+        AuthorizationClient.openLoginActivity(
+            this,
+            REQUEST_CODE,
+            request
+        )
+    }
 
+    private fun getAuthorizationBuilder(): AuthorizationRequest.Builder {
         val builder: AuthorizationRequest.Builder = AuthorizationRequest.Builder(
             getString(R.string.client_id),
             AuthorizationResponse.Type.TOKEN,
             getString(R.string.callback)
         )
         builder.setScopes(arrayOf(getString(R.string.scopes)))
-        val request: AuthorizationRequest = builder.build()
-
-        AuthorizationClient.openLoginActivity(
-            this,
-            REQUEST_CODE,
-            request
-        )
+        return builder
     }
 
 

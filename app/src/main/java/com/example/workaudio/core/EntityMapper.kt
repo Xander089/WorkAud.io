@@ -29,24 +29,21 @@ object EntityMapper {
     )
 
 
-    fun toWorkout(entity: WorkoutRoomEntity): Workout = Workout(
-        entity.id ?: 0,
-        entity.name.orEmpty(),
-        entity.duration ?: 0,
+    fun WorkoutRoomEntity.toWorkout(): Workout = Workout(
+        this.id,
+        this.name.orEmpty(),
+        this.duration ?: 0,
         emptyList(),
-        entity.imageUrl.orEmpty()
+        this.imageUrl.orEmpty()
     )
 
 
-    fun toWorkout(
-        entity: WorkoutRoomEntity,
-        tracks: List<Track>
-    ): Workout = Workout(
-        entity.id ?: 0,
-        entity.name.orEmpty(),
-        entity.duration ?: 0,
+    fun WorkoutRoomEntity.toWorkout(tracks: List<Track>): Workout = Workout(
+        this.id,
+        this.name.orEmpty(),
+        this.duration ?: 0,
         tracks,
-        entity.imageUrl.orEmpty()
+        this.imageUrl.orEmpty()
     )
 
 

@@ -13,7 +13,7 @@ import com.example.workaudio.databinding.FragmentDurationBinding
 import com.example.workaudio.Constants.DEFAULT_DURATION
 import com.example.workaudio.Constants.ID_TAG
 import com.example.workaudio.Constants.WORKOUT_NAME
-import com.example.workaudio.presentation.utils.itemTouchHelper.NavigationManager
+import com.example.workaudio.presentation.utils.NavigationManager
 
 
 class DurationFragment : Fragment() {

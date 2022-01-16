@@ -30,7 +30,6 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
     }
 
 
-
     fun setTargetDuration(workout: Workout) {
         targetDuration = workout.duration
     }
@@ -69,11 +68,6 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
     fun formatDuration(duration: Int): String =
         "/${(duration / MILLISECONDS_IN_A_MINUTE)}$MIN"
 
-    /*    fun compareDuration(): Boolean {
-        val current = currentDuration.value ?: 0
-        val workoutDuration = workoutDuration.value ?: 0
-        return current > workoutDuration
-    }*/
 
     fun formatSnackBarText(title: String, decoration: String) = "$title $decoration"
 

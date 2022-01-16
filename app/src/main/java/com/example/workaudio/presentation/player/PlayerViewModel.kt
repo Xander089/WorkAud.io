@@ -62,7 +62,7 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
             playerInteractor.updateCurrentPosition(0)
             countDownTimer?.cancellable()?.collect { currentTime ->
                 _timerText.value = DataHelper.toTime(currentTime)
-                handlePlayer(currentTime, getCurrentPlayingSongEndingTime())
+                setNextSong(currentTime, getCurrentPlayingSongEndingTime())
             }
         }
         viewModelScope.launch {
@@ -94,7 +94,7 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
         timerJob = viewModelScope.launch {
             countDownTimer?.cancellable()?.collect { currentTime ->
                 _timerText.value = DataHelper.toTime(currentTime)
-                handlePlayer(currentTime, getCurrentPlayingSongEndingTime())
+                setNextSong(currentTime, getCurrentPlayingSongEndingTime())
             }
         }
         viewModelScope.launch {
@@ -134,11 +134,10 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
         }
     }
 
-    private fun handlePlayer(currentTime: Int, currentSongEndingTime: Int) {
+    private fun setNextSong(currentTime: Int, currentSongEndingTime: Int) {
         if (currentTime <= 0) {
             return
-        }
-        if (currentTime <= currentSongEndingTime / 1000) {
+        } else if (currentTime <= currentSongEndingTime / 1000) {
             viewModelScope.launch(Dispatchers.IO) {
                 playerInteractor.updateCurrentPosition(1)
             }

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">WorkAudIo</string>
+    <string name="delete_selected_track">Delete selected track</string>
+    <string name="delete_selected_workout">Delete selected workout</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="workout_name">workout_name</string>
     <string name="workout_duration">workout_duration</string>

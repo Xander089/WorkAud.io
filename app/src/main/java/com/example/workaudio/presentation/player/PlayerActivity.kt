@@ -16,6 +16,8 @@ import com.example.workaudio.Constants.WORKOUT_ID
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
 import com.example.workaudio.presentation.utils.adapter.PlayerTracksAdapter
+import com.example.workaudio.presentation.utils.dialogs.DialogFactory
+import com.example.workaudio.presentation.utils.dialogs.DialogFlavour
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -35,18 +37,18 @@ class PlayerActivity : AppCompatActivity() {
     @Inject
     lateinit var spotify: SpotifyManager
 
-    private lateinit var tracksAdapter: PlayerTracksAdapter
+    private var tracksAdapter: PlayerTracksAdapter = buildTrackListAdapter()
     private lateinit var binding: ActivityPlayerBinding
+
+    //1. LIFECYCLE CALLBACKS
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-
         spotify.spotifyConnect(this)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        buildTrackListAdapter()
         setupCurrentWorkout()
         initializeLayout()
         initializeViewModelObservers()
@@ -72,14 +74,7 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun buildTrackListAdapter() {
-        tracksAdapter = AdapterFactory.create(AdapterFlavour.PLAYER,
-            fetchImage = { imageView, imageUrl ->
-                Glide.with(this).load(imageUrl).into(imageView)
-            }
-        ) as PlayerTracksAdapter
-    }
-
+    //2. Methods invoked inside onCreate
     private fun setupCurrentWorkout() {
         intent?.extras?.getInt(WORKOUT_ID)?.let { workoutId ->
             viewModel.initializeCurrentWorkout(workoutId)
@@ -87,25 +82,30 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun initializeLayout() {
-        binding.apply {
+        setupPlayButton()
+        setupStopButton()
+        setupTrackListRecyclerView()
+    }
 
-            playButton.setOnClickListener {
-                if (viewModel.getPlayerState() == PlayerState.PLAYING) {
-                    pause()
-                } else {
-                    play()
-                }
+    private fun initializeViewModelObservers() {
+
+        setupWorkoutObserver()
+        setupTimerObserver()
+        setupTrackObserver()
+        setupCurrentPlayingSongObserver()
+        setupPlayingSongInfoObserver()
+
+    }
+
+    fun timerNotEmpty() = binding.timerText.text.isNotEmpty()
+    fun getExtra() = intent?.extras?.getInt(WORKOUT_ID) ?: -1
+
+    private fun buildTrackListAdapter(): PlayerTracksAdapter {
+        return AdapterFactory.create(AdapterFlavour.PLAYER,
+            fetchImage = { imageView, imageUrl ->
+                Glide.with(this).load(imageUrl).into(imageView)
             }
-            stopButton.setOnClickListener {
-                pause()
-                showStopPlayerDialogFragment()
-            }
-            trackList.apply {
-                layoutManager =
-                    LinearLayoutManager(this@PlayerActivity, LinearLayoutManager.HORIZONTAL, false)
-                adapter = tracksAdapter
-            }
-        }
+        ) as PlayerTracksAdapter
     }
 
     private fun pause() {
@@ -125,52 +125,81 @@ class PlayerActivity : AppCompatActivity() {
         spotify.resumePlayer()
     }
 
-    private fun initializeViewModelObservers() {
 
-        viewModel.apply {
-
-            selectedWorkout.observe(this@PlayerActivity, { workout ->
-                binding.apply {
-                    workoutNameText.text = workout.name
-                }
-                viewModel.initializeWorkoutTracks(workout.tracks)
-            })
-
-            timerText.observe(this@PlayerActivity, { timerText ->
-                binding.timerText.text = timerText
-                spotify.stopSpotifyPlayer(timerText)
-            })
-
-            tracks.observe(this@PlayerActivity, { trackList ->
-                tracksAdapter.refreshTrackList(trackList)
-                binding.timerText.text = viewModel.initTimer(trackList.toList())
-                startTimer()
-            })
-
-            currentTrackPlaying.observe(this@PlayerActivity, { newSongPosition ->
-                if (viewModel.getPlayerState() != PlayerState.PAUSED) {
-                    tracksAdapter.refreshPlayingTrack(newSongPosition.position)
-                    spotify.play(getTrackUri(newSongPosition.position))
-                    binding.apply {
-                        trackProgressBar.progress = 0
-                        currentTimeText.text = getString(R.string.reset_song_time)
-                        songTotTimeText.text = formatTrackDuration(newSongPosition.position)
-                    }
-                    viewModel.resetSongTimer(newSongPosition.position)
-                }
-            })
-
-            playingTrackText.observe(this@PlayerActivity, { songCurrentTime ->
-                binding.currentTimeText.text = songCurrentTime
-                binding.trackProgressBar.progress = getProgress(songCurrentTime)
-            })
+    private fun setupPlayButton() {
+        binding.playButton.setOnClickListener {
+            if (viewModel.getPlayerState() == PlayerState.PLAYING) {
+                pause()
+            } else {
+                play()
+            }
         }
+    }
 
+    private fun setupStopButton() {
+        binding.stopButton.setOnClickListener {
+            pause()
+            showStopPlayerDialogFragment()
+        }
+    }
 
+    private fun setupTrackListRecyclerView() {
+        binding.trackList.apply {
+            layoutManager =
+                LinearLayoutManager(this@PlayerActivity, LinearLayoutManager.HORIZONTAL, false)
+            adapter = tracksAdapter
+        }
+    }
+
+    private fun setupPlayingSongInfoObserver() {
+        viewModel.playingTrackText.observe(this@PlayerActivity, { songCurrentTime ->
+            binding.currentTimeText.text = songCurrentTime
+            binding.trackProgressBar.progress = viewModel.getProgress(songCurrentTime)
+        })
+    }
+
+    private fun setupCurrentPlayingSongObserver() {
+        viewModel.currentTrackPlaying.observe(this@PlayerActivity, { newSongPosition ->
+            if (viewModel.getPlayerState() != PlayerState.PAUSED) {
+                tracksAdapter.refreshPlayingTrack(newSongPosition.position)
+                spotify.play(viewModel.getTrackUri(newSongPosition.position))
+                binding.apply {
+                    trackProgressBar.progress = 0
+                    currentTimeText.text = getString(R.string.reset_song_time)
+                    songTotTimeText.text = viewModel.formatTrackDuration(newSongPosition.position)
+                }
+                viewModel.resetSongTimer(newSongPosition.position)
+            }
+        })
+    }
+
+    private fun setupTrackObserver() {
+        viewModel.tracks.observe(this@PlayerActivity, { trackList ->
+            tracksAdapter.refreshTrackList(trackList)
+            binding.timerText.text = viewModel.initTimer(trackList.toList())
+            viewModel.startTimer()
+        })
+    }
+
+    private fun setupTimerObserver() {
+        viewModel.timerText.observe(this@PlayerActivity, { timerText ->
+            binding.timerText.text = timerText
+            spotify.stopSpotifyPlayer(timerText)
+        })
+    }
+
+    private fun setupWorkoutObserver() {
+        viewModel.selectedWorkout.observe(this@PlayerActivity, { workout ->
+            binding.apply {
+                workoutNameText.text = workout.name
+            }
+            viewModel.initializeWorkoutTracks(workout.tracks)
+        })
     }
 
     private fun showStopPlayerDialogFragment() {
-        StopPlayerDialogFragment(
+        DialogFactory.create(
+            DialogFlavour.STOP_PLAYER,
             ok = {
                 spotify.spotifyDisconnect()
                 finish()

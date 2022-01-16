@@ -22,22 +22,22 @@ class CreationDataAccess(
         return gsonResponse.tracks.items.map { it.toTrack() }
     }
 
+    //when database entity is empty -> return null
     override suspend fun getWorkout(): Workout? {
-
         val latestWorkout = dao.getLatestWorkout()
         return if (latestWorkout != null) {
-            toWorkout(latestWorkout)
+            latestWorkout.toWorkout()
         } else {
             null
         }
-
     }
 
+    //when database entity is empty -> map flow to null
     override fun getLatestWorkoutAsFlow() = dao.getLatestWorkoutAsFlow().map { roomEntity ->
         if (roomEntity == null) {
             null
         } else {
-            toWorkout(roomEntity)
+            roomEntity.toWorkout()
         }
     }
 

@@ -15,7 +15,7 @@ class ListDataAccess(
 
     override fun getWorkouts() = dao.getAllWorkouts().map { workoutRoomEntities ->
         workoutRoomEntities.map { workoutRoomEntity ->
-            toWorkout(workoutRoomEntity,emptyList<Track>())
+            workoutRoomEntity.toWorkout(emptyList<Track>())
         }
     }
 

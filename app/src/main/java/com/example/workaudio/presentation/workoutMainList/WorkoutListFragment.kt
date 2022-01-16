@@ -12,20 +12,25 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.Constants.ID_TAG
+import com.example.workaudio.Constants.MODAL_ACTION
+import com.example.workaudio.Constants.MODAL_TITLE
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentWorkoutListBinding
 import com.example.workaudio.Constants.TAG
-import com.example.workaudio.presentation.utils.itemTouchHelper.NavigationManager
+import com.example.workaudio.presentation.utils.NavigationManager
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
 import com.example.workaudio.presentation.utils.adapter.WorkoutAdapter
+import com.example.workaudio.presentation.utils.modal.BottomModalDialog
+import com.example.workaudio.presentation.utils.modal.ModalAction
 
 
 class WorkoutListFragment : Fragment() {
 
     companion object {
         private const val WORKOUTS_TO_NAME = R.id.action_workoutListFragment_to_nameFragment
-        private const val WORKOUTS_TO_DETAIL = R.id.action_workoutListFragment_to_workoutDetailFragment
+        private const val WORKOUTS_TO_DETAIL =
+            R.id.action_workoutListFragment_to_workoutDetailFragment
     }
 
     private lateinit var binding: FragmentWorkoutListBinding
@@ -74,12 +79,12 @@ class WorkoutListFragment : Fragment() {
             showModalBottomFragment(workoutId)
         },
         fetchImage = { imageView, imageUri ->
-            fetchImage(imageView,imageUri)
+            fetchImage(imageView, imageUri)
         }
     )
 
-    private fun fetchImage(imageView: ImageView, imageUri: String){
-        if(imageUri.isEmpty()){
+    private fun fetchImage(imageView: ImageView, imageUri: String) {
+        if (imageUri.isEmpty()) {
             return
         }
         Glide.with(requireActivity()).load(imageUri).into(imageView)
@@ -87,9 +92,13 @@ class WorkoutListFragment : Fragment() {
 
 
     private fun showModalBottomFragment(workoutId: Int) {
-        val modalBottomSheet = BottomModalSelectWorkout(workoutId) { id ->
-            viewModel.deleteWorkout(id)
-        }
+        val action: (String, Int) -> Unit = { _, id -> viewModel.deleteWorkout(id) }
+        val bundle = bundleOf(
+            MODAL_ACTION to ModalAction("", workoutId, action),
+            MODAL_TITLE to getString(R.string.delete_selected_workout)
+        )
+        val modalBottomSheet = BottomModalDialog()
+        modalBottomSheet.arguments = bundle
         modalBottomSheet.show(parentFragmentManager, TAG)
     }
 
