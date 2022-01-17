@@ -5,6 +5,6 @@ data class Workout(
     var name: String,
     var duration: Int,
     var tracks: List<Track>,
-    val imageUrl: String
+    var imageUrl: String
 )
 

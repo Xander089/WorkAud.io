@@ -7,6 +7,7 @@ import com.example.workaudio.core.usecases.searchTracks.SearchBoundary
 import com.example.workaudio.Constants.MILLISECONDS_IN_A_MINUTE
 import com.example.workaudio.Constants.MIN
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,6 +16,11 @@ import javax.inject.Inject
 class SearchTracksFragmentViewModel @Inject constructor(private val searchInteractor: SearchBoundary) :
     ViewModel() {
 
+
+    private var dispatcher: CoroutineDispatcher = Dispatchers.IO
+    fun setDispatcher(dispatcher: CoroutineDispatcher){
+        this.dispatcher = dispatcher
+    }
 
     var scrollState = 0
 
@@ -35,7 +41,7 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
     }
 
     fun addTrack(track: Track, workoutId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             searchInteractor.addTrack(track, workoutId)
         }
     }
@@ -51,7 +57,7 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
     }
 
     fun updateWorkoutDefaultImage(imageUrl: String, workoutId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             searchInteractor.updateWorkoutDefaultImage(imageUrl, workoutId)
         }
     }
@@ -62,8 +68,9 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
         return (current / target * 100).toInt()
     }
 
-    fun formatCurrentDuration(tracks: List<Track>): String =
-        tracks.map { it.duration / MILLISECONDS_IN_A_MINUTE }.sum().toString()
+    fun formatCurrentDuration(tracks: List<Track>): String {
+        return tracks.map { it.duration / MILLISECONDS_IN_A_MINUTE }.sum().toString()
+    }
 
     fun formatDuration(duration: Int): String =
         "/${(duration / MILLISECONDS_IN_A_MINUTE)}$MIN"

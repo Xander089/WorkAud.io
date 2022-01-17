@@ -3,6 +3,7 @@ package com.example.workaudio.presentation.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import com.example.workaudio.Constants.REQUEST_CODE
 import com.example.workaudio.R
@@ -55,6 +56,7 @@ class LoginActivity : AppCompatActivity() {
                 AuthorizationClient.getResponse(resultCode, intent)
 
             response.accessToken?.let { token ->
+                Log.v("tokenn", token)
                 viewModel.cacheSpotifyAuthToken(token)
                 startActivity(MainActivity.newIntent(this))
                 finish()
