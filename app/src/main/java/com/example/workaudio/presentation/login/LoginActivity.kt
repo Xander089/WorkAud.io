@@ -1,5 +1,6 @@
 package com.example.workaudio.presentation.login
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +10,7 @@ import com.example.workaudio.Constants.REQUEST_CODE
 import com.example.workaudio.R
 import com.example.workaudio.presentation.workoutMainList.MainActivity
 import com.example.workaudio.databinding.ActivityLoginBinding
+import com.example.workaudio.databinding.ActivityLoginEmptyBinding
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
@@ -20,14 +22,41 @@ class LoginActivity : AppCompatActivity() {
     private val viewModel: LoginViewModel by viewModels()
     private lateinit var binding: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = ActivityLoginBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
+
+        automaticLogin(ignoreLoginActivity())
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.loginButton.setOnClickListener {
             authenticateSpotify()
         }
+    }
 
+
+    private fun launchMainActivity() {
+        startActivity(MainActivity.newIntent(this))
+    }
+
+    private fun automaticLogin(isAutomatic: Boolean) {
+        if (isAutomatic) {
+            authenticateSpotify()
+        }
+    }
+
+    private fun ignoreLoginActivity(): Boolean =
+        getPreferences(Context.MODE_PRIVATE).getBoolean(getString(R.string.login_pref), false)
+
+    private fun saveLoginAction(doNotShowAnymore: Boolean) {
+        if (ignoreLoginActivity()) {
+            return
+        }
+
+        val sharedPref = getPreferences(Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putBoolean(getString(R.string.login_pref), doNotShowAnymore)
+            apply()
+        }
     }
 
     private fun authenticateSpotify() {
@@ -54,11 +83,10 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CODE) {
             val response: AuthorizationResponse =
                 AuthorizationClient.getResponse(resultCode, intent)
-
             response.accessToken?.let { token ->
-                Log.v("tokenn", token)
+                saveLoginAction(binding.dontShowAnymoreCheckBox.isChecked)
                 viewModel.cacheSpotifyAuthToken(token)
-                startActivity(MainActivity.newIntent(this))
+                launchMainActivity()
                 finish()
             }
 

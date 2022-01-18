@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +50,7 @@ class SearchTracksFragment : Fragment() {
         setupLayout()
         setupObservers()
 
+
         return binding.root
     }
 
@@ -61,11 +63,9 @@ class SearchTracksFragment : Fragment() {
     //provides search view in app bar menu
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
-
         val searchView = provideSearchView(menu.findItem(R.id.action_search))
         val searchManager = provideSearchManager()
         setupSearchView(searchView, searchManager)
-
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -97,6 +97,10 @@ class SearchTracksFragment : Fragment() {
         }
     }
 
+    private fun showSoftKeyboard(view: View) {
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
     private fun getResourceString(resId: Int) = requireActivity().resources.getString(resId)
     private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: 0
 

@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/drawable/ic_music.xml" value="0.2548717948717949" />
         <entry key="app/src/main/res/drawable/main_gradient.xml" value="0.2548717948717949" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.37604166666666666" />
+        <entry key="app/src/main/res/layout/activity_login_empty.xml" value="0.24270833333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/activity_player.xml" value="0.375" />
         <entry key="app/src/main/res/layout/dialog_duration.xml" value="0.37604166666666666" />

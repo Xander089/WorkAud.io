@@ -1,5 +1,6 @@
 package com.example.workaudio.presentation.workoutCreation
 
+import android.content.Context
 import android.os.Bundle
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
@@ -11,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentNameBinding
 import android.text.Editable
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.workaudio.Constants.WORKOUT_NAME
 import com.example.workaudio.presentation.utils.NavigationManager
 
@@ -36,8 +39,21 @@ class NameFragment : Fragment() {
         return binding.root
     }
 
+    private fun showSoftKeyboard(view: View) {
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+
     private fun setupLayoutFunctionality() {
         binding.apply {
+
+            workoutNameText.apply {
+                setOnFocusChangeListener { view, b ->
+                    showSoftKeyboard(view)
+                }
+                requestFocus()
+            }
+
             confirmNameButton.apply {
                 setOnClickListener {
                     val workoutName = workoutNameText.text.toString()
@@ -45,40 +61,39 @@ class NameFragment : Fragment() {
                     NavigationManager.navigateTo(findNavController(), NAME_TO_DURATION, bundle)
                 }
             }
-            cancelButton.setOnClickListener {
-                NavigationManager.navigateTo(findNavController(), NAME_TO_WORKOUTS)
-            }
-            workoutNameText.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable) {}
-                override fun beforeTextChanged(
-                    s: CharSequence, start: Int,
-                    count: Int, after: Int
-                ) {
-                }
+            cancelButton.setOnClickListener { NavigationManager.navigateTo(findNavController(), NAME_TO_WORKOUTS) }
+            workoutNameText.addTextChangedListener(listener)
+        }
+    }
 
-                override fun onTextChanged(
-                    s: CharSequence, start: Int,
-                    before: Int, count: Int
-                ) {
-                    if (s.length > 4) {
-                        confirmNameButton.apply {
-                            isEnabled = true
-                            setTextColor(
-                                requireActivity().resources.getColor(ENABLED_COLOR, null)
-                            )
-                            setStrokeColorResource(ENABLED_COLOR)
-                        }
-                    } else {
-                        confirmNameButton.apply {
-                            isEnabled = false
-                            setTextColor(
-                                requireActivity().resources.getColor(DISABLED_COLOR, null)
-                            )
-                            setStrokeColorResource(DISABLED_COLOR)
-                        }
-                    }
+    private val listener = object : TextWatcher {
+        override fun afterTextChanged(s: Editable) {}
+        override fun beforeTextChanged(
+            s: CharSequence, start: Int,
+            count: Int, after: Int
+        ) {}
+
+        override fun onTextChanged(
+            s: CharSequence, start: Int,
+            before: Int, count: Int
+        ) {
+            if (s.length > 4) {
+                binding.confirmNameButton.apply {
+                    isEnabled = true
+                    setTextColor(
+                        requireActivity().resources.getColor(ENABLED_COLOR, null)
+                    )
+                    setStrokeColorResource(ENABLED_COLOR)
                 }
-            })
+            } else {
+                binding.confirmNameButton.apply {
+                    isEnabled = false
+                    setTextColor(
+                        requireActivity().resources.getColor(DISABLED_COLOR, null)
+                    )
+                    setStrokeColorResource(DISABLED_COLOR)
+                }
+            }
         }
     }
 }
