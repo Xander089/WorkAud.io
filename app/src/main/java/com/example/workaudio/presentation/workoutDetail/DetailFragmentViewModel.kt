@@ -1,12 +1,12 @@
 package com.example.workaudio.presentation.workoutDetail
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.detail.DetailBoundary
 import com.example.workaudio.Constants.MILLIS_IN_A_MINUTE
 import com.example.workaudio.Constants.MIN
+import com.example.workaudio.DataHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ class DetailFragmentViewModel @Inject constructor(private val useCaseInteractor:
     ViewModel() {
 
     private var dispatcher: CoroutineDispatcher = Dispatchers.IO
-    fun setDispatcher(dispatcher: CoroutineDispatcher){
+    fun setDispatcher(dispatcher: CoroutineDispatcher) {
         this.dispatcher = dispatcher
     }
 
@@ -52,16 +52,22 @@ class DetailFragmentViewModel @Inject constructor(private val useCaseInteractor:
         }
     }
 
-    fun durationToMinutes(duration: Int) = "${(duration / MILLIS_IN_A_MINUTE)}$MIN"
 
-    fun getTracksDuration(tracks: List<Track>) =
-        durationToMinutes(tracks.map { it.duration }.sum())
+    fun getTracksDuration(tracks: List<Track>): String =
+        DataHelper.durationToMinutes(calculateTracksDuration(tracks))
 
-    fun tracksDurationCheck(tracks: List<Track>): Boolean {
-        return tracks.map { it.duration }.sum() >= targetDuration()
+    fun formatTargetDuration(duration: Int): String {
+        val minutes = DataHelper.durationToMinutes(duration)
+        return "/$minutes$MIN"
     }
 
-    private fun targetDuration() = selectedWorkout.value?.duration ?: 0
+
+    fun checkTracksDuration(tracks: List<Track>): Boolean {
+        return calculateTracksDuration(tracks) >= getTargetDuration()
+    }
+
+    private fun getTargetDuration() = selectedWorkout.value?.duration ?: 0
+    private fun calculateTracksDuration(tracks: List<Track>) = tracks.map { it.duration }.sum()
 
 
 }

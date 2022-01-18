@@ -29,8 +29,6 @@ import com.example.workaudio.presentation.utils.adapter.DetailTracksAdapter
 import com.example.workaudio.presentation.utils.modal.BottomModalDialog
 import com.example.workaudio.presentation.utils.modal.ModalAction
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 
 
 class DetailFragment : Fragment() {
@@ -176,12 +174,12 @@ class DetailFragment : Fragment() {
 
             binding.apply {
                 topAppBar.title = workout.name
-                durationText.text = viewModel.durationToMinutes(workout.duration)
+                targetDurationText.text = viewModel.formatTargetDuration(workout.duration)
             }
         })
 
         viewModel.tracks.observe(this, { tracks ->
-            togglePlayButton(viewModel.tracksDurationCheck(tracks))
+            togglePlayButton(viewModel.checkTracksDuration(tracks))
             binding.durationText.text = viewModel.getTracksDuration(tracks)
             workoutAdapter.refreshTrackList(tracks)
         })

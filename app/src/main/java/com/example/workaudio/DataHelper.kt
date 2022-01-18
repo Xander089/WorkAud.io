@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException
 
 object DataHelper {
 
+    fun durationToMinutes(duration: Int) = "${(duration / Constants.MILLIS_IN_A_MINUTE)}"
 
     fun fromTimeToSeconds(time: String): Int {
         val timeList = time.split(":").map {
