@@ -15,6 +15,8 @@ import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentEditingTracksBinding
 import com.example.workaudio.Constants.ID_TAG
+import com.example.workaudio.presentation.utils.OnScrollListenerFactory
+import com.example.workaudio.presentation.utils.QueryTextListenerFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
 import com.example.workaudio.presentation.utils.adapter.SearchedTracksAdapter
@@ -32,14 +34,7 @@ class SearchTracksFragment : Fragment() {
     private lateinit var trackListAdapter: SearchedTracksAdapter
     private lateinit var binding: FragmentEditingTracksBinding
 
-    private val searchTracksQueryTextListener = object : SearchView.OnQueryTextListener {
-        override fun onQueryTextChange(newText: String): Boolean {
-            viewModel.searchTracks(newText)
-            return true
-        }
-
-        override fun onQueryTextSubmit(query: String) = true
-    }
+    /* Lifecycle callbacks*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,12 +52,13 @@ class SearchTracksFragment : Fragment() {
         return binding.root
     }
 
+    //in order to provide app bar menu
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
-
+    //provides search view in app bar menu
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
 
@@ -73,6 +69,7 @@ class SearchTracksFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    //when tapping the navigation icon in app bar, navigate to previous fragment
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -89,9 +86,13 @@ class SearchTracksFragment : Fragment() {
     private fun provideSearchManager(): SearchManager =
         requireActivity().getSystemService(Context.SEARCH_SERVICE) as SearchManager
 
+    //setup the search view query text listener
     private fun setupSearchView(searchView: SearchView, searchManager: SearchManager) {
         searchView.apply {
             setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
+            val searchTracksQueryTextListener = QueryTextListenerFactory.create { newText ->
+                viewModel.searchTracks(newText)
+            }
             setOnQueryTextListener(searchTracksQueryTextListener)
         }
     }
@@ -114,26 +115,24 @@ class SearchTracksFragment : Fragment() {
         ) as SearchedTracksAdapter
     }
 
+    //when user scrolls up, hide the app bar
     private fun addOnScrollListener() {
-        binding.trackList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                viewModel.scrollState = newState
-            }
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                if (dy > 0 && (viewModel.scrollState in listOf(0, 2))) {
-                    binding.topAppBar.visibility = View.GONE
-                } else {
-                    binding.topAppBar.visibility = View.VISIBLE
-                }
-            }
-
-        })
+        binding.trackList.addOnScrollListener(OnScrollListenerFactory.create(
+            onScrollStateChanged = {dy -> onScrolledStateChanged(dy)},
+            onScrolled = {newState -> viewModel.scrollState = newState}
+        ))
     }
 
+    private fun onScrolledStateChanged(dy: Int){
+        if (dy > 0 && (viewModel.scrollState in listOf(0, 2))) {
+            binding.topAppBar.visibility = View.GONE
+        } else {
+            binding.topAppBar.visibility = View.VISIBLE
+        }
+
+    }
+
+    //when user add a tracks, then show snackbar with title track
     private fun showAddedTrackSnackBar(titleTrack: String) = Snackbar.make(
         binding.root,
         viewModel.formatSnackBarText(

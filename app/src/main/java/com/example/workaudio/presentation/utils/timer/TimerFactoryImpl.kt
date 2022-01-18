@@ -7,7 +7,10 @@ class TimerFactoryImpl : AbstractTimerFactory {
         delayTime: Long,
         ascending: Boolean
     ): AbstractTimer =
-        if (ascending) AscendingTimer(seconds, delayTime)
-        else DescendingTimer(seconds, delayTime)
+        if (ascending) {
+            AscendingTimer(seconds, delayTime)
+        } else {
+            DescendingTimer(seconds, delayTime)
+        }
 
 }

@@ -1,4 +1,4 @@
-package com.example.workaudio
+package com.example.workaudio.useCaseInteractors.search
 
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout

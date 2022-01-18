@@ -14,18 +14,22 @@ class FakeSearchBoundary : SearchBoundary {
         imageUrl = "test",
         tracks = emptyList()
     )
-    private val track = Track("title", "uri", 1000, "artist", "album", "url", 0)
+    private val track = Track("title", "uri", 1000*60*3, "artist", "album", "url", 0)
     private val trackList = mutableListOf(track)
 
 
     override fun getWorkout(id: Int): Flow<Workout> {
-        return flow {
+        return if (id != 0) {
+            flow { }
+        } else flow {
             emit(workout)
         }
     }
 
     override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>> {
-        return flow {
+        return if (workoutId != 0) {
+            flow { }
+        } else flow {
             emit(trackList)
         }
     }

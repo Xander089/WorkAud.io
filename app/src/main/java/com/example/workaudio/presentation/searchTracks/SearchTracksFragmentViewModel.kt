@@ -18,15 +18,16 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
 
 
     private var dispatcher: CoroutineDispatcher = Dispatchers.IO
-    fun setDispatcher(dispatcher: CoroutineDispatcher){
+    var scrollState = 0
+    private var targetDuration = -1
+
+    fun setDispatcher(dispatcher: CoroutineDispatcher) {
         this.dispatcher = dispatcher
     }
 
-    var scrollState = 0
 
     private val _searchedTracks = MutableLiveData<List<Track>>()
     val searchedTracks: LiveData<List<Track>> = _searchedTracks
-    private var targetDuration = -1
     var currentWorkout: LiveData<Workout> = MutableLiveData<Workout>()
     var workoutTracks: LiveData<List<Track>> = MutableLiveData()
 
@@ -68,9 +69,9 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
         return (current / target * 100).toInt()
     }
 
-    fun formatCurrentDuration(tracks: List<Track>): String {
-        return tracks.map { it.duration / MILLISECONDS_IN_A_MINUTE }.sum().toString()
-    }
+    fun formatCurrentDuration(tracks: List<Track>): String =
+        tracks.map { it.duration / MILLISECONDS_IN_A_MINUTE }.sum().toString()
+
 
     fun formatDuration(duration: Int): String =
         "/${(duration / MILLISECONDS_IN_A_MINUTE)}$MIN"

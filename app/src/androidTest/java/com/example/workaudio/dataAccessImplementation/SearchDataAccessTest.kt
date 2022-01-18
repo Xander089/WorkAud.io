@@ -1,19 +1,16 @@
-package com.example.workaudio
+package com.example.workaudio.dataAccessImplementation
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.workaudio.core.entities.Track
-import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.data.database.ApplicationDAO
 import com.example.workaudio.data.database.ApplicationDatabase
 import com.example.workaudio.data.database.WorkoutRoomEntity
 import com.example.workaudio.data.web.SpotifyRestApi
 import com.example.workaudio.data.web.SpotifyWebService
-import com.example.workaudio.libraries.hilt.ApplicationModule
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient

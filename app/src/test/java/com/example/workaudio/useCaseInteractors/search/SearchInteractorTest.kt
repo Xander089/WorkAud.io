@@ -1,12 +1,10 @@
-package com.example.workaudio
+package com.example.workaudio.useCaseInteractors.search
 
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
 
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
