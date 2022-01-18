@@ -7,6 +7,7 @@
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.2824074074074074" />
         <entry key="app/src/main/res/drawable/ic_add_medium.xml" value="0.2548717948717949" />
         <entry key="app/src/main/res/drawable/ic_circle_add.xml" value="0.2824074074074074" />
+        <entry key="app/src/main/res/drawable/ic_font_1.xml" value="0.24814814814814815" />
         <entry key="app/src/main/res/drawable/ic_music.xml" value="0.2548717948717949" />
         <entry key="app/src/main/res/drawable/main_gradient.xml" value="0.2548717948717949" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.37604166666666666" />
@@ -21,7 +22,7 @@
         <entry key="app/src/main/res/layout/fragment_name.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/fragment_tracks.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/fragment_workout_detail.xml" value="0.3754534995013082" />
-        <entry key="app/src/main/res/layout/fragment_workout_list.xml" value="0.37604166666666666" />
+        <entry key="app/src/main/res/layout/fragment_workout_list.xml" value="0.375" />
         <entry key="app/src/main/res/layout/item_detail_track.xml" value="0.27291666666666664" />
         <entry key="app/src/main/res/layout/item_detail_track_horizontal.xml" value="0.375" />
         <entry key="app/src/main/res/layout/item_track.xml" value="0.37604166666666666" />

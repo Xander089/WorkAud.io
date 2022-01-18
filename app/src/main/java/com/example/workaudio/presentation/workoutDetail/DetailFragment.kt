@@ -84,6 +84,8 @@ class DetailFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+
+
     private fun buildAdapter() {
         workoutAdapter = AdapterFactory.create(
             AdapterFlavour.DETAIL,
@@ -94,7 +96,7 @@ class DetailFragment : Fragment() {
                 showModalBottomFragment(uri)
             },
             onSwipe = { uri ->
-                showModalBottomFragment(uri)
+                viewModel.deleteTrack(uri)
             }
         ) as DetailTracksAdapter
         mItemTouchHelper = ItemTouchHelper(SwipeHelperCallback(workoutAdapter))
