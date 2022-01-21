@@ -24,6 +24,8 @@ import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchDataAccessInterface
 import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
 import com.example.workaudio.core.usecases.searchTracks.SearchBoundary
+import com.example.workaudio.presentation.utils.timer.AbstractTimerFactory
+import com.example.workaudio.presentation.utils.timer.TimerFactoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -84,6 +86,10 @@ abstract class AbstractApplicationModule {
     @Singleton
     @Binds
     abstract fun bindNavigationDataAccessInterface(dataAccessImpl: ListDataAccess): ListDataAccessInterface
+
+    @Singleton
+    @Binds
+    abstract fun bindTimer(timerFactoryImpl: TimerFactoryImpl): AbstractTimerFactory
 
 
 }

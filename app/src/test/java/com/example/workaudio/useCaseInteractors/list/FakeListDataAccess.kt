@@ -1,13 +1,15 @@
-package com.example.workaudio.viewmodels.fakeBoundary
+package com.example.workaudio.useCaseInteractors.list
 
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
-import com.example.workaudio.core.usecases.workoutList.ListInteractor
-import com.example.workaudio.core.usecases.workoutList.ListBoundary
+import com.example.workaudio.core.usecases.searchTracks.SearchDataAccessInterface
+import com.example.workaudio.core.usecases.workoutList.ListDataAccess
+import com.example.workaudio.core.usecases.workoutList.ListDataAccessInterface
+import com.example.workaudio.data.database.WorkoutRoomEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FakeNavigationBoundary: ListBoundary {
+class FakeListDataAccess : ListDataAccessInterface {
 
     private val workout = Workout(
         name = "test_name",
@@ -21,18 +23,19 @@ class FakeNavigationBoundary: ListBoundary {
     private val trackList = mutableListOf(track)
 
 
-    override suspend fun deleteWorkout(workoutId: Int) {
-        workoutList.removeAt(workoutId)
-        getWorkouts()
-    }
-
     override fun getWorkouts(): Flow<List<Workout>> {
         return flow { emit(workoutList) }
-
     }
 
-    override suspend fun getWorkoutTrack(id: Int): ListInteractor.JoinedTrack {
-        TODO("Not yet implemented")
+    override suspend fun deleteWorkout(workoutId: Int) {
+        workoutList.removeIf {
+            it.id == workoutId
+        }
     }
+
+    override suspend fun getWorkoutTrack(workoutId: Int): Track {
+        return trackList.first()
+    }
+
 
 }

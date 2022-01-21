@@ -13,10 +13,6 @@ class LoginViewModel @Inject constructor(private val useCaseInteractor: LoginBou
     ViewModel() {
 
 
-    fun getToken(){
-
-    }
-
     fun cacheSpotifyAuthToken(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
             useCaseInteractor.insertToken(token)

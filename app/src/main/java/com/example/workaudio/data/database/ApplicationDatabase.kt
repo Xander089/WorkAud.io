@@ -6,8 +6,7 @@ import androidx.room.*
     entities = [
         WorkoutRoomEntity::class,
         WorkoutTracksRoomEntity::class,
-        TokenRoomEntity::class,
-        CurrentPosition::class
+        TokenRoomEntity::class
     ], version = 1
 )
 abstract class ApplicationDatabase : RoomDatabase() {
@@ -39,16 +38,6 @@ data class WorkoutTracksRoomEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
 
-}
-
-
-//when the audio player is active, this entity logs the current playing track
-@Entity
-data class CurrentPosition(
-    @ColumnInfo(name = "position") val position: Int = 0
-) {
-    @PrimaryKey(autoGenerate = true)
-    var id: Int = 0
 }
 
 

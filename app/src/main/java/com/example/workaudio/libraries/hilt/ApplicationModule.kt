@@ -22,6 +22,8 @@ import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
 import com.example.workaudio.libraries.spotify.SpotifyManager
 import com.example.workaudio.presentation.player.PlayerViewModel
 import com.example.workaudio.presentation.searchTracks.SearchTracksFragmentViewModel
+import com.example.workaudio.presentation.utils.timer.AbstractTimerFactory
+import com.example.workaudio.presentation.utils.timer.TimerFactoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -145,6 +147,11 @@ object ApplicationModule {
     @Provides
     fun provideSearchViewModel(boundary: SearchBoundary) =
         SearchTracksFragmentViewModel(boundary)
+
+    @Singleton
+    @Provides
+    fun provideTimer() = TimerFactoryImpl()
+
 
 
 

@@ -3,7 +3,6 @@
     <string name="delete_selected_track">Delete selected track</string>
     <string name="delete_selected_workout">Delete selected workout</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="workout_name">workout_name</string>
     <string name="workout_duration">workout_duration</string>
     <string name="reset_time">00:00:00</string>
     <string name="reset_song_time">00:00</string>
@@ -20,4 +19,13 @@
     <string name="callback">http://10.0.2.2:8090/callback</string>
     <string name="client_id">522adc8dc0d643bea4200d7e3721dbc5</string>
     <string name="login_pref">login_pref</string>
+    <string name="player_timer">player_timer</string>
+    <string name="song_timer">song_timer</string>
+    <string name="song_duration">song_duration</string>
+    <string name="workout_name">workout_name</string>
+    <string name="song_name">song_name</string>
+    <string name="song_artist">song_artist</string>
+    <string name="workout_id">workout_id</string>
+    <string name="progress_bar_value">progress_bar_value</string>
+    <string name="current_song">current_song</string>
 </resources>

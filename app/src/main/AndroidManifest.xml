@@ -13,10 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WorkAudIo">
         <activity
-            android:name=".presentation.DummyActivity"
-            android:exported="false" />
-        <activity
             android:name=".presentation.player.PlayerActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".presentation.login.LoginActivity"

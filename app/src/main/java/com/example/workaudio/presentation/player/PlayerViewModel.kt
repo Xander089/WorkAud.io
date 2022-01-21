@@ -1,10 +1,14 @@
 package com.example.workaudio.presentation.player
 
 import androidx.lifecycle.*
+import androidx.room.Update
+import com.example.workaudio.Constants.DEFAULT_DELAY_TIME
+import com.example.workaudio.Constants.MILLIS_TO_SECOND
 import com.example.workaudio.DataHelper
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.player.PlayerBoundary
+import com.example.workaudio.presentation.utils.timer.AbstractTimerFactory
 import com.example.workaudio.presentation.utils.timer.TimerFactoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -28,14 +32,14 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
         playerState = state
     }
 
-    //WORKOUT AND TRACKS
-    val currentTrackPlaying = playerInteractor.getCurrentPosition().asLiveData()
-    var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
-    private var _tracks = MutableLiveData<List<PlayingTrack>>()
-    val tracks: LiveData<List<PlayingTrack>> = _tracks
+    //Workout & Player Position
+    var workout: LiveData<Workout> = MutableLiveData<Workout>()
+    private var _playerPosition = MutableLiveData<Int>(0)
+    var playerPosition: LiveData<Int> = _playerPosition
+    private fun getPlayerPosition() = _playerPosition.value ?: 0
 
-    //TIMER
-    private val timerFactory = TimerFactoryImpl()
+    @Inject
+    lateinit var timerFactory: AbstractTimerFactory
 
     //MAIN PLAYER TIMER
     private var countDownTimer: Flow<Int>? = null
@@ -45,168 +49,139 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
 
     //CURRENT PLAYING SONG TIMER
     private var songTimer: Flow<Int>? = null
-    private lateinit var songJob: Job
+    private var songJob: Job? = null
     private val _playingTrackText = MutableLiveData<String>()
-    val playingTrackText: LiveData<String> = _playingTrackText
+    val songTimerText: LiveData<String> = _playingTrackText
 
 
-    fun startTimer() {
+    fun emitWorkout(workoutId: Int) {
+        workout = liveData(Dispatchers.IO) {
+            delay(DEFAULT_DELAY_TIME)
+            val workout = playerInteractor.getWorkout(workoutId)
+            val totalDuration = calculateTotalTracksTime(workout.tracks)
+            val firstTrackDuration = getTrackDuration(0).toInt()
+            songTimer = createTimer(firstTrackDuration, true)
+            countDownTimer = createTimer(totalDuration, false)
+            emit(workout)
+        }
+    }
+
+    private fun createTimer(seconds: Int, ascending: Boolean): Flow<Int> =
+        timerFactory.create(seconds, DEFAULT_DELAY_TIME, ascending).get()
+
+    fun initTimer() {
         playerState = PlayerState.PLAYING
         setTracksEndingTime()
         startMainTimerJob()
-        startSongTimerJob()
+        _playerPosition.value = 0
+
+    }
+
+    private fun createJob(flow: Flow<Int>?, update: (Int) -> Unit): Job = viewModelScope.launch {
+        flow?.cancellable()?.collect { currentTime ->
+            update(currentTime)
+        }
+    }
+
+    private fun Job.launch() {
+        viewModelScope.launch {
+            this@launch.join()
+        }
+    }
+
+
+    private fun startSongTimerJob() {
+        songJob = createJob(songTimer) { currentTime ->
+            _playingTrackText.value = DataHelper.formatTrackDuration(currentTime)
+        }.also {
+            it.launch()
+        }
+
     }
 
     private fun startMainTimerJob() {
-        timerJob = viewModelScope.launch {
-            playerInteractor.updateCurrentPosition(0)
-            countDownTimer?.cancellable()?.collect { currentTime ->
-                _timerText.value = DataHelper.toTime(currentTime)
-                setNextSong(currentTime, getCurrentPlayingSongEndingTime())
-            }
-        }
-        viewModelScope.launch {
-            timerJob.join()
-        }
-    }
-
-    private fun startSongTimerJob() {
-        songJob = viewModelScope.launch {
-            songTimer?.cancellable()?.collect { currentTime ->
-                _playingTrackText.value = DataHelper.formatTrackDuration(currentTime)
-            }
-        }
-        viewModelScope.launch {
-            songJob.join()
-        }
-    }
-
-    fun restartTimer(time: String, songTime: String) {
-        val seconds = DataHelper.fromTimeToSeconds(time)
-        val songSeconds = DataHelper.fromMinutesToSeconds(songTime)
-        countDownTimer = timerFactory.create(seconds, 1000L, false).get()
-        songTimer = timerFactory.create(songSeconds, 1000L, true).get()
-        restartMainTimerJob()
-        startSongTimerJob()
-    }
-
-    private fun restartMainTimerJob() {
-        timerJob = viewModelScope.launch {
-            countDownTimer?.cancellable()?.collect { currentTime ->
-                _timerText.value = DataHelper.toTime(currentTime)
-                setNextSong(currentTime, getCurrentPlayingSongEndingTime())
-            }
-        }
-        viewModelScope.launch {
-            timerJob.join()
-        }
-    }
-
-    private fun getPlayerPosition() = currentTrackPlaying.value?.position ?: 0
-    private fun getCurrentPlayingSongEndingTime() =
-        tracks.value?.get(getPlayerPosition())?.endingTime ?: 0
-
-
-    fun stopTimer() {
-        timerJob.cancel()
-        countDownTimer = null
-        songJob.cancel()
-        songTimer = null
-    }
-
-    private fun stopSongTimer() {
-        songJob.cancel()
-        songTimer = null
-    }
-
-    fun resetSongTimer(position: Int) {
-        stopSongTimer()
-        val nextSongDuration = (getTrack(position)?.duration ?: 0) / 1000
-        songTimer = timerFactory.create(nextSongDuration, 1000L, true).get()
-        startSongTimerJob()
-    }
-
-    private fun setTracksEndingTime() {
-        var totTime = tracks.value?.map { track -> track.duration }?.sum() ?: 0
-        tracks.value?.forEach { track ->
-            track.endingTime = totTime - track.duration
-            totTime -= track.duration
+        timerJob = createJob(countDownTimer) { currentTime ->
+            _timerText.value = DataHelper.toTime(currentTime)
+            setNextSong(currentTime, getCurrentPlayingSongEndingTime())
+        }.also {
+            it.launch()
         }
     }
 
     private fun setNextSong(currentTime: Int, currentSongEndingTime: Int) {
         if (currentTime <= 0) {
             return
-        } else if (currentTime <= currentSongEndingTime / 1000) {
-            viewModelScope.launch(Dispatchers.IO) {
-                playerInteractor.updateCurrentPosition(1)
+        } else if (currentTime <= currentSongEndingTime * MILLIS_TO_SECOND) {
+            _playerPosition.value = getPlayerPosition() + 1
+        }
+    }
+
+
+    fun restartTimer(time: String, songTime: String) {
+        val seconds = DataHelper.fromTimeToSeconds(time)
+        val songSeconds = DataHelper.fromMinutesToSeconds(songTime)
+        countDownTimer = createTimer(seconds, false)
+        songTimer = createTimer(songSeconds, true)
+        startMainTimerJob()
+        startSongTimerJob()
+    }
+
+
+    fun stopTimer() {
+        timerJob.cancel()
+        countDownTimer = null
+        songJob?.cancel()
+        songTimer = null
+    }
+
+    private fun disposeSongTimer() {
+        songJob?.cancel()
+        songTimer = null
+    }
+
+    fun setSongTimer(position: Int) {
+        disposeSongTimer()
+        val nextSongDuration = getTrackDuration(position).toInt()
+        songTimer = createTimer(nextSongDuration, true)
+        startSongTimerJob()
+    }
+
+    private fun setTracksEndingTime() {
+        getTracks().let { tracks ->
+            var totTime = tracks.map { track -> track.duration }.sum()
+            tracks.forEach { track ->
+                track.endingTime = totTime - track.duration
+                totTime -= track.duration
             }
         }
     }
 
-    fun initializeWorkoutTracks(currentTracks: List<Track>) {
-        _tracks.value = currentTracks.map {
-            it.toPlayingTrack()
-        }
-        (currentTracks[0].duration / 1000).let { songDuration ->
-            initializeSongTimer(songDuration)
-        }
-    }
-
-    private fun initializeSongTimer(seconds: Int) {
-        songTimer = timerFactory.create(seconds, 1000L, true).get()
-    }
-
-    fun initializeCurrentWorkout(workoutId: Int) {
-        selectedWorkout = liveData(Dispatchers.IO) {
-            delay(1000)
-            playerInteractor.apply {
-                val workout = getWorkout(workoutId)
-                clearCurrentPosition()
-                insertCurrentPosition(0)
-
-                countDownTimer = timerFactory.create(
-                    calculateTotalTracksTime(workout.tracks),
-                    1000L,
-                    false
-                ).get()
-
-                emit(workout)
-            }
-        }
-
-    }
-
-    fun getTrackUri(position: Int) = tracks.value?.get(position)?.uri.orEmpty()
-    private fun getTrack(position: Int) = tracks.value?.get(position)
+    private fun getCurrentPlayingSongEndingTime() = getTracks()[getPlayerPosition()].endingTime
+    private fun getTracks() = workout.value?.tracks.orEmpty()
+    private fun getTrack(position: Int) = workout.value?.tracks?.get(position)
+    fun getTrackUri(position: Int) = getTrack(position)?.uri.orEmpty()
+    fun getTrackName(position: Int) = getTrack(position)?.title.orEmpty()
+    fun getTrackArtist(position: Int) = getTrack(position)?.artist.orEmpty()
     private fun calculateTotalTracksTime(tracks: List<Track>) =
-        tracks.map { it.duration / 1000 }.sum()
+        tracks.map { it.duration * MILLIS_TO_SECOND }.sum().toInt()
 
-    fun initTimer(tracks: List<PlayingTrack>): String {
-        val currentPlaylistTotalTime = tracks.map { it.duration }.sum() / 1000
-        return DataHelper.toTime(currentPlaylistTotalTime)
+    private fun getTrackDuration(position: Int) =
+        (((getTrack(position)?.duration) ?: 0) * MILLIS_TO_SECOND)
+
+    fun formatTimer(tracks: List<Track>): String {
+        val totTime = (tracks.map { it.duration }.sum() * MILLIS_TO_SECOND).toInt()
+        return DataHelper.toTime(totTime)
     }
 
     fun formatTrackDuration(position: Int): String {
-        val seconds = ((getTrack(position)?.duration) ?: 0) / 1000
+        val seconds = getTrackDuration(position).toInt()
         return DataHelper.formatTrackDuration(seconds)
     }
 
     fun getProgress(minutes: String): Int {
         val currentSeconds = DataHelper.fromMinutesToSeconds(minutes).toFloat()
-        val currentPosition = currentTrackPlaying.value?.position ?: 0
-        val totalSeconds = (((getTrack(currentPosition)?.duration) ?: 0) / 1000).toFloat()
+        val totalSeconds = getTrackDuration(getPlayerPosition())
         return (currentSeconds / totalSeconds * 100).toInt()
     }
-
-    private fun Track.toPlayingTrack() = PlayingTrack(
-        this.title,
-        this.uri,
-        this.duration,
-        this.artist,
-        this.album,
-        this.imageUrl,
-        this.endingTime
-    )
 
 }

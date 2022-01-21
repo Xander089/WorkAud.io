@@ -31,7 +31,7 @@ class PlayerActivityTest {
         activityScenario = ActivityScenario.launch<PlayerActivity>(intent)
         activityScenario.moveToState(Lifecycle.State.STARTED)
         activityScenario.onActivity {
-            assert(it.getExtra() == 4)
+            assert(it.getCurrentWorkoutId() == 4)
         }
 
     }

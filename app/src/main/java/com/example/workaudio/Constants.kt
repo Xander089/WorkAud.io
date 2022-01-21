@@ -3,6 +3,8 @@ package com.example.workaudio
 object Constants {
 
     const val LABEL = "Delete Selected Track"
+    const val MILLIS_TO_SECOND = 0.001
+    const val DEFAULT_DELAY_TIME = 1000L
     const val BEARER = "Bearer"
     const val SEARCH_TYPE = "track"
     const val MODAL_TITLE = "title"
