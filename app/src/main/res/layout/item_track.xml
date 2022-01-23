@@ -33,7 +33,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_circle_add"
-            app:tint="@color/white" />
+            app:tint="@color/white"
+            android:contentDescription="@string/content" />
 
         <ImageView
             android:id="@+id/trackImage"
@@ -45,16 +46,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:srcCompat="@tools:sample/avatars"
+            android:contentDescription="@string/content" />
 
         <TextView
             android:id="@+id/durationTrackText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-
             android:layout_marginTop="8dp"
-            android:text="duration"
+            android:text="@string/duration"
             android:textColor="@color/grey"
             app:layout_constraintStart_toEndOf="@+id/trackImage"
             app:layout_constraintTop_toBottomOf="@+id/artistNameText" />
@@ -65,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:text="Artist"
+            android:text="@string/artist"
             android:textColor="@color/grey"
             app:layout_constraintEnd_toEndOf="@+id/trackNameText"
             app:layout_constraintStart_toEndOf="@+id/trackImage"
@@ -83,7 +84,7 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="name"
+            android:text="@string/name"
             android:textAllCaps="false"
             android:textColor="@color/grey"
             app:layout_constraintEnd_toStartOf="@+id/addButton"

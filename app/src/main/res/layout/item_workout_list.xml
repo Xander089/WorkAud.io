@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
@@ -29,7 +28,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_settings"
-            app:tint="@color/grey" />
+            app:tint="@color/grey"
+            android:contentDescription="@string/content" />
 
         <TextView
             android:id="@+id/playlistNameText"
@@ -39,7 +39,6 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="2dp"
             android:fontFamily="@font/hammersmith_one"
-            android:text="My custom playlist"
             android:textAllCaps="false"
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/durationPlaylistText"
@@ -55,7 +54,7 @@
             android:layout_marginTop="2dp"
             android:fontFamily="@font/hammersmith_one"
             android:letterSpacing="0.01"
-            android:text="30 min, 20 songs"
+            android:text="@string/duration_info"
             android:textColor="@color/grey3"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"

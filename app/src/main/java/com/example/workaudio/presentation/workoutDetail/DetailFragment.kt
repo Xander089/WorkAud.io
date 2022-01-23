@@ -22,6 +22,7 @@ import com.example.workaudio.presentation.utils.dialogs.DialogFactory
 import com.example.workaudio.presentation.utils.dialogs.DialogFlavour
 import com.example.workaudio.presentation.player.PlayerActivity
 import com.example.workaudio.presentation.utils.NavigationManager
+import com.example.workaudio.presentation.utils.OnScrollListenerFactory
 import com.example.workaudio.presentation.utils.itemTouchHelper.SwipeHelperCallback
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
@@ -74,7 +75,7 @@ class DetailFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-                NavigationManager.navigateTo(findNavController(),DETAIL_TO_WORKOUTS)
+                NavigationManager.navigateTo(findNavController(), DETAIL_TO_WORKOUTS)
             }
             R.id.action_edit -> {
                 showEditNameDialogFragment()
@@ -83,7 +84,6 @@ class DetailFragment : Fragment() {
         }
         return super.onOptionsItemSelected(item)
     }
-
 
 
     private fun buildAdapter() {
@@ -104,23 +104,19 @@ class DetailFragment : Fragment() {
     }
 
     private fun addOnScrollListener() {
-        binding.trackList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                viewModel.scrollState = newState
-            }
+        binding.trackList.addOnScrollListener(
+            OnScrollListenerFactory.create(
+                onScrollStateChanged = { newState -> viewModel.scrollState = newState },
+                onScrolled = { dy -> onScrolled(dy) }
+            ))
+    }
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                if (dy > 0 && (viewModel.scrollState in listOf(0, 2))) {
-                    binding.topAppBar.visibility = View.GONE
-                } else {
-                    binding.topAppBar.visibility = View.VISIBLE
-                }
-            }
-
-        })
+    private fun onScrolled(dy: Int) {
+        if (dy > 0 && (viewModel.scrollState in listOf(0, 2))) {
+            binding.topAppBar.visibility = View.GONE
+        } else {
+            binding.topAppBar.visibility = View.VISIBLE
+        }
     }
 
     private fun showModalBottomFragment(trackUri: String) {
@@ -144,9 +140,6 @@ class DetailFragment : Fragment() {
                 layoutManager = LinearLayoutManager(requireContext())
                 adapter = workoutAdapter
             }
-            playButton.setOnClickListener {
-                startPlayerActivity()
-            }
             editTracksButton.setOnClickListener {
                 val workoutId = getWorkoutId()
                 val bundle = bundleOf(ID_TAG to workoutId)
@@ -158,15 +151,6 @@ class DetailFragment : Fragment() {
             }
             targetDurationText.setOnClickListener {
                 showEditDurationDialogFragment()
-            }
-
-            infoButton.setOnClickListener {
-                Snackbar.make(
-                    binding.root,
-                    getString(R.string.snackbar_duration_info),
-                    Snackbar.LENGTH_SHORT
-                )
-                    .show()
             }
         }
     }
@@ -189,18 +173,28 @@ class DetailFragment : Fragment() {
     }
 
     private fun togglePlayButton(enabled: Boolean) {
-        binding.playButton.isEnabled = enabled
-        if (enabled) {
-            binding.playButton.setStrokeColorResource(R.color.yellow)
-            binding.playButton.setTextColor(getColor(R.color.yellow))
-        } else {
-            binding.playButton.setStrokeColorResource(R.color.grey2)
-            binding.playButton.setTextColor(getColor(R.color.grey2))
+        binding.playButton.setOnClickListener {
+            when (enabled) {
+                true -> startPlayerActivity()
+                false -> showSnackBar()
+            }
         }
-
     }
 
-    private fun getColor(id: Int) = requireActivity().resources.getColor(id, null)
+    private fun showSnackBar() {
+        val firstPart = getString(R.string.snackbar_duration_info)
+        val secondPart = getString(R.string.snackbar_duration_info_second)
+        val duration = viewModel.getTargetDurationText()
+        val message = "$firstPart $duration $secondPart"
+        Snackbar.make(
+            binding.root,
+            message,
+            Snackbar.LENGTH_SHORT
+        )
+            .show()
+    }
+
+    private fun getColor(id: Int) = context?.resources?.getColor(id, null)
 
     private fun startPlayerActivity() {
         startActivity(
@@ -226,8 +220,8 @@ class DetailFragment : Fragment() {
         DialogFactory.create(
             DialogFlavour.EDIT_DURATION,
             updateDuration = { duration ->
-            viewModel.updateWorkoutDuration(getWorkoutId(), duration)
-        })
+                viewModel.updateWorkoutDuration(getWorkoutId(), duration)
+            })
             .show(parentFragmentManager, DURATION_TAG)
     }
 

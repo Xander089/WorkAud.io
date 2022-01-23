@@ -10,24 +10,28 @@
         <entry key="app/src/main/res/drawable/ic_font_1.xml" value="0.24814814814814815" />
         <entry key="app/src/main/res/drawable/ic_music.xml" value="0.2548717948717949" />
         <entry key="app/src/main/res/drawable/main_gradient.xml" value="0.2548717948717949" />
-        <entry key="app/src/main/res/layout/activity_login.xml" value="0.37604166666666666" />
+        <entry key="app/src/main/res/layout-sw600dp/activity_player.xml" value="0.19609375" />
+        <entry key="app/src/main/res/layout-w260dp/activity_login.xml" value="0.25" />
+        <entry key="app/src/main/res/layout-w480dp/fragment_name.xml" value="0.23854166666666668" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.4990195298477899" />
         <entry key="app/src/main/res/layout/activity_login_empty.xml" value="0.24270833333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.37604166666666666" />
-        <entry key="app/src/main/res/layout/activity_player.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_player.xml" value="0.25" />
         <entry key="app/src/main/res/layout/dialog_duration.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/dialog_name.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/dialog_stop_player.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/fragment_duration.xml" value="0.37604166666666666" />
-        <entry key="app/src/main/res/layout/fragment_editing_tracks.xml" value="0.37604166666666666" />
-        <entry key="app/src/main/res/layout/fragment_name.xml" value="0.37604166666666666" />
+        <entry key="app/src/main/res/layout/fragment_editing_tracks.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_name.xml" value="0.1219706981364746" />
         <entry key="app/src/main/res/layout/fragment_tracks.xml" value="0.37604166666666666" />
-        <entry key="app/src/main/res/layout/fragment_workout_detail.xml" value="0.3754534995013082" />
-        <entry key="app/src/main/res/layout/fragment_workout_list.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/fragment_workout_detail.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/fragment_workout_list.xml" value="0.27975510281515426" />
         <entry key="app/src/main/res/layout/item_detail_track.xml" value="0.27291666666666664" />
         <entry key="app/src/main/res/layout/item_detail_track_horizontal.xml" value="0.375" />
         <entry key="app/src/main/res/layout/item_track.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/item_workout_list.xml" value="0.45" />
         <entry key="app/src/main/res/layout/modal_bottom_layout.xml" value="0.37604166666666666" />
+        <entry key="app/src/main/res/layout/modal_layout.xml" value="0.12692307692307692" />
         <entry key="app/src/main/res/menu/detail_menu.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/menu/search_menu.xml" value="0.2203125" />
       </map>
@@ -38,5 +42,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.33" />
+      </ProjectState>
+    </option>
   </component>
 </project>

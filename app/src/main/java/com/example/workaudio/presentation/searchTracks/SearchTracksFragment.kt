@@ -5,7 +5,9 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.SearchView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
@@ -88,7 +90,17 @@ class SearchTracksFragment : Fragment() {
 
     //setup the search view query text listener
     private fun setupSearchView(searchView: SearchView, searchManager: SearchManager) {
+        val searchViewEditTextId = searchView.context.resources.getIdentifier(
+            "android:id/search_src_text",
+            null,
+            null
+        )
         searchView.apply {
+            queryHint = context.getString(R.string.standard_search)
+
+            val textView: TextView = this.findViewById(searchViewEditTextId)
+            textView.setHintTextColor(context.resources.getColor(R.color.grey2,null))
+
             setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
             val searchTracksQueryTextListener = QueryTextListenerFactory.create { newText ->
                 viewModel.searchTracks(newText)
@@ -97,10 +109,7 @@ class SearchTracksFragment : Fragment() {
         }
     }
 
-    private fun showSoftKeyboard(view: View) {
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-    }
+
     private fun getResourceString(resId: Int) = requireActivity().resources.getString(resId)
     private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: 0
 
@@ -122,12 +131,12 @@ class SearchTracksFragment : Fragment() {
     //when user scrolls up, hide the app bar
     private fun addOnScrollListener() {
         binding.trackList.addOnScrollListener(OnScrollListenerFactory.create(
-            onScrollStateChanged = {dy -> onScrolledStateChanged(dy)},
-            onScrolled = {newState -> viewModel.scrollState = newState}
+            onScrollStateChanged = { newState -> viewModel.scrollState = newState },
+            onScrolled = { dy -> onScrolled(dy) }
         ))
     }
 
-    private fun onScrolledStateChanged(dy: Int){
+    private fun onScrolled(dy: Int) {
         if (dy > 0 && (viewModel.scrollState in listOf(0, 2))) {
             binding.topAppBar.visibility = View.GONE
         } else {

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">WorkAudIo</string>
-    <string name="delete_selected_track">Delete selected track</string>
-    <string name="delete_selected_workout">Delete selected workout</string>
+    <string name="delete_selected_track">Delete track</string>
+    <string name="delete_selected_workout">Delete workout</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="workout_duration">workout_duration</string>
     <string name="reset_time">00:00:00</string>
@@ -14,7 +14,8 @@
     <string name="added_to_playlist"> added to playlist</string>
     <string name="description">description</string>
     <string name="edit">Edit</string>
-    <string name="snackbar_duration_info">You need to match at least the target duration to start the playlist</string>
+    <string name="snackbar_duration_info">Add enough tracks to match at least the target duration of </string>
+    <string name="snackbar_duration_info_second">in order to start the player</string>
     <string name="scopes">user-read-recently-played,user-library-modify,user-read-email,user-read-private</string>
     <string name="callback">http://10.0.2.2:8090/callback</string>
     <string name="client_id">522adc8dc0d643bea4200d7e3721dbc5</string>
@@ -28,4 +29,31 @@
     <string name="workout_id">workout_id</string>
     <string name="progress_bar_value">progress_bar_value</string>
     <string name="current_song">current_song</string>
+    <string name="standard_search">Search</string>
+    <string name="premium_spotify">A premium Spotify Account is required to run this app</string>
+    <string name="login_with_spotify">LOGIN WITH SPOTIFY</string>
+    <string name="login_automatically">Login automatically and don\'t show anymore</string>
+    <string name="title_track">Title</string>
+    <string name="artist_track">Artist</string>
+    <string name="image_description">image_description</string>
+    <string name="cancel">CANCEL</string>
+    <string name="set_duration">Set duration:</string>
+    <string name="standard_duration">30 min</string>
+    <string name="enter_a_new_name">Enter a new name</string>
+    <string name="stop_the_workout">Stop the workout?</string>
+    <string name="create_workout">CREATE WORKOUT</string>
+    <string name="standard_workout_time">20</string>
+    <string name="standard_duration2">/30 min</string>
+    <string name="enter_a_name">Enter a name:</string>
+    <string name="continue_message">CONTINUE</string>
+    <string name="add_tracks">Add Tracks</string>
+    <string name="thirty">30</string>
+    <string name="play">play</string>
+    <string name="content">content</string>
+    <string name="artist">Artist</string>
+    <string name="name">name</string>
+    <string name="duration">duration</string>
+    <string name="duration_info">30 min, 20 songs</string>
+    <string name="delete">Delete</string>
+    <string name="search_track">Search Track</string>
 </resources>

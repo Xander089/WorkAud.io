@@ -67,6 +67,13 @@ class DetailFragmentViewModel @Inject constructor(private val useCaseInteractor:
     }
 
     private fun getTargetDuration() = selectedWorkout.value?.duration ?: 0
+
+    fun getTargetDurationText(): String {
+        val duration = getTargetDuration()
+        val minutes = DataHelper.durationToMinutes(duration)
+        return "$minutes$MIN"
+    }
+
     private fun calculateTracksDuration(tracks: List<Track>) = tracks.map { it.duration }.sum()
 
 

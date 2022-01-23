@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.workaudio.Constants.MIN
+import com.example.workaudio.DataHelper
 import com.example.workaudio.databinding.ItemWorkoutListBinding
 import com.example.workaudio.core.entities.Workout
 
@@ -13,7 +15,7 @@ class WorkoutAdapter(
     private val openWorkoutDetail: (Int) -> Unit,
     private val showBottomModal: (Int) -> Unit,
     private val fetchImage: (ImageView, String) -> Unit
-) : RecyclerView.Adapter<WorkoutAdapter.PlaylistViewHolder>() , BaseAdapter{
+) : RecyclerView.Adapter<WorkoutAdapter.PlaylistViewHolder>(), BaseAdapter {
 
 
     fun updateWorkouts(workouts: List<Workout>) {
@@ -34,30 +36,25 @@ class WorkoutAdapter(
             openWorkoutDetail: (id: Int) -> Unit,
             showBottomModal: (id: Int) -> Unit,
         ) {
-            workout.duration.also { it ->
-                "${it / 60000} min".let { converted ->
-                    binding.durationPlaylistText.text = converted
-                }
-            }
+            val id = workout.id
+            val duration = DataHelper.durationToMinutes(workout.duration)
 
             binding.apply {
 
                 fetchImage(imageView, workout.imageUrl)
                 settingsButton.setOnClickListener {
-                    showBottomModal(workout.id)
+                    showBottomModal(id)
                     true
                 }
-                imageView.setOnClickListener {
-                    openWorkoutDetail(workout.id)
-                }
-                playlistNameText.setOnClickListener {
-                    openWorkoutDetail(workout.id)
-                }
-                durationPlaylistText.setOnClickListener {
-                    openWorkoutDetail(workout.id)
+
+                openWorkoutDetail.let { open ->
+                    imageView.setOnClickListener { open(id) }
+                    durationPlaylistText.setOnClickListener { open(id) }
+                    playlistNameText.setOnClickListener { open(id) }
                 }
 
                 playlistNameText.text = workout.name
+                durationPlaylistText.text = "$duration$MIN"
 
             }
         }

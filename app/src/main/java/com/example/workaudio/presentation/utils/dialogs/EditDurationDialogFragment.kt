@@ -8,9 +8,9 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
+import com.example.workaudio.Constants
 import com.example.workaudio.R
 import com.google.android.material.slider.RangeSlider
-import javax.xml.datatype.DatatypeConstants.MINUTES
 
 class EditDurationDialogFragment(
     val updateDuration: (duration: Int) -> Unit
@@ -46,7 +46,7 @@ class EditDurationDialogFragment(
             dialog?.dismiss()
         }
         durationRangeSlider.addOnChangeListener { _, value, _ ->
-            timeLabel.text = value.toInt().toString().plus(MINUTES)
+            timeLabel.text = value.toInt().toString().plus(Constants.MIN)
         }
 
     }

@@ -1,5 +1,6 @@
 package com.example.workaudio.presentation.player
 
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.room.Update
 import com.example.workaudio.Constants.DEFAULT_DELAY_TIME
@@ -24,7 +25,7 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBoundary) :
     ViewModel() {
 
-
+    var scrollState = 0
     //PLAYER STATE
     private var playerState = PlayerState.PAUSED
     fun getPlayerState() = playerState
@@ -90,9 +91,9 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
     }
 
 
-    private fun startSongTimerJob() {
+    private fun startSongTimerJob(offset: Int = 0) {
         songJob = createJob(songTimer) { currentTime ->
-            _playingTrackText.value = DataHelper.formatTrackDuration(currentTime)
+            _playingTrackText.value = DataHelper.formatTrackDuration(currentTime + offset)
         }.also {
             it.launch()
         }
@@ -117,13 +118,14 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
     }
 
 
-    fun restartTimer(time: String, songTime: String) {
+    fun restartTimer(time: String, songTime: String, songTotTime: String) {
         val seconds = DataHelper.fromTimeToSeconds(time)
         val songSeconds = DataHelper.fromMinutesToSeconds(songTime)
+        val songTotSeconds = DataHelper.fromMinutesToSeconds(songTotTime)
         countDownTimer = createTimer(seconds, false)
-        songTimer = createTimer(songSeconds, true)
+        songTimer = createTimer(songTotSeconds-songSeconds, true)
         startMainTimerJob()
-        startSongTimerJob()
+        startSongTimerJob(songSeconds)
     }
 
 
@@ -160,6 +162,7 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
     private fun getTracks() = workout.value?.tracks.orEmpty()
     private fun getTrack(position: Int) = workout.value?.tracks?.get(position)
     fun getTrackUri(position: Int) = getTrack(position)?.uri.orEmpty()
+    fun getTrackImageUrl(position: Int) = getTrack(position)?.imageUrl.orEmpty()
     fun getTrackName(position: Int) = getTrack(position)?.title.orEmpty()
     fun getTrackArtist(position: Int) = getTrack(position)?.artist.orEmpty()
     private fun calculateTotalTracksTime(tracks: List<Track>) =

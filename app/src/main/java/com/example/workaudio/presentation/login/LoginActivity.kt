@@ -4,13 +4,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import com.example.workaudio.Constants.REQUEST_CODE
 import com.example.workaudio.R
 import com.example.workaudio.presentation.workoutMainList.MainActivity
 import com.example.workaudio.databinding.ActivityLoginBinding
-import com.example.workaudio.databinding.ActivityLoginEmptyBinding
 import com.spotify.sdk.android.auth.AuthorizationClient
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
@@ -23,20 +21,21 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        automaticLogin(ignoreLoginActivity())
+        automaticLogin(isLoginAutomatic())
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.loginButton.setOnClickListener {
-            authenticateSpotify()
+        binding.loginButton.setOnClickListener { authenticateSpotify() }
+        setCheckBox()
+
+    }
+
+    private fun setCheckBox() {
+        if(isLoginAutomatic()){
+            binding.dontShowAnymoreCheckBox.isChecked = true
         }
     }
 
-
-    private fun launchMainActivity() {
-        startActivity(MainActivity.newIntent(this))
-    }
 
     private fun automaticLogin(isAutomatic: Boolean) {
         if (isAutomatic) {
@@ -44,11 +43,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun ignoreLoginActivity(): Boolean =
+    private fun isLoginAutomatic(): Boolean =
         getPreferences(Context.MODE_PRIVATE).getBoolean(getString(R.string.login_pref), false)
 
     private fun saveLoginAction(doNotShowAnymore: Boolean) {
-        if (ignoreLoginActivity()) {
+        if (isLoginAutomatic()) {
             return
         }
 
@@ -86,7 +85,7 @@ class LoginActivity : AppCompatActivity() {
             response.accessToken?.let { token ->
                 saveLoginAction(binding.dontShowAnymoreCheckBox.isChecked)
                 viewModel.cacheSpotifyAuthToken(token)
-                launchMainActivity()
+                startActivity(MainActivity.newIntent(this))
                 finish()
             }
 

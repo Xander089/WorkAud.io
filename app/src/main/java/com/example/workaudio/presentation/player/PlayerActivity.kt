@@ -2,18 +2,19 @@ package com.example.workaudio.presentation.player
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.workaudio.R
-import com.example.workaudio.databinding.ActivityPlayerBinding
-import com.example.workaudio.presentation.utils.dialogs.StopPlayerDialogFragment
-import com.example.workaudio.libraries.spotify.SpotifyManager
 import com.example.workaudio.Constants.STOP_TAG
 import com.example.workaudio.Constants.WORKOUT_ID
-import com.example.workaudio.core.entities.Workout
+import com.example.workaudio.R
+import com.example.workaudio.databinding.ActivityPlayerBinding
+import com.example.workaudio.libraries.spotify.SpotifyManager
+import com.example.workaudio.presentation.utils.OnScrollListenerFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
 import com.example.workaudio.presentation.utils.adapter.PlayerTracksAdapter
@@ -21,6 +22,7 @@ import com.example.workaudio.presentation.utils.dialogs.DialogFactory
 import com.example.workaudio.presentation.utils.dialogs.DialogFlavour
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class PlayerActivity : AppCompatActivity() {
@@ -31,6 +33,7 @@ class PlayerActivity : AppCompatActivity() {
             intent.putExtra(WORKOUT_ID, workoutId)
             return intent
         }
+
     }
 
     private val viewModel: PlayerViewModel by viewModels()
@@ -47,7 +50,7 @@ class PlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        addOnScrollListener()
         viewModel.emitWorkout(getWorkoutIdExtra())
         setupLayout()
         setupObservers()
@@ -71,15 +74,24 @@ class PlayerActivity : AppCompatActivity() {
         viewModel.stopTimer()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+               onBackPressed()
+            }
+            else -> {}
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
     private fun setupLayout() {
         setupPlayButton()
-        setupStopButton()
         setupTrackList()
     }
 
     private fun setupObservers() {
-
+        setSupportActionBar(binding.topAppBar)
         setupWorkoutObserver()
         setupMainTimerObserver()
         setupPlayerPositionObserver()
@@ -96,20 +108,36 @@ class PlayerActivity : AppCompatActivity() {
             }
         ) as PlayerTracksAdapter
 
+    private fun addOnScrollListener() {
+        binding.trackList.addOnScrollListener(
+            OnScrollListenerFactory.create(
+                onScrollStateChanged = { newState -> viewModel.scrollState = newState },
+                onScrolled = { dy -> onScrolled(dy) }
+            ))
+    }
+
+    private fun onScrolled(dy: Int) {
+        if (dy > 0 && (viewModel.scrollState in listOf(0, 2))) {
+            binding.songCardView.visibility = View.GONE
+        } else {
+            binding.songCardView.visibility = View.VISIBLE
+        }
+    }
 
     private fun pause() {
-        binding.playButton.setBackgroundResource(R.drawable.ic_play)
+        binding.playButton.setImageResource(R.drawable.ic_play)
         viewModel.setPlayerState(PlayerState.PAUSED)
         viewModel.stopTimer()
         spotify.pausePlayer()
     }
 
     private fun play() {
-        binding.playButton.setBackgroundResource(R.drawable.ic_pause)
+        binding.playButton.setImageResource(R.drawable.ic_pause)
         viewModel.setPlayerState(PlayerState.PLAYING)
         viewModel.restartTimer(
             binding.timerText.text.toString(),
-            binding.currentTimeText.text.toString()
+            binding.currentTimeText.text.toString(),
+            binding.songTotTimeText.text.toString()
         )
         spotify.resumePlayer()
     }
@@ -124,28 +152,18 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupStopButton() {
-        binding.stopButton.setOnClickListener {
-            pause()
-            showStopPlayerDialog()
-        }
-    }
-
     private fun setupTrackList() {
         binding.trackList.apply {
             layoutManager =
-                LinearLayoutManager(
-                    this@PlayerActivity,
-                    LinearLayoutManager.HORIZONTAL,
-                    false
-                )
+                LinearLayoutManager(this@PlayerActivity)
             adapter = tracksAdapter
         }
     }
 
     private fun setupWorkoutObserver() {
         viewModel.workout.observe(this@PlayerActivity, { workout ->
-            binding.workoutNameText.text = workout.name
+            binding.topAppBar.visibility = View.VISIBLE
+            binding.topAppBar.title = workout.name
             binding.timerText.text = viewModel.formatTimer(workout.tracks.toList())
             tracksAdapter.refreshTrackList(workout.tracks)
             viewModel.initTimer()
@@ -163,8 +181,10 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun setupPlayingTrackObserver() {
         viewModel.songTimerText.observe(this@PlayerActivity, { songCurrentTime ->
-            binding.currentTimeText.text = songCurrentTime
-            binding.trackProgressBar.progress = viewModel.getProgress(songCurrentTime)
+            binding.apply {
+                currentTimeText.text = songCurrentTime
+                trackProgressBar.progress = viewModel.getProgress(songCurrentTime)
+            }
         })
     }
 
@@ -179,9 +199,17 @@ class PlayerActivity : AppCompatActivity() {
                     songTitleText.text = viewModel.getTrackName(songPosition)
                     songArtistText.text = viewModel.getTrackArtist(songPosition)
                 }
+                setSongImage(songPosition)
                 viewModel.setSongTimer(songPosition)
             }
         })
+    }
+
+    private fun setSongImage(songPosition: Int) {
+        val imageUrl = viewModel.getTrackImageUrl(songPosition)
+        Glide.with(this).load(imageUrl).into(
+            binding.songImageView
+        )
     }
 
 
