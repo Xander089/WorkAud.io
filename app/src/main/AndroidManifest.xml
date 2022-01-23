@@ -29,6 +29,12 @@
             android:name=".presentation.workoutMainList.MainActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
+
+
+        <meta-data
+            android:name = "clientId"
+            android:value = "${SPOTIFY_CLIENT_ID}"/>
+
     </application>
 
 </manifest>

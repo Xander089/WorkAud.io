@@ -2,11 +2,14 @@ package com.example.workaudio.presentation.player
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.text.toUpperCase
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.Constants.STOP_TAG
@@ -63,7 +66,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
-        spotify.spotifyConnect(this)
+        spotify.spotifyConnect(this, getSpotifyClientId())
         super.onStart()
     }
 
@@ -163,7 +166,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun setupWorkoutObserver() {
         viewModel.workout.observe(this@PlayerActivity, { workout ->
             binding.topAppBar.visibility = View.VISIBLE
-            binding.topAppBar.title = workout.name
+            binding.topAppBar.title = workout.name.uppercase()
             binding.timerText.text = viewModel.formatTimer(workout.tracks.toList())
             tracksAdapter.refreshTrackList(workout.tracks)
             viewModel.initTimer()
@@ -233,6 +236,12 @@ class PlayerActivity : AppCompatActivity() {
             supportFragmentManager,
             STOP_TAG
         )
+    }
+
+    private fun getSpotifyClientId(): String {
+        val ai: ApplicationInfo = applicationContext.packageManager
+            .getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
+        return ai.metaData["clientId"].toString()
     }
 
 }

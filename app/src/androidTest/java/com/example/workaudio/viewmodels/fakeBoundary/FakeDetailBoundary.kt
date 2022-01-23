@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 
-class FakeEditingBoundary: DetailBoundary {
+class FakeDetailBoundary: DetailBoundary {
 
     private val track = Track(
         "test_title",
@@ -21,9 +21,9 @@ class FakeEditingBoundary: DetailBoundary {
     )
 
 
-    private val trackList = mutableListOf(track)
+    val trackList = mutableListOf(track)
 
-    private var workout: Workout = Workout(
+    val workout: Workout = Workout(
         0,
         "test_workout",
         30 * Constants.MILLIS_IN_A_MINUTE,
@@ -31,7 +31,7 @@ class FakeEditingBoundary: DetailBoundary {
         "test_url"
     )
 
-    private val workouts = listOf(workout)
+    val workouts = listOf(workout)
 
 
     override fun getWorkout(id: Int): Flow<Workout> {
@@ -43,27 +43,22 @@ class FakeEditingBoundary: DetailBoundary {
        }
     }
 
-    override suspend fun getWorkout(): Workout {
-        return workout
-    }
+
 
     override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>> {
         return flow { emit(trackList) }
     }
 
     override suspend fun updateWorkoutName(id: Int, name: String) {
-        val w = workouts.find { it.id == id }
-        w!!.name = name
+        workout.name = name
+
     }
 
     override suspend fun updateWorkoutDuration(id: Int, duration: Int) {
-        val w = workouts.find { it.id == id }
-        w!!.duration = duration
+        workouts.first { it.id == id }.duration = duration
+
     }
 
-    override suspend fun insertWorkoutTrack(id: Int, track: Track) {
-        trackList.add(track)
-    }
 
     override suspend fun deleteTrack(uri: String, id: Int) {
         trackList.removeIf {

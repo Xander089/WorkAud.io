@@ -11,40 +11,46 @@ import com.spotify.sdk.android.auth.AuthorizationClient
 
 class SpotifyManager() {
 
+    // spotifyAppRemote let us remotely control Spotify from within this app
+    // For example: pause-resume the player, or play a specific song
     var mSpotifyAppRemote: SpotifyAppRemote? = null
 
     fun spotifyDisconnect() = SpotifyAppRemote.disconnect(mSpotifyAppRemote)
     fun logOut(context: Context) = AuthorizationClient.clearCookies(context)
 
-    fun spotifyConnect(context: Context) {
-
-        val connectionParams = ConnectionParams.Builder(context.getString(R.string.client_id))
-            .setRedirectUri(context.getString(R.string.callback))
-            .showAuthView(true)
-            .build()
-
-        SpotifyAppRemote.connect(context, connectionParams,
+    fun spotifyConnect(context: Context, clientId: String = "") {
+        SpotifyAppRemote.connect(
+            context,
+            getConnectionParams(context,clientId),
             object : ConnectionListener {
                 override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                     if (mSpotifyAppRemote == null) {
                         mSpotifyAppRemote = spotifyAppRemote
                     }
                 }
+
                 override fun onFailure(throwable: Throwable) {}
             })
     }
 
+    private fun getConnectionParams(
+        context: Context,
+        clientId: String
+    ) = ConnectionParams.Builder(clientId)
+        .setRedirectUri(context.getString(R.string.callback))
+        .showAuthView(true)
+        .build()
 
     private fun getPlayer() = mSpotifyAppRemote?.playerApi
 
     //with the track uri as input, this method triggers spotify app to play the related song
-    fun play(uri: String) {
-        if(uri.isNotEmpty()){
-            getPlayer()?.play(uri)
+    fun play(songUri: String) {
+        if (songUri.isNotEmpty()) {
+            getPlayer()?.play(songUri)
         }
     }
 
-    private fun getTrackInfo(){
+    private fun getTrackInfo() {
         getPlayer()?.subscribeToPlayerState()?.setEventCallback { playerState: PlayerState -> }
     }
 

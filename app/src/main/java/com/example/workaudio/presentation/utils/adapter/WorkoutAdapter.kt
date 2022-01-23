@@ -53,7 +53,7 @@ class WorkoutAdapter(
                     playlistNameText.setOnClickListener { open(id) }
                 }
 
-                playlistNameText.text = workout.name
+                playlistNameText.text = workout.name.uppercase()
                 durationPlaylistText.text = "$duration$MIN"
 
             }

@@ -15,7 +15,7 @@ class PlayerDataAccess(
         val workoutRoomEntity = dao.getWorkout(id)
         val tracks = tracksRoomEntity.map { trackEntity ->
             trackEntity.toTrack()
-        }
+        }.orEmpty()
         return workoutRoomEntity.toWorkout(tracks)
     }
 

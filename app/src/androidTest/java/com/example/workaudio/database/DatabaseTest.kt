@@ -72,15 +72,6 @@ class DatabaseTest {
         assert(track.uri == "abcde")
     }
 
-    @Test
-    fun test_track_position() = runBlocking {
-        dao.clearCurrentPosition()
-        dao.insertCurrentPosition(CurrentPosition(0))
-        dao.updateCurrentPosition(1)
-        val position = dao.getCurrentPosition().first().position
-        dao.clearCurrentPosition()
-        assert(position == 1)
-    }
 
     @Test
     fun test_token() = runBlocking {

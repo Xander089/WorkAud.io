@@ -7,7 +7,7 @@ import com.example.workaudio.core.usecases.workoutList.ListBoundary
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FakeNavigationBoundary: ListBoundary {
+class FakeMainListBoundary: ListBoundary {
 
     private val workout = Workout(
         name = "test_name",

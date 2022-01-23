@@ -43,14 +43,14 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/hammersmith_one"
         android:text="@string/cancel"
-        android:textColor="@color/grey"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/confirmNameButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:rippleColor="@color/grey3"
-        app:strokeColor="@color/grey" />
+        app:strokeColor="@color/white" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/confirmNameButton"

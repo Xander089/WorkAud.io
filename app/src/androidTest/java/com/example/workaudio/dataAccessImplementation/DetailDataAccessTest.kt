@@ -9,6 +9,7 @@ import com.example.workaudio.core.EntityMapper.toTrackRoomEntity
 import com.example.workaudio.core.EntityMapper.toWorkout
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.usecases.creation.CreationDataAccess
+import com.example.workaudio.core.usecases.detail.DetailDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.core.usecases.workoutList.ListDataAccess
 import com.example.workaudio.data.database.ApplicationDAO
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.junit.After
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -31,10 +33,10 @@ import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 
-class MainListDataAccessTest {
+class DetailDataAccessTest {
 
 
-    private lateinit var dataAccess: ListDataAccess
+    private lateinit var dataAccess: DetailDataAccess
     private lateinit var db: ApplicationDatabase
     private lateinit var dao: ApplicationDAO
 
@@ -45,7 +47,7 @@ class MainListDataAccessTest {
             context, ApplicationDatabase::class.java
         ).build()
         dao = db.applicationDao()
-        dataAccess = ListDataAccess(dao)
+        dataAccess = DetailDataAccess(dao)
 
 
         runBlocking {
@@ -64,31 +66,31 @@ class MainListDataAccessTest {
 
 
     @Test
-    fun when_all_workout_are_requested_then_they_are_returned() = runBlocking {
-        val workoutName = dataAccess.getWorkouts().first()[0].name
+    fun when_workout_is_requested_then_it_is_returned() = runBlocking {
+        val id = dao.getLatestWorkout().id
+        val result = dataAccess.getWorkoutAsFlow(id).first()
         dao.clearWorkouts()
-        assertEquals(workoutName, "test_name")
+        assertEquals("test_name", result.name)
 
     }
 
     @Test
-    fun when_a_workout_is_deleted_then_null_is_returned() = runBlocking {
+    fun when_name_parameter_is_new_name_then_workout_name_is_updated_accordingly() = runBlocking {
         val id = dao.getLatestWorkout().id
-        dataAccess.deleteWorkout(id)
-        val workout = dao.getWorkout(id)
-        assert(workout == null)
+        dataAccess.updateWorkoutName("new_name", id)
+        val result = dataAccess.getWorkoutAsFlow(id).first()
+        dao.clearWorkouts()
+        assertEquals("new_name", result.name)
 
     }
 
     @Test
-    fun when_a_workout_track_is_requested_then_it_is_returned() = runBlocking {
+    fun when_duration_parameter_is_ten_then_workout_duration_is_updated_accordingly() = runBlocking {
         val id = dao.getLatestWorkout().id
-        val track = Track("title", "uri", 1000, "artist", "album", "url", 0).toTrackRoomEntity(id)
-        dao.insertWorkoutTrack(track)
-        val result = dataAccess.getWorkoutTrack(id).title
+        dataAccess.updateWorkoutDuration(id,10)
+        val result = dataAccess.getWorkoutAsFlow(id).first()
         dao.clearWorkouts()
-        dao.clearWorkoutsTracks()
-        assertEquals("title", result)
+        assertEquals(10, result.duration)
 
     }
 

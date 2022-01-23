@@ -9,6 +9,7 @@ import com.example.workaudio.core.EntityMapper.toTrackRoomEntity
 import com.example.workaudio.core.EntityMapper.toWorkout
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.usecases.creation.CreationDataAccess
+import com.example.workaudio.core.usecases.player.PlayerDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.core.usecases.workoutList.ListDataAccess
 import com.example.workaudio.data.database.ApplicationDAO
@@ -31,10 +32,10 @@ import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 
-class MainListDataAccessTest {
+class PlayerDataAccessTest {
 
 
-    private lateinit var dataAccess: ListDataAccess
+    private lateinit var dataAccess: PlayerDataAccess
     private lateinit var db: ApplicationDatabase
     private lateinit var dao: ApplicationDAO
 
@@ -45,7 +46,7 @@ class MainListDataAccessTest {
             context, ApplicationDatabase::class.java
         ).build()
         dao = db.applicationDao()
-        dataAccess = ListDataAccess(dao)
+        dataAccess = PlayerDataAccess(dao)
 
 
         runBlocking {
@@ -64,33 +65,12 @@ class MainListDataAccessTest {
 
 
     @Test
-    fun when_all_workout_are_requested_then_they_are_returned() = runBlocking {
-        val workoutName = dataAccess.getWorkouts().first()[0].name
-        dao.clearWorkouts()
-        assertEquals(workoutName, "test_name")
-
-    }
-
-    @Test
-    fun when_a_workout_is_deleted_then_null_is_returned() = runBlocking {
+    fun when_workout_is_requested_then_it_is_returned() = runBlocking {
         val id = dao.getLatestWorkout().id
-        dataAccess.deleteWorkout(id)
-        val workout = dao.getWorkout(id)
-        assert(workout == null)
-
-    }
-
-    @Test
-    fun when_a_workout_track_is_requested_then_it_is_returned() = runBlocking {
-        val id = dao.getLatestWorkout().id
-        val track = Track("title", "uri", 1000, "artist", "album", "url", 0).toTrackRoomEntity(id)
-        dao.insertWorkoutTrack(track)
-        val result = dataAccess.getWorkoutTrack(id).title
+        val result = dataAccess.getWorkout(id)
         dao.clearWorkouts()
-        dao.clearWorkoutsTracks()
-        assertEquals("title", result)
+        assertEquals("test_name", result.name)
 
     }
-
 
 }

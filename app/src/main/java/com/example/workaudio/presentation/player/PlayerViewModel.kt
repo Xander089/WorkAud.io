@@ -12,20 +12,23 @@ import com.example.workaudio.core.usecases.player.PlayerBoundary
 import com.example.workaudio.presentation.utils.timer.AbstractTimerFactory
 import com.example.workaudio.presentation.utils.timer.TimerFactoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBoundary) :
     ViewModel() {
 
+    private var dispatcher: CoroutineDispatcher = Dispatchers.IO
+    fun setDispatcher(dispatcher: CoroutineDispatcher) {
+        this.dispatcher = dispatcher
+    }
+
     var scrollState = 0
+
     //PLAYER STATE
     private var playerState = PlayerState.PAUSED
     fun getPlayerState() = playerState
@@ -56,7 +59,7 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
 
 
     fun emitWorkout(workoutId: Int) {
-        workout = liveData(Dispatchers.IO) {
+        workout = liveData(dispatcher) {
             delay(DEFAULT_DELAY_TIME)
             val workout = playerInteractor.getWorkout(workoutId)
             val totalDuration = calculateTotalTracksTime(workout.tracks)
@@ -66,6 +69,7 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
             emit(workout)
         }
     }
+
 
     private fun createTimer(seconds: Int, ascending: Boolean): Flow<Int> =
         timerFactory.create(seconds, DEFAULT_DELAY_TIME, ascending).get()
@@ -91,15 +95,6 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
     }
 
 
-    private fun startSongTimerJob(offset: Int = 0) {
-        songJob = createJob(songTimer) { currentTime ->
-            _playingTrackText.value = DataHelper.formatTrackDuration(currentTime + offset)
-        }.also {
-            it.launch()
-        }
-
-    }
-
     private fun startMainTimerJob() {
         timerJob = createJob(countDownTimer) { currentTime ->
             _timerText.value = DataHelper.toTime(currentTime)
@@ -123,9 +118,12 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
         val songSeconds = DataHelper.fromMinutesToSeconds(songTime)
         val songTotSeconds = DataHelper.fromMinutesToSeconds(songTotTime)
         countDownTimer = createTimer(seconds, false)
-        songTimer = createTimer(songTotSeconds-songSeconds, true)
         startMainTimerJob()
-        startSongTimerJob(songSeconds)
+
+        songTimer = createTimer(songTotSeconds - songSeconds, true)
+        songJob = createJob(songTimer) { currentTime ->
+            _playingTrackText.value = DataHelper.formatTrackDuration(currentTime) + songSeconds
+        }.also { it.launch() }
     }
 
 
@@ -145,7 +143,9 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
         disposeSongTimer()
         val nextSongDuration = getTrackDuration(position).toInt()
         songTimer = createTimer(nextSongDuration, true)
-        startSongTimerJob()
+        songJob = createJob(songTimer) { currentTime ->
+            _playingTrackText.value = DataHelper.formatTrackDuration(currentTime)
+        }.also { it.launch() }
     }
 
     private fun setTracksEndingTime() {
