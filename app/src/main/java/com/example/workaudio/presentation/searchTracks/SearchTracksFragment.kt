@@ -39,17 +39,6 @@ class SearchTracksFragment : Fragment() {
     private lateinit var trackListAdapter: SearchedTracksAdapter
     private lateinit var binding: FragmentEditingTracksBinding
 
-    //onBackPressed -> navigate to home screen
-    private val onBackPressedCallback: OnBackPressedCallback =
-        object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                NavigationManager.navigateTo(
-                    findNavController(),
-                    R.id.action_workoutDetailFragment_to_workoutListFragment
-                )
-            }
-        }
-
     /* Lifecycle callbacks*/
 
     override fun onCreateView(
@@ -72,9 +61,6 @@ class SearchTracksFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        requireActivity()
-            .onBackPressedDispatcher
-            .addCallback(onBackPressedCallback)
     }
 
     //provides search view in app bar menu

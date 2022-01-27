@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentNameBinding
 import android.text.Editable
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat.getSystemService
 import com.example.workaudio.Constants.WORKOUT_NAME
@@ -40,8 +41,9 @@ class NameFragment : Fragment() {
     }
 
     private fun showSoftKeyboard(view: View) {
-            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+        val imm =
+            requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun setupLayoutFunctionality() {
@@ -58,10 +60,17 @@ class NameFragment : Fragment() {
                 setOnClickListener {
                     val workoutName = workoutNameText.text.toString()
                     val bundle = bundleOf(WORKOUT_NAME to workoutName)
-                    NavigationManager.navigateTo(findNavController(), NAME_TO_DURATION, bundle)
+
+                    NavigationManager.navigateTo(
+                        findNavController(),
+                        NAME_TO_DURATION,
+                        bundle
+                    )
                 }
             }
-            cancelButton.setOnClickListener { NavigationManager.navigateTo(findNavController(), NAME_TO_WORKOUTS) }
+            cancelButton.setOnClickListener {
+                NavigationManager.navigateTo(findNavController(), NAME_TO_WORKOUTS)
+            }
             workoutNameText.addTextChangedListener(listener)
         }
     }
@@ -71,7 +80,8 @@ class NameFragment : Fragment() {
         override fun beforeTextChanged(
             s: CharSequence, start: Int,
             count: Int, after: Int
-        ) {}
+        ) {
+        }
 
         override fun onTextChanged(
             s: CharSequence, start: Int,

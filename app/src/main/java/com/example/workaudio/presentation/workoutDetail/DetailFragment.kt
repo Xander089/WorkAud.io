@@ -2,6 +2,7 @@ package com.example.workaudio.presentation.workoutDetail
 
 import android.os.Bundle
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.core.os.bundleOf
@@ -46,6 +47,17 @@ class DetailFragment : Fragment() {
     private var mItemTouchHelper: ItemTouchHelper? = null
     private val viewModel: DetailFragmentViewModel by activityViewModels()
 
+    //onBackPressed -> navigate to home screen
+    private val onBackPressedCallback: OnBackPressedCallback =
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                NavigationManager.navigateTo(
+                    findNavController(),
+                    DETAIL_TO_WORKOUTS
+                )
+            }
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -62,9 +74,13 @@ class DetailFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(onBackPressedCallback)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
