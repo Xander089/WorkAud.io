@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentEditingTracksBinding
 import com.example.workaudio.Constants.ID_TAG
+import com.example.workaudio.presentation.utils.NavigationManager
 import com.example.workaudio.presentation.utils.OnScrollListenerFactory
 import com.example.workaudio.presentation.utils.QueryTextListenerFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
@@ -36,6 +38,17 @@ class SearchTracksFragment : Fragment() {
 
     private lateinit var trackListAdapter: SearchedTracksAdapter
     private lateinit var binding: FragmentEditingTracksBinding
+
+    //onBackPressed -> navigate to home screen
+    private val onBackPressedCallback: OnBackPressedCallback =
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                NavigationManager.navigateTo(
+                    findNavController(),
+                    R.id.action_workoutDetailFragment_to_workoutListFragment
+                )
+            }
+        }
 
     /* Lifecycle callbacks*/
 
@@ -56,10 +69,12 @@ class SearchTracksFragment : Fragment() {
         return binding.root
     }
 
-    //in order to provide app bar menu
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(onBackPressedCallback)
     }
 
     //provides search view in app bar menu
@@ -99,7 +114,7 @@ class SearchTracksFragment : Fragment() {
             queryHint = context.getString(R.string.standard_search)
 
             val textView: TextView = this.findViewById(searchViewEditTextId)
-            textView.setHintTextColor(context.resources.getColor(R.color.grey2,null))
+            textView.setHintTextColor(context.resources.getColor(R.color.grey2, null))
 
             setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
             val searchTracksQueryTextListener = QueryTextListenerFactory.create { newText ->
@@ -110,7 +125,7 @@ class SearchTracksFragment : Fragment() {
     }
 
 
-    private fun getResourceString(resId: Int) = requireActivity().resources.getString(resId)
+    private fun getResourceString(resId: Int) = context?.resources?.getString(resId).orEmpty()
     private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: 0
 
     private fun buildAdapter() {
