@@ -1,34 +1,66 @@
 package com.example.workaudio.viewmodels
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.filters.SmallTest
+import com.example.workaudio.core.usecases.login.LoginBoundary
 import com.example.workaudio.presentation.login.LoginViewModel
-import com.example.workaudio.viewmodels.fakeBoundary.FakeLoginBoundary
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
 
-
+@ExperimentalCoroutinesApi
+@SmallTest
+@HiltAndroidTest
+@RunWith(MockitoJUnitRunner::class)
 class LoginViewModelTest {
 
+    @get:Rule
+    val rule = InstantTaskExecutorRule()
+
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
+
     private lateinit var viewModel: LoginViewModel
-    private lateinit var boundary: FakeLoginBoundary
+
+    @Mock
+    lateinit var boundary: LoginBoundary
+
+    private lateinit var source : TestDataSource
+
 
     @Before
     fun setup() {
-        boundary = FakeLoginBoundary()
+        source = TestDataSource()
+        hiltRule.inject()
+
         viewModel = LoginViewModel(boundary)
         viewModel.setDispatcher(Dispatchers.Main)
     }
 
+    private fun insert(token: String) {
+        source.tokens.add(token)
+    }
+
 
     @Test
-    fun when_token_inserted_then_it_is_returned() = runBlocking {
+    fun when_tokenIsInserted_then_itIsReturned() = runBlocking(Dispatchers.Main) {
         val expected = "new_token"
+        Mockito.`when`(boundary.insertToken(expected)).thenReturn(insert(expected))
         viewModel.cacheSpotifyAuthToken(expected)
-        val result = boundary.tokens.first()
-        assertEquals(expected, result)
-
+        delay(1000)
+        val actual = source.tokens.first()
+        assertEquals(expected, actual)
     }
 
 

@@ -28,8 +28,8 @@ class SearchTracksFragmentViewModel @Inject constructor(private val searchIntera
 
     private val _searchedTracks = MutableLiveData<List<Track>>()
     val searchedTracks: LiveData<List<Track>> = _searchedTracks
-    var currentWorkout: LiveData<Workout> = MutableLiveData<Workout>()
-    var workoutTracks: LiveData<List<Track>> = MutableLiveData()
+    var currentWorkout: LiveData<Workout?> = MutableLiveData<Workout?>()
+    var workoutTracks: LiveData<List<Track>?> = MutableLiveData()
 
     fun setupCurrentWorkout(workoutId: Int) {
         currentWorkout = searchInteractor.getWorkout(workoutId).asLiveData()

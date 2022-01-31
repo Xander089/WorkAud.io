@@ -17,28 +17,17 @@ class CreationDataAccess(
 ) : CreationDataAccessInterface {
 
     override suspend fun searchTracks(queryText: String): List<Track> {
-        val token = dao.getToken().token.orEmpty()
+        val token = dao.getToken()?.token.orEmpty()
         val gsonResponse = service.fetchTracks(token, queryText)
         return gsonResponse.tracks.items.map { it.toTrack() }
     }
 
     //when database entity is empty -> return null
-    override suspend fun getWorkout(): Workout? {
-        val latestWorkout = dao.getLatestWorkout()
-        return if (latestWorkout != null) {
-            latestWorkout.toWorkout()
-        } else {
-            null
-        }
-    }
+    override suspend fun getWorkout(): Workout? = dao.getLatestWorkout()?.toWorkout()
 
     //when database entity is empty -> map flow to null
-    override fun getLatestWorkoutAsFlow() = dao.getLatestWorkoutAsFlow().map { roomEntity ->
-        if (roomEntity == null) {
-            null
-        } else {
-            roomEntity.toWorkout()
-        }
+    override fun getLatestWorkoutAsFlow() = dao.getLatestWorkoutAsFlow().map {
+        it?.toWorkout()
     }
 
     override suspend fun insertWorkout(
@@ -62,11 +51,11 @@ class CreationDataAccess(
     }
 
     override suspend fun insertWorkoutTracks(tracks: List<Track>) {
-        val currentWorkout = dao.getLatestWorkout()
-        val workoutId = currentWorkout.id
-        tracks.forEach { track ->
-            val roomEntityTrack = track.toTrackRoomEntity(workoutId)
-            dao.insertWorkoutTrack(roomEntityTrack)
+        dao.getLatestWorkout()?.id?.let { id ->
+            tracks.forEach { track ->
+                val roomEntityTrack = track.toTrackRoomEntity(id)
+                dao.insertWorkoutTrack(roomEntityTrack)
+            }
         }
     }
 

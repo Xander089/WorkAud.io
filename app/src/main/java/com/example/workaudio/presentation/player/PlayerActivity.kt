@@ -165,12 +165,13 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun setupWorkoutObserver() {
         viewModel.workout.observe(this@PlayerActivity, { workout ->
-            binding.topAppBar.visibility = View.VISIBLE
-            binding.topAppBar.title = workout.name.uppercase()
-            binding.timerText.text = viewModel.formatTimer(workout.tracks.toList())
-            tracksAdapter.refreshTrackList(workout.tracks)
             viewModel.initTimer()
-
+            workout?.let {
+                binding.topAppBar.visibility = View.VISIBLE
+                binding.topAppBar.title = it.name.uppercase()
+                binding.timerText.text = viewModel.formatTimer(it.tracks.toList())
+                tracksAdapter.refreshTrackList(it.tracks)
+            }
         })
     }
 

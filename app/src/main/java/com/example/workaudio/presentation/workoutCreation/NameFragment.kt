@@ -12,9 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentNameBinding
 import android.text.Editable
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
 import com.example.workaudio.Constants.WORKOUT_NAME
 import com.example.workaudio.presentation.utils.NavigationManager
 
@@ -59,8 +57,7 @@ class NameFragment : Fragment() {
             confirmNameButton.apply {
                 setOnClickListener {
                     val workoutName = workoutNameText.text.toString()
-                    val bundle = bundleOf(WORKOUT_NAME to workoutName)
-
+                    val bundle: Bundle = bundleOf(WORKOUT_NAME to workoutName)
                     NavigationManager.navigateTo(
                         findNavController(),
                         NAME_TO_DURATION,
@@ -68,6 +65,7 @@ class NameFragment : Fragment() {
                     )
                 }
             }
+
             cancelButton.setOnClickListener {
                 NavigationManager.navigateTo(findNavController(), NAME_TO_WORKOUTS)
             }

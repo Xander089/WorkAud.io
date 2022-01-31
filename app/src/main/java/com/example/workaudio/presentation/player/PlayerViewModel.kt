@@ -22,10 +22,14 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBoundary) :
     ViewModel() {
 
+
     private var dispatcher: CoroutineDispatcher = Dispatchers.IO
     fun setDispatcher(dispatcher: CoroutineDispatcher) {
         this.dispatcher = dispatcher
     }
+
+    suspend fun getWorkout(): Workout? = playerInteractor.getWorkout(0)
+
 
     var scrollState = 0
 
@@ -37,7 +41,8 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
     }
 
     //Workout & Player Position
-    var workout: LiveData<Workout> = MutableLiveData<Workout>()
+    private var _workout = MutableLiveData<Workout>()
+    var workout: LiveData<Workout?> = _workout
     private var _playerPosition = MutableLiveData<Int>(0)
     var playerPosition: LiveData<Int> = _playerPosition
     private fun getPlayerPosition() = _playerPosition.value ?: 0
@@ -62,14 +67,13 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
         workout = liveData(dispatcher) {
             delay(DEFAULT_DELAY_TIME)
             val workout = playerInteractor.getWorkout(workoutId)
-            val totalDuration = calculateTotalTracksTime(workout.tracks)
+            val totalDuration = calculateTotalTracksTime(workout?.tracks)
             val firstTrackDuration = getTrackDuration(0).toInt()
             songTimer = createTimer(firstTrackDuration, true)
             countDownTimer = createTimer(totalDuration, false)
             emit(workout)
         }
     }
-
 
     private fun createTimer(seconds: Int, ascending: Boolean): Flow<Int> =
         timerFactory.create(seconds, DEFAULT_DELAY_TIME, ascending).get()
@@ -165,8 +169,8 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
     fun getTrackImageUrl(position: Int) = getTrack(position)?.imageUrl.orEmpty()
     fun getTrackName(position: Int) = getTrack(position)?.title.orEmpty()
     fun getTrackArtist(position: Int) = getTrack(position)?.artist.orEmpty()
-    private fun calculateTotalTracksTime(tracks: List<Track>) =
-        tracks.map { it.duration * MILLIS_TO_SECOND }.sum().toInt()
+    private fun calculateTotalTracksTime(tracks: List<Track>?) =
+        tracks?.map { it.duration * MILLIS_TO_SECOND }?.sum()?.toInt() ?: 0
 
     private fun getTrackDuration(position: Int) =
         (((getTrack(position)?.duration) ?: 0) * MILLIS_TO_SECOND)

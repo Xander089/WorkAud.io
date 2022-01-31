@@ -15,14 +15,14 @@ class DetailDataAccess(
 
 
 
-    override fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> =
+    override fun getWorkoutAsFlow(workoutId: Int): Flow<Workout?> =
         dao.getWorkoutById(workoutId).map {
-            it.toWorkout(emptyList())
+            it?.toWorkout(emptyList())
         }
 
-    override fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =
+    override fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>?> =
         dao.getWorkoutTracksFlow(workoutId).map {
-            it.map { entity ->
+            it?.map { entity ->
                 entity.toTrack()
             }
         }

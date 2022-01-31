@@ -1,40 +1,33 @@
 package com.example.workaudio.activities
 
-import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.LargeTest
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import com.example.workaudio.R
 import com.example.workaudio.presentation.login.LoginActivity
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-
-@RunWith(AndroidJUnit4::class)
-@LargeTest
+@HiltAndroidTest
 class LoginActivityTest {
 
-    @get:Rule
-    val activityRule = ActivityScenarioRule(LoginActivity::class.java)
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
 
     @Before
-    fun setup(){
-        activityRule.scenario.moveToState(Lifecycle.State.STARTED)
+    fun setup() {
+        hiltRule.inject()
     }
 
     @Test
-    fun activityIsLaunched() {
-        onView(ViewMatchers.withId(R.id.loginButton)).perform(click())
-        onView(ViewMatchers.withId(R.id.textView)).check(
-            matches(withText("a"))
-        )
-
+    fun onActivity_whenLoginButtonClicked_thenSpotifyAutomaticLoginIsLaunched() {
+       val scenario =  ActivityScenario.launch(LoginActivity::class.java)
+        onView(withId(R.id.loginButton)).perform(click())
     }
+
+
 }

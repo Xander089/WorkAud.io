@@ -1,18 +1,17 @@
-package com.example.workaudio.viewmodels.fakeBoundary
+package com.example.workaudio.viewmodels
 
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
-import com.example.workaudio.core.usecases.player.PlayerBoundary
-import kotlinx.coroutines.flow.Flow
 
-class FakePlayerBoundary : PlayerBoundary {
+class TestDataSource {
 
-    val tracks = listOf(
+    val tokens = mutableListOf<String>()
+    val tracks = mutableListOf(
         Track("title1", "uri2", 1000, "artist1", "album1", "url1"),
         Track("title2", "uri2", 2000, "artist2", "album2", "url2")
     )
 
-    val workout = Workout(
+    var workout = Workout(
         name = "test_name",
         duration = 3000,
         imageUrl = "test",
@@ -20,9 +19,6 @@ class FakePlayerBoundary : PlayerBoundary {
         id = 0
     )
 
-    val list = listOf(workout)
+    val list = mutableListOf(workout)
 
-    override suspend fun getWorkout(id: Int): Workout {
-        return workout
-    }
 }

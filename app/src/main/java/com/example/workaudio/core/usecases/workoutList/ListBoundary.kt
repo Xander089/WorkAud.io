@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ListBoundary{
      suspend fun deleteWorkout(workoutId: Int)
-     fun getWorkouts(): Flow<List<Workout>>
-     suspend fun getWorkoutTrack(id: Int): ListInteractor.JoinedTrack
+     fun getWorkouts(): Flow<List<Workout>?>
+     suspend fun getWorkoutTrack(id: Int): ListInteractor.JoinedTrack?
 
 }

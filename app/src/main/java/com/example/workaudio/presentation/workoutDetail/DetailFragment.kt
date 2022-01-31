@@ -173,17 +173,20 @@ class DetailFragment : Fragment() {
 
     private fun setObservers() {
         viewModel.selectedWorkout.observe(this, { workout ->
-
-            binding.apply {
-                topAppBar.title = workout.name
-                targetDurationText.text = viewModel.formatTargetDuration(workout.duration)
+            workout?.let {
+                binding.apply {
+                    topAppBar.title = it.name
+                    targetDurationText.text = viewModel.formatTargetDuration(it.duration)
+                }
             }
         })
 
         viewModel.tracks.observe(this, { tracks ->
-            togglePlayButton(viewModel.checkTracksDuration(tracks))
-            binding.durationText.text = viewModel.getTracksDuration(tracks)
-            workoutAdapter.refreshTrackList(tracks)
+            tracks?.let {
+                togglePlayButton(viewModel.checkTracksDuration(it))
+                binding.durationText.text = viewModel.getTracksDuration(it)
+                workoutAdapter.refreshTrackList(it)
+            }
         })
 
     }
@@ -241,6 +244,6 @@ class DetailFragment : Fragment() {
             .show(parentFragmentManager, DURATION_TAG)
     }
 
-    private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: -1
+    private fun getWorkoutId() = arguments?.getInt(ID_TAG) ?: 0
 
 }

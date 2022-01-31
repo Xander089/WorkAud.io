@@ -20,7 +20,7 @@ class DurationFragment : Fragment() {
 
     companion object {
         private const val DURATION_TO_NAME = R.id.action_durationFragment_to_nameFragment
-        private const val DURATION_TO_DETAIL = R.id.action_durationFragment_to_workoutDetailFragment
+        private const val DURATION_TO_MAIN_LIST = R.id.action_durationFragment_to_workoutListFragment
     }
 
     private lateinit var binding: FragmentDurationBinding
@@ -42,7 +42,7 @@ class DurationFragment : Fragment() {
             if (viewModel.isWorkoutCreated()) {
                 NavigationManager.navigateTo(
                     findNavController(),
-                    DURATION_TO_DETAIL,
+                    DURATION_TO_MAIN_LIST,
                     bundleOf(ID_TAG to workout?.id)
                 )
             }
@@ -59,7 +59,7 @@ class DurationFragment : Fragment() {
                     DURATION_TO_NAME
                 )
             }
-            continueButton.setOnClickListener {
+            confirmWorkoutCreationButton.setOnClickListener {
                 viewModel.insertWorkout(
                     getWorkoutName(),
                     getRangeSliderDuration()

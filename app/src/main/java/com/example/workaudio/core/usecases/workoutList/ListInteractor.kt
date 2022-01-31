@@ -9,8 +9,8 @@ class ListInteractor(
 ) : ListBoundary {
 
     override suspend fun deleteWorkout(workoutId: Int) = dataAccess.deleteWorkout(workoutId)
-    override fun getWorkouts(): Flow<List<Workout>> = dataAccess.getWorkouts()
-    override suspend fun getWorkoutTrack(id: Int): JoinedTrack = dataAccess.getWorkoutTrack(id).toJoinedTrack(id)
+    override fun getWorkouts(): Flow<List<Workout>?> = dataAccess.getWorkouts()
+    override suspend fun getWorkoutTrack(id: Int) = dataAccess.getWorkoutTrack(id)?.toJoinedTrack(id)
 
     inner class JoinedTrack(
         val workoutId: Int,

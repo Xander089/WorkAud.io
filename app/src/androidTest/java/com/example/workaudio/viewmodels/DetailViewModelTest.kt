@@ -1,74 +1,78 @@
 package com.example.workaudio.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.example.workaudio.DataHelper.getOrAwaitValue
+import com.example.workaudio.core.usecases.detail.DetailBoundary
 import com.example.workaudio.presentation.workoutDetail.DetailFragmentViewModel
-import com.example.workaudio.viewmodels.fakeBoundary.FakeDetailBoundary
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.junit.MockitoJUnitRunner
+import kotlin.math.exp
 
-@RunWith(AndroidJUnit4::class)
+@ExperimentalCoroutinesApi
+@SmallTest
+@HiltAndroidTest
+@RunWith(MockitoJUnitRunner::class)
 class DetailViewModelTest {
 
-    private lateinit var viewModel: DetailFragmentViewModel
-    private lateinit var boundary: FakeDetailBoundary
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
+    private lateinit var source : TestDataSource
+    private lateinit var viewModel: DetailFragmentViewModel
+
+    @Mock
+    lateinit var interactor: DetailBoundary
+
 
     @Before
     fun setup() {
-        boundary = FakeDetailBoundary()
-        viewModel = DetailFragmentViewModel(boundary)
+        source = TestDataSource()
+        mockWorkoutEmission()
+        viewModel = DetailFragmentViewModel(interactor)
         viewModel.setDispatcher(Dispatchers.Main)
         viewModel.initializeCurrentWorkout(0)
     }
 
+    private fun mockWorkoutEmission() {
+        Mockito.`when`(interactor.getWorkout(0)).thenReturn(flow {
+            emit(source.workout)
+        })
+        Mockito.`when`(interactor.getWorkoutTracks(0)).thenReturn(flow {
+            emit(source.tracks)
+        })
+    }
+
 
     @Test
-    fun when_workout_is_requested_then_it_is_emitted_as_live_data() {
-        val workout = viewModel.selectedWorkout.getOrAwaitValue()
-        assertEquals("test_workout", workout.name)
+    fun whenWorkoutIsRequested_thenItIsEmittedAsLiveData()  {
+        val expected = "test_name"
+        val actual = viewModel.selectedWorkout.getOrAwaitValue()?.name.orEmpty()
+        assertEquals(expected, actual)
     }
 
     @Test
-    fun when_tracks_are_requested_then_they_are_emitted_as_live_data() {
-        val track = viewModel.tracks.getOrAwaitValue().first()
-        assertEquals("test_title", track.title)
-    }
-
-    @Test
-    fun when_name_is_updated_then_workout_with_new_name_is_returned() =
-        runBlocking(Dispatchers.Main) {
-            viewModel.updateWorkoutName(0, "new_name")
-            delay(1000)
-            assertEquals("new_name", boundary.workout.name)
-        }
-
-    @Test
-    fun when_duration_is_updated_then_workout_with_new_duration_is_returned() =
-        runBlocking(Dispatchers.Main) {
-            viewModel.updateWorkoutDuration(0, 1)
-            delay(1000)
-            assertEquals(60000, boundary.workout.duration)
-        }
-
-    @Test
-    fun when_track_is_deleted_then_tracks_do_not_contain_it_anymore() = runBlocking(Dispatchers.Main) {
-        viewModel.deleteTrack("test_uri")
-        delay(1000)
-        assertTrue(boundary.trackList.isEmpty())
+    fun whenWorkoutTracksAreRequested_thenEmittedAsLiveData() {
+        val expected = "title1"
+        val actual = viewModel.tracks.getOrAwaitValue()?.first()?.title.orEmpty()
+        assertEquals(expected, actual)
     }
 
 

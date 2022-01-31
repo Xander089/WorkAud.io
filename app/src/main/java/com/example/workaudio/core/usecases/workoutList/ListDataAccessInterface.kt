@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ListDataAccessInterface {
 
-    fun getWorkouts(): Flow<List<Workout>>
+    fun getWorkouts(): Flow<List<Workout>?>
     suspend fun deleteWorkout(workoutId: Int)
-    suspend fun getWorkoutTrack(workoutId: Int): Track
+    suspend fun getWorkoutTrack(workoutId: Int): Track?
 
 }

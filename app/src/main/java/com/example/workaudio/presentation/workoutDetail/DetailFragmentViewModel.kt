@@ -24,8 +24,8 @@ class DetailFragmentViewModel @Inject constructor(private val useCaseInteractor:
 
     var scrollState = 0
 
-    var selectedWorkout: LiveData<Workout> = MutableLiveData<Workout>()
-    var tracks: LiveData<List<Track>> = MutableLiveData()
+    var selectedWorkout: LiveData<Workout?> = MutableLiveData<Workout>()
+    var tracks: LiveData<List<Track>?> = MutableLiveData()
 
     fun initializeCurrentWorkout(workoutId: Int) {
         selectedWorkout = useCaseInteractor.getWorkout(workoutId).asLiveData()

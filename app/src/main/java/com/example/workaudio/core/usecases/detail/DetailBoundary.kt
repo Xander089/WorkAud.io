@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface DetailBoundary {
 
-    fun getWorkout(id: Int): Flow<Workout>
-    fun getWorkoutTracks(workoutId: Int): Flow<List<Track>>
+    fun getWorkout(id: Int): Flow<Workout?>
+    fun getWorkoutTracks(workoutId: Int): Flow<List<Track>?>
     suspend fun updateWorkoutName(
         id: Int,
         name: String

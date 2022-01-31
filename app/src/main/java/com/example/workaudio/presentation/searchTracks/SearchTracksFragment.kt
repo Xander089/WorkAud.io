@@ -177,15 +177,19 @@ class SearchTracksFragment : Fragment() {
 
     private fun setupWorkoutObserver() {
         viewModel.currentWorkout.observe(this, { workout ->
-            binding.minuteLabel.text = viewModel.formatDuration(workout.duration)
-            viewModel.setTargetDuration(workout)
+            workout?.let {
+                binding.minuteLabel.text = viewModel.formatDuration(it.duration)
+                viewModel.setTargetDuration(it)
+            }
         })
     }
 
     private fun setupWorkoutTracksObserver() {
         viewModel.workoutTracks.observe(this, { tracks ->
-            binding.currentMinuteLabel.text = viewModel.formatCurrentDuration(tracks)
-            binding.progressBar.progress = viewModel.updateProgressBar(tracks)
+            tracks?.let {
+                binding.currentMinuteLabel.text = viewModel.formatCurrentDuration(it)
+                binding.progressBar.progress = viewModel.updateProgressBar(it)
+            }
         })
     }
 

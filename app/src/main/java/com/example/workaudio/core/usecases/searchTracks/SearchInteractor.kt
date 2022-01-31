@@ -9,8 +9,8 @@ class SearchInteractor(
 ) : SearchBoundary {
 
 
-    override fun getWorkout(id: Int): Flow<Workout> = dataAccess.getWorkoutAsFlow(id)
-    override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>> = dataAccess.getWorkoutTracksAsFlow(workoutId)
+    override fun getWorkout(id: Int): Flow<Workout?> = dataAccess.getWorkoutAsFlow(id)
+    override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>?> = dataAccess.getWorkoutTracksAsFlow(workoutId)
 
     override suspend fun searchTracks(queryText: String): List<Track> =
         dataAccess.searchTracks(queryText)

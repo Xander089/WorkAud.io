@@ -8,8 +8,8 @@ class DetailInteractor(
     private val dataAccess: DetailDataAccessInterface
 ) : DetailBoundary{
 
-    override fun getWorkout(id: Int): Flow<Workout> = dataAccess.getWorkoutAsFlow(id)
-    override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>> = dataAccess.getWorkoutTracksAsFlow(workoutId)
+    override fun getWorkout(id: Int): Flow<Workout?> = dataAccess.getWorkoutAsFlow(id)
+    override fun getWorkoutTracks(workoutId: Int): Flow<List<Track>?> = dataAccess.getWorkoutTracksAsFlow(workoutId)
     override suspend fun updateWorkoutName(
         id: Int,
         name: String

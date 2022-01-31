@@ -1,41 +1,69 @@
 package com.example.workaudio.viewmodels
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SmallTest
 import com.example.workaudio.DataHelper.getOrAwaitValue
+import com.example.workaudio.core.usecases.creation.CreationBoundary
+import com.example.workaudio.core.usecases.workoutList.ListBoundary
 import com.example.workaudio.presentation.workoutMainList.WorkoutListFragmentViewModel
-import com.example.workaudio.viewmodels.fakeBoundary.FakeMainListBoundary
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.junit.MockitoJUnitRunner
 
 
-@RunWith(AndroidJUnit4::class)
+@ExperimentalCoroutinesApi
+@SmallTest
+@HiltAndroidTest
+@RunWith(MockitoJUnitRunner::class)
 class MainListViewModelTest {
 
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
+
+    private lateinit var source: TestDataSource
     private lateinit var viewModel: WorkoutListFragmentViewModel
-    private lateinit var access: FakeMainListBoundary
+
+    @Mock
+    lateinit var interactor: ListBoundary
+
 
     @Before
     fun setup() {
-        access = FakeMainListBoundary()
-        viewModel = WorkoutListFragmentViewModel(access)
+        `when`(interactor.getWorkouts()).thenReturn(flow { emit(source.list) })
+        source = TestDataSource()
+        hiltRule.inject()
+        viewModel = WorkoutListFragmentViewModel(interactor)
         viewModel.setDispatcher(Dispatchers.Main)
     }
 
+    private fun removeWorkout(id: Int) {
+        source.list.removeAt(id)
+    }
+
 
     @Test
-    fun test() = runBlocking(Dispatchers.Main){
-        val workoutName = viewModel.workouts.getOrAwaitValue()[0].name
-        assert(workoutName == "test_name")
+    fun whenWorkoutsRequested_thenTheyAreEmittedAsLiveData() = runBlocking(Dispatchers.Main) {
+        val workoutName = viewModel.workouts.getOrAwaitValue()?.get(0)?.name
+        assertTrue(workoutName == "test_name")
     }
 
     @Test
-    fun test2() = runBlocking(Dispatchers.Main){
+    fun whnWorkoutIsDeleted_thenListDoesNotContainIt() = runBlocking(Dispatchers.Main) {
+        `when`(interactor.deleteWorkout(0)).thenReturn(removeWorkout(0))
         viewModel.deleteWorkout(0)
-        assert(access.getWorkouts().first().first().name == "test_name")
+        assertTrue(source.list.isEmpty())
     }
 
 

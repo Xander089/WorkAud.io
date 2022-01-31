@@ -19,11 +19,13 @@ import com.example.workaudio.core.usecases.workoutList.ListInteractor
 import com.example.workaudio.core.usecases.workoutList.ListDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.core.usecases.searchTracks.SearchInteractor
+import com.example.workaudio.core.usecases.workoutList.ListBoundary
 import com.example.workaudio.libraries.spotify.SpotifyManager
 import com.example.workaudio.presentation.player.PlayerViewModel
 import com.example.workaudio.presentation.searchTracks.SearchTracksFragmentViewModel
 import com.example.workaudio.presentation.utils.timer.AbstractTimerFactory
 import com.example.workaudio.presentation.utils.timer.TimerFactoryImpl
+import com.example.workaudio.presentation.workoutMainList.WorkoutListFragmentViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -152,7 +154,11 @@ object ApplicationModule {
     @Provides
     fun provideTimer() = TimerFactoryImpl()
 
+    @Provides
+    fun provideMainListViewModel(boundary: ListBoundary) =
+        WorkoutListFragmentViewModel(boundary)
 
-
-
+    @Provides
+    fun providePlayerViewModel(boundary: PlayerBoundary) =
+        PlayerViewModel(boundary)
 }

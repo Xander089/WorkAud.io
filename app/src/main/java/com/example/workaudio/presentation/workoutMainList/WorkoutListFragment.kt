@@ -1,6 +1,7 @@
 package com.example.workaudio.presentation.workoutMainList
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,8 +24,10 @@ import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
 import com.example.workaudio.presentation.utils.adapter.WorkoutAdapter
 import com.example.workaudio.presentation.utils.modal.BottomModalDialog
 import com.example.workaudio.presentation.utils.modal.ModalAction
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class WorkoutListFragment : Fragment() {
 
     companion object {
@@ -35,7 +38,9 @@ class WorkoutListFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkoutListBinding
     private lateinit var workoutAdapter: WorkoutAdapter
-    private val viewModel: WorkoutListFragmentViewModel by activityViewModels()
+
+    @Inject
+    lateinit var viewModel: WorkoutListFragmentViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,6 +68,7 @@ class WorkoutListFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.workouts.observe(this, { workouts ->
+            Log.v("ciccio", workouts.toString())
             workouts?.let {
                 workoutAdapter.updateWorkouts(it)
             }

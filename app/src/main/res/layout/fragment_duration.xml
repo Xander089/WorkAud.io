@@ -17,14 +17,14 @@
         android:text="@string/cancel"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/continueButton"
+        app:layout_constraintEnd_toStartOf="@+id/confirmWorkoutCreationButton"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="@color/white" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/continueButton"
+        android:id="@+id/confirmWorkoutCreationButton"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

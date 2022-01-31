@@ -17,7 +17,7 @@ class SearchDataAccess(
 
     override suspend fun searchTracks(queryText: String): List<Track> {
 
-        val token = dao.getToken().token.orEmpty()
+        val token = dao.getToken()?.token.orEmpty()
         val gsonResponse = service.fetchTracks(token, queryText)
 
         return gsonResponse.tracks.items.map { it.toTrack() }
@@ -36,14 +36,14 @@ class SearchDataAccess(
         dao.updateWorkoutImageUrl(imageUrl, workoutId)
 
 
-    override fun getWorkoutAsFlow(workoutId: Int): Flow<Workout> =
+    override fun getWorkoutAsFlow(workoutId: Int): Flow<Workout?> =
         dao.getWorkoutById(workoutId).map {
-            it.toWorkout(emptyList())
+            it?.toWorkout(emptyList())
         }
 
-    override fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>> =
+    override fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>?> =
         dao.getWorkoutTracksFlow(workoutId).map {
-            it.map { entity ->
+            it?.map { entity ->
                 entity.toTrack()
             }
         }

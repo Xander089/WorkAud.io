@@ -10,13 +10,13 @@ class PlayerDataAccess(
 ) : PlayerDataAccessInterface{
 
 
-    override suspend fun getWorkout(id: Int): Workout {
+    override suspend fun getWorkout(id: Int): Workout? {
         val tracksRoomEntity = dao.getWorkoutTracks(id)
         val workoutRoomEntity = dao.getWorkout(id)
-        val tracks = tracksRoomEntity.map { trackEntity ->
+        val tracks = tracksRoomEntity?.map { trackEntity ->
             trackEntity.toTrack()
         }.orEmpty()
-        return workoutRoomEntity.toWorkout(tracks)
+        return workoutRoomEntity?.toWorkout(tracks)
     }
 
 }

@@ -35,23 +35,23 @@
         android:label="fragment_name"
         tools:layout="@layout/fragment_name" >
         <action
-            android:id="@+id/action_nameFragment_to_durationFragment"
-            app:destination="@id/durationFragment" />
-        <action
             android:id="@+id/action_nameFragment_to_workoutListFragment"
             app:destination="@id/workoutListFragment" />
+        <action
+            android:id="@+id/action_nameFragment_to_durationFragment"
+            app:destination="@id/durationFragment" />
     </fragment>
     <fragment
         android:id="@+id/durationFragment"
         android:name="com.example.workaudio.presentation.workoutCreation.DurationFragment"
         android:label="fragment_duration"
-        tools:layout="@layout/fragment_duration" >
+        tools:layout="@layout/fragment_duration">
         <action
             android:id="@+id/action_durationFragment_to_nameFragment"
             app:destination="@id/nameFragment" />
         <action
-            android:id="@+id/action_durationFragment_to_workoutDetailFragment"
-            app:destination="@id/workoutDetailFragment" />
+            android:id="@+id/action_durationFragment_to_workoutListFragment"
+            app:destination="@id/workoutListFragment" />
     </fragment>
     <fragment
         android:id="@+id/editingTracksFragment"

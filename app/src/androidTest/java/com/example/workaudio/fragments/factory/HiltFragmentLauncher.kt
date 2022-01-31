@@ -1,4 +1,4 @@
-package com.example.workaudio.fragments
+package com.example.workaudio.fragments.factory
 
 import android.content.ComponentName
 import android.content.Intent
@@ -11,8 +11,10 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import com.example.workaudio.HiltTestActivity
 import com.example.workaudio.R
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@ExperimentalCoroutinesApi
 inline fun <reified T : Fragment> launchFragmentInHiltContainer(
     fragmentArgs: Bundle? = null,
     @StyleRes themeResId: Int = R.style.AppTheme_Toolbar,

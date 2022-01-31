@@ -9,6 +9,6 @@ interface SearchDataAccessInterface {
     suspend fun searchTracks(queryText: String): List<Track>
     suspend fun insertTrack(track: Track, workoutId: Int)
     suspend fun updateWorkoutDefaultImage(imageUrl: String, workoutId: Int)
-    fun getWorkoutAsFlow(workoutId: Int): Flow<Workout>
-    fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>>
+    fun getWorkoutAsFlow(workoutId: Int): Flow<Workout?>
+    fun getWorkoutTracksAsFlow(workoutId: Int): Flow<List<Track>?>
 }

@@ -51,7 +51,7 @@ class DatabaseTest {
         dao.clearWorkouts()
         dao.insertWorkout(WorkoutRoomEntity("test", 100, ""))
         val workout = dao.getLatestWorkout()
-        assert(workout.name == "test")
+        assert(workout?.name == "test")
     }
 
     @Test
@@ -69,7 +69,7 @@ class DatabaseTest {
             )
         )
         val track = dao.getWorkoutTrack(10)
-        assert(track.uri == "abcde")
+        assert(track?.uri == "abcde")
     }
 
 
@@ -77,8 +77,8 @@ class DatabaseTest {
     fun test_token() = runBlocking {
         dao.clearToken()
         dao.insertToken(TokenRoomEntity("abc"))
-        val tokenFlow = dao.readToken().first().token
-        val token = dao.getToken().token
+        val tokenFlow = dao.readToken().first()?.token
+        val token = dao.getToken()?.token
         assert(token == tokenFlow)
     }
 
@@ -86,8 +86,10 @@ class DatabaseTest {
     fun test_updateWorkoutDefaultImage() = runBlocking {
         dao.clearWorkouts()
         dao.insertWorkout(WorkoutRoomEntity("test", 100, ""))
-        dao.updateWorkoutImageUrl("image_url", dao.getLatestWorkout().id)
-        assert("image_url" == dao.getLatestWorkout().imageUrl)
+        dao.getLatestWorkout()?.id?.let { id ->
+            dao.updateWorkoutImageUrl("image_url", id)
+        }
+        assert("image_url" == dao.getLatestWorkout()?.imageUrl)
     }
 
 
@@ -95,9 +97,10 @@ class DatabaseTest {
     fun test_getWorkoutAsFlow() = runBlocking {
         dao.clearWorkouts()
         dao.insertWorkout(WorkoutRoomEntity("test", 100, ""))
-        val id = dao.getLatestWorkout().id
-        val resultId = dao.getWorkoutById(id).first().id
-        assert(id == resultId)
+        dao.getLatestWorkout()?.id?.let { id ->
+            val resultId = dao.getWorkoutById(id).first()?.id
+            assert(id == resultId)
+        }
     }
 
 
@@ -106,8 +109,8 @@ class DatabaseTest {
         dao.clearWorkoutsTracks()
         val track = WorkoutTracksRoomEntity(10, "abcde", "test", 100, "test", "test", "test")
         dao.insertWorkoutTrack(track)
-        val resultTrack = dao.getWorkoutTracksFlow(10).first()[0]
-        assert(track.uri == resultTrack.uri)
+        val resultTrack = dao.getWorkoutTracksFlow(10).first()?.get(0)
+        assert(track.uri == resultTrack?.uri)
     }
 
 

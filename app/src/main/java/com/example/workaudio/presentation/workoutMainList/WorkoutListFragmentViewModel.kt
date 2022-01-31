@@ -19,7 +19,7 @@ class WorkoutListFragmentViewModel @Inject constructor(private val workoutNaviga
         this.dispatcher = dispatcher
     }
 
-    var workouts: LiveData<List<Workout>> = workoutNavigationInteractor.getWorkouts().asLiveData()
+    var workouts: LiveData<List<Workout>?> = workoutNavigationInteractor.getWorkouts().asLiveData()
 
     fun deleteWorkout(workoutId: Int) {
         viewModelScope.launch(dispatcher) {

@@ -35,8 +35,8 @@ class SearchViewModelTest {
     fun test_setupCurrentWorkout() = runBlocking {
         //GIVEN
         //WHEN
-        val workoutName = viewModel.currentWorkout.getOrAwaitValue().name
-        val trackName = viewModel.workoutTracks.getOrAwaitValue()[0].title
+        val workoutName = viewModel.currentWorkout.getOrAwaitValue()?.name
+        val trackName = viewModel.workoutTracks.getOrAwaitValue()?.get(0)?.title
         //THEN
         assert(workoutName == "test_name" && trackName == "title")
     }
@@ -48,7 +48,7 @@ class SearchViewModelTest {
         //WHEN
         viewModel.addTrack(track, 0)
         //THEN
-        val title = viewModel.workoutTracks.getOrAwaitValue()[1].title
+        val title = viewModel.workoutTracks.getOrAwaitValue()?.get(1)?.title
         assert(title == "title2")
     }
 
@@ -70,20 +70,21 @@ class SearchViewModelTest {
         //WHEN
         viewModel.updateWorkoutDefaultImage(url, 0)
         //THEN
-        val newUrl = viewModel.currentWorkout.getOrAwaitValue().imageUrl
+        val newUrl = viewModel.currentWorkout.getOrAwaitValue()?.imageUrl
         assert(newUrl == url)
     }
 
     @Test
     fun test_updateProgressBar() = runBlocking {
         //GIVEN
-        val workout = viewModel.currentWorkout.getOrAwaitValue()
-        viewModel.setTargetDuration(workout)
-        val tracks = viewModel.workoutTracks.getOrAwaitValue()
-        //WHEN
-        val progress = viewModel.updateProgressBar(tracks)
-        //THEN
-        assert(progress == 10)
+        viewModel.currentWorkout.getOrAwaitValue()?.let { workout ->
+            viewModel.setTargetDuration(workout)
+            val tracks = viewModel.workoutTracks.getOrAwaitValue()
+            //WHEN
+            val progress = viewModel.updateProgressBar(tracks.orEmpty())
+            //THEN
+            assert(progress == 10)
+        }
     }
 
     @Test
@@ -91,7 +92,7 @@ class SearchViewModelTest {
         //GIVEN
         val tracks = viewModel.workoutTracks.getOrAwaitValue()
         //WHEN
-        val duration = viewModel.formatCurrentDuration(tracks)
+        val duration = viewModel.formatCurrentDuration(tracks.orEmpty())
         //THEN
         assert(duration == "3")
     }
@@ -101,7 +102,7 @@ class SearchViewModelTest {
         //GIVEN
 
         //WHEN
-        val formatted = viewModel.formatDuration(1000*60*3)
+        val formatted = viewModel.formatDuration(1000 * 60 * 3)
         //THEN
         assert(formatted == "/3 min")
     }
