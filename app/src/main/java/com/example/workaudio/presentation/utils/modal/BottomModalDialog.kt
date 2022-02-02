@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.workaudio.Constants.MODAL_ACTION
-import com.example.workaudio.Constants.MODAL_TITLE
+import com.example.workaudio.common.Constants.MODAL_ACTION
+import com.example.workaudio.common.Constants.MODAL_TITLE
 import com.example.workaudio.databinding.ModalLayoutBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 

@@ -8,7 +8,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import com.example.workaudio.Constants
+import com.example.workaudio.common.Constants
 import com.example.workaudio.R
 import com.google.android.material.slider.RangeSlider
 

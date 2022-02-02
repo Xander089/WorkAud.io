@@ -1,120 +1,151 @@
 package com.example.workaudio.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.workaudio.DataHelper.getOrAwaitValue
+import androidx.test.filters.SmallTest
+import com.example.workaudio.common.DataHelper.getOrAwaitValue
+import com.example.workaudio.TestDataSource
 import com.example.workaudio.core.entities.Track
+import com.example.workaudio.core.usecases.searchTracks.SearchBoundary
 import com.example.workaudio.presentation.searchTracks.SearchTracksFragmentViewModel
-import com.example.workaudio.viewmodels.fakeBoundary.FakeSearchBoundary
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(AndroidJUnit4::class)
+@ExperimentalCoroutinesApi
+@SmallTest
+@HiltAndroidTest
+@RunWith(MockitoJUnitRunner::class)
 class SearchViewModelTest {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
+    @get:Rule(order = 0)
+    val hiltRule = HiltAndroidRule(this)
+
+    private lateinit var source : TestDataSource
+
     private lateinit var viewModel: SearchTracksFragmentViewModel
+
+    @Mock
+    lateinit var interactor: SearchBoundary
 
     @Before
     fun setup() {
-        viewModel = SearchTracksFragmentViewModel(FakeSearchBoundary())
+        source = TestDataSource()
+        setupMock()
+        hiltRule.inject()
+        viewModel = SearchTracksFragmentViewModel(interactor)
         viewModel.setDispatcher(Dispatchers.Main)
         viewModel.setupCurrentWorkout(0)
 
     }
 
+    private fun setupMock(){
+        `when`(interactor.getWorkout(0)).thenReturn(flow { emit(source.workout) })
+        `when`(interactor.getWorkoutTracks(0)).thenReturn(flow { source.tracks })
+    }
+
 
     @Test
-    fun test_setupCurrentWorkout() = runBlocking {
+    fun whenWorkoutIsSet_thenItIsReturnedAsLiveData() = runBlocking(Dispatchers.Main) {
         //GIVEN
+        val expected = "test_name"
         //WHEN
         val workoutName = viewModel.currentWorkout.getOrAwaitValue()?.name
-        val trackName = viewModel.workoutTracks.getOrAwaitValue()?.get(0)?.title
         //THEN
-        assert(workoutName == "test_name" && trackName == "title")
+        assertEquals(expected,workoutName)
     }
 
     @Test
-    fun test_addTrack() = runBlocking {
+    fun whenTrackIsAdded_thenTheListContainsIt() = runBlocking(Dispatchers.Main) {
         //GIVEN
-        val track = Track("title2", "uri", 1000, "artist", "album", "url", 0)
+        val track = source.tracks[1]
+        val expected = track.title
+        `when`(interactor.addTrack(track,0)).thenReturn(addTrack(track))
         //WHEN
         viewModel.addTrack(track, 0)
         //THEN
-        val title = viewModel.workoutTracks.getOrAwaitValue()?.get(1)?.title
-        assert(title == "title2")
+        val actual = source.tracks[2].title
+        assertEquals(expected, actual)
+    }
+
+    private fun addTrack(track: Track){
+        source.tracks.add(track)
     }
 
     @Test
-    fun test_searchTracks() {
+    fun whenTracksAreSearched_thenTheyAreReturned() = runBlocking(Dispatchers.Main)  {
         //GIVEN
-
+        val expected = "title1"
+        val query = "query"
         //WHEN
-        viewModel.searchTracks("abc")
+        `when`(interactor.searchTracks(query)).thenReturn(source.tracks)
+        viewModel.searchTracks(query)
+        delay(1000)
         //THEN
-        val title = viewModel.searchedTracks.getOrAwaitValue()[0].title
-        assert(title == "title")
+        val actual = viewModel.searchedTracks.getOrAwaitValue()[0].title
+        assertEquals(expected,actual)
+
     }
 
     @Test
-    fun test_updateWorkoutDefaultImage() {
+    fun whenDefaultImageUrlUpdated_thenWorkoutContainsIt() = runBlocking {
         //GIVEN
-        val url = "abc"
+        val expected = "newImageUrl"
+        `when`(interactor.updateWorkoutDefaultImage(expected,0)).thenReturn(updateUrl(expected))
         //WHEN
-        viewModel.updateWorkoutDefaultImage(url, 0)
+        viewModel.updateWorkoutDefaultImage(expected, 0)
         //THEN
-        val newUrl = viewModel.currentWorkout.getOrAwaitValue()?.imageUrl
-        assert(newUrl == url)
+        val actual = source.workout.imageUrl
+        assertEquals(expected,actual)
+
+    }
+
+    private fun updateUrl(url: String){
+        source.workout.imageUrl = url
     }
 
     @Test
-    fun test_updateProgressBar() = runBlocking {
+    fun whenTotalTimeIsThree_thenThreeIsReturnedAsDurationString() {
         //GIVEN
-        viewModel.currentWorkout.getOrAwaitValue()?.let { workout ->
-            viewModel.setTargetDuration(workout)
-            val tracks = viewModel.workoutTracks.getOrAwaitValue()
-            //WHEN
-            val progress = viewModel.updateProgressBar(tracks.orEmpty())
-            //THEN
-            assert(progress == 10)
-        }
-    }
-
-    @Test
-    fun test_formatCurrentDuration() {
-        //GIVEN
-        val tracks = viewModel.workoutTracks.getOrAwaitValue()
+        val expected = "3"
         //WHEN
-        val duration = viewModel.formatCurrentDuration(tracks.orEmpty())
+        val actual = viewModel.formatCurrentDuration(source.tracks)
         //THEN
-        assert(duration == "3")
+        assertEquals(expected,actual)
     }
 
     @Test
-    fun test_formatDuration() {
+    fun whenInputIs180Seconds_then_3MinIsReturnedAsString() {
         //GIVEN
-
+        val expected = "/3 min"
         //WHEN
-        val formatted = viewModel.formatDuration(1000 * 60 * 3)
+        val actual = viewModel.formatDuration(1000 * 60 * 3)
         //THEN
-        assert(formatted == "/3 min")
+        assertEquals(expected,actual)
     }
 
     @Test
     fun test_formatSnackBarText() {
         //GIVEN
-
+        val expected = "title decoration"
         //WHEN
-        val res = viewModel.formatSnackBarText("title", "decoration")
+        val actual = viewModel.formatSnackBarText("title", "decoration")
         //THEN
-        assert(res == "title decoration")
+        assertEquals(expected,actual)
     }
 
 

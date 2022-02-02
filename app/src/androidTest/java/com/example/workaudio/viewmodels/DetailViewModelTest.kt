@@ -2,18 +2,16 @@ package com.example.workaudio.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.filters.SmallTest
-import com.example.workaudio.DataHelper.getOrAwaitValue
+import com.example.workaudio.common.DataHelper.getOrAwaitValue
+import com.example.workaudio.TestDataSource
 import com.example.workaudio.core.usecases.detail.DetailBoundary
 import com.example.workaudio.presentation.workoutDetail.DetailFragmentViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -21,7 +19,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnitRunner
-import kotlin.math.exp
 
 @ExperimentalCoroutinesApi
 @SmallTest

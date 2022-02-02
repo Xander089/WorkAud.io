@@ -1,21 +1,17 @@
 package com.example.workaudio.presentation.player
 
-import android.util.Log
 import androidx.lifecycle.*
-import androidx.room.Update
-import com.example.workaudio.Constants.DEFAULT_DELAY_TIME
-import com.example.workaudio.Constants.MILLIS_TO_SECOND
-import com.example.workaudio.DataHelper
+import com.example.workaudio.common.Constants.DEFAULT_DELAY_TIME
+import com.example.workaudio.common.Constants.MILLIS_TO_SECOND
+import com.example.workaudio.common.DataHelper
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.player.PlayerBoundary
 import com.example.workaudio.presentation.utils.timer.AbstractTimerFactory
-import com.example.workaudio.presentation.utils.timer.TimerFactoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.cancellable
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @HiltViewModel

@@ -13,7 +13,7 @@ import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentNameBinding
 import android.text.Editable
 import android.view.inputmethod.InputMethodManager
-import com.example.workaudio.Constants.WORKOUT_NAME
+import com.example.workaudio.common.Constants.WORKOUT_NAME
 import com.example.workaudio.presentation.utils.NavigationManager
 
 

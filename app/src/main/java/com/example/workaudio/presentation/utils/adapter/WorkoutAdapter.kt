@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.workaudio.Constants.MIN
-import com.example.workaudio.DataHelper
+import com.example.workaudio.common.Constants.MIN
+import com.example.workaudio.common.DataHelper
 import com.example.workaudio.databinding.ItemWorkoutListBinding
 import com.example.workaudio.core.entities.Workout
 

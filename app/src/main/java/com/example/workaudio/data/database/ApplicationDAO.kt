@@ -23,6 +23,9 @@ interface ApplicationDAO {
     @Query("SELECT * FROM TokenRoomEntity")
     suspend fun getToken(): TokenRoomEntity?
 
+    @Query("SELECT * FROM TokenRoomEntity")
+    fun getTokenSync(): TokenRoomEntity?
+
     @Query("SELECT * FROM WorkoutRoomEntity ORDER BY id DESC LIMIT 1")
     suspend fun getLatestWorkout(): WorkoutRoomEntity?
 

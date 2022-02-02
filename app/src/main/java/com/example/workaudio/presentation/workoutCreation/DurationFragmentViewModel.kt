@@ -3,9 +3,8 @@ package com.example.workaudio.presentation.workoutCreation
 import androidx.lifecycle.*
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.creation.CreationBoundary
-import com.example.workaudio.Constants.MILLIS_IN_A_MINUTE
-import com.example.workaudio.Constants.MIN
-import com.example.workaudio.DataHelper
+import com.example.workaudio.common.Constants.MILLIS_IN_A_MINUTE
+import com.example.workaudio.common.DataHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

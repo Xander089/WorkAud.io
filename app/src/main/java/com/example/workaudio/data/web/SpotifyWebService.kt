@@ -1,7 +1,8 @@
 package com.example.workaudio.data.web
 
-import com.example.workaudio.Constants.BEARER
-import com.example.workaudio.Constants.SEARCH_TYPE
+import com.example.workaudio.common.Constants.BEARER
+import com.example.workaudio.common.Constants.SEARCH_TYPE
+import io.reactivex.rxjava3.core.Observable
 import okio.IOException
 import retrofit2.HttpException
 
@@ -26,6 +27,10 @@ class SpotifyWebService(
             is SafeHandler.Success -> safeCall.value
         }
     }
+
+    fun fetchTracksAsObservable(token: String, queryText: String) =
+        api.getTracksAsObservable("$BEARER $token", queryText, SEARCH_TYPE)
+
 
     private suspend fun <T> safeApiCall(
         token: String,

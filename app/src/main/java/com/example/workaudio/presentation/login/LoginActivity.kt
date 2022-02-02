@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.example.workaudio.Constants.REQUEST_CODE
+import com.example.workaudio.common.Constants.REQUEST_CODE
 import com.example.workaudio.R
 import com.example.workaudio.presentation.workoutMainList.MainActivity
 import com.example.workaudio.databinding.ActivityLoginBinding

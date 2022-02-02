@@ -1,4 +1,4 @@
-package com.example.workaudio
+package com.example.workaudio.common
 
 object Constants {
 

@@ -1,16 +1,14 @@
 package com.example.workaudio.viewmodels
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.example.workaudio.DataHelper.getOrAwaitValue
-import com.example.workaudio.core.usecases.creation.CreationBoundary
+import com.example.workaudio.common.DataHelper.getOrAwaitValue
+import com.example.workaudio.TestDataSource
 import com.example.workaudio.core.usecases.workoutList.ListBoundary
 import com.example.workaudio.presentation.workoutMainList.WorkoutListFragmentViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertTrue

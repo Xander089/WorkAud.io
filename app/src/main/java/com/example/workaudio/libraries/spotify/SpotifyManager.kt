@@ -1,7 +1,7 @@
 package com.example.workaudio.libraries.spotify
 
 import android.content.Context
-import com.example.workaudio.Constants.RESET_TIME
+import com.example.workaudio.common.Constants.RESET_TIME
 import com.example.workaudio.R
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector.ConnectionListener

@@ -9,11 +9,10 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.text.toUpperCase
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.workaudio.Constants.STOP_TAG
-import com.example.workaudio.Constants.WORKOUT_ID
+import com.example.workaudio.common.Constants.STOP_TAG
+import com.example.workaudio.common.Constants.WORKOUT_ID
 import com.example.workaudio.R
 import com.example.workaudio.databinding.ActivityPlayerBinding
 import com.example.workaudio.libraries.spotify.SpotifyManager

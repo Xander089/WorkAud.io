@@ -23,7 +23,6 @@ import com.example.workaudio.core.usecases.workoutList.ListBoundary
 import com.example.workaudio.libraries.spotify.SpotifyManager
 import com.example.workaudio.presentation.player.PlayerViewModel
 import com.example.workaudio.presentation.searchTracks.SearchTracksFragmentViewModel
-import com.example.workaudio.presentation.utils.timer.AbstractTimerFactory
 import com.example.workaudio.presentation.utils.timer.TimerFactoryImpl
 import com.example.workaudio.presentation.workoutMainList.WorkoutListFragmentViewModel
 import dagger.Module
@@ -33,6 +32,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
@@ -65,6 +65,7 @@ object ApplicationModule {
             .baseUrl(ENDPOINT)
             .client(client)
             .addConverterFactory(gsonConverterFactory)
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .build()
     }
 
