@@ -33,20 +33,7 @@ class DurationFragment : Fragment() {
 
         binding = FragmentDurationBinding.inflate(inflater, container, false)
         setupLayoutFunctionality()
-        setupObserver()
         return binding.root
-    }
-
-    private fun setupObserver() {
-        viewModel.workout.observe(this, { workout ->
-            if (viewModel.isWorkoutCreated()) {
-                NavigationManager.navigateTo(
-                    findNavController(),
-                    DURATION_TO_MAIN_LIST,
-                    bundleOf(ID_TAG to workout?.id)
-                )
-            }
-        })
     }
 
     private fun setupLayoutFunctionality() {
@@ -63,6 +50,11 @@ class DurationFragment : Fragment() {
                 viewModel.insertWorkout(
                     getWorkoutName(),
                     getRangeSliderDuration()
+                )
+
+                NavigationManager.navigateTo(
+                    findNavController(),
+                    DURATION_TO_MAIN_LIST,
                 )
             }
 

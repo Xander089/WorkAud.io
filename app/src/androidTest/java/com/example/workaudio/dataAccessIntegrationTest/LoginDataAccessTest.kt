@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.workaudio.TestDatabaseFactory
 import com.example.workaudio.core.usecases.login.LoginDataAccess
 import com.example.workaudio.data.database.ApplicationDAO
 import com.example.workaudio.data.database.ApplicationDatabase
@@ -19,20 +20,13 @@ import java.io.IOException
 
 class LoginDataAccessTest {
 
-
     private lateinit var dataAccess: LoginDataAccess
-    private lateinit var db: ApplicationDatabase
     private lateinit var dao: ApplicationDAO
 
     @Before
     fun createDb() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(
-            context, ApplicationDatabase::class.java
-        ).build()
-        dao = db.applicationDao()
+        dao = TestDatabaseFactory.createDao()!!
         dataAccess = LoginDataAccess(dao)
-
 
         runBlocking {
             dao.clearToken()
@@ -42,20 +36,21 @@ class LoginDataAccessTest {
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        db.close()
+        TestDatabaseFactory.disposeDb()
     }
 
 
     @Test
-    fun when_token_inserted_then_when_requested_it_is_returned() = runBlocking {
-        val token = "new_token"
-        dataAccess.insertToken(token)
-        val result = dao.getToken()?.token.orEmpty()
+    fun whenTokenInserted_thenItCanBeRead() = runBlocking {
+        //Given
+        val expected = "new_token"
+        //When
+        dataAccess.insertToken(expected)
+        val actual = dao.getToken()?.token.orEmpty()
+        //Then
+        assertEquals(expected, actual)
         dao.clearToken()
-        assertEquals(token,result)
 
     }
-
-
 
 }

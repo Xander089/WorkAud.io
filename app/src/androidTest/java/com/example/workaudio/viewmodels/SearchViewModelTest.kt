@@ -9,6 +9,7 @@ import com.example.workaudio.core.usecases.searchTracks.SearchBoundary
 import com.example.workaudio.presentation.searchTracks.SearchTracksFragmentViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -35,7 +36,7 @@ class SearchViewModelTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
 
-    private lateinit var source : TestDataSource
+    private lateinit var source: TestDataSource
 
     private lateinit var viewModel: SearchTracksFragmentViewModel
 
@@ -53,7 +54,7 @@ class SearchViewModelTest {
 
     }
 
-    private fun setupMock(){
+    private fun setupMock() {
         `when`(interactor.getWorkout(0)).thenReturn(flow { emit(source.workout) })
         `when`(interactor.getWorkoutTracks(0)).thenReturn(flow { source.tracks })
     }
@@ -66,7 +67,7 @@ class SearchViewModelTest {
         //WHEN
         val workoutName = viewModel.currentWorkout.getOrAwaitValue()?.name
         //THEN
-        assertEquals(expected,workoutName)
+        assertEquals(expected, workoutName)
     }
 
     @Test
@@ -74,7 +75,7 @@ class SearchViewModelTest {
         //GIVEN
         val track = source.tracks[1]
         val expected = track.title
-        `when`(interactor.addTrack(track,0)).thenReturn(addTrack(track))
+        `when`(interactor.addTrack(track, 0)).thenReturn(addTrack(track))
         //WHEN
         viewModel.addTrack(track, 0)
         //THEN
@@ -82,39 +83,42 @@ class SearchViewModelTest {
         assertEquals(expected, actual)
     }
 
-    private fun addTrack(track: Track){
+    private fun addTrack(track: Track) {
         source.tracks.add(track)
     }
 
     @Test
-    fun whenTracksAreSearched_thenTheyAreReturned() = runBlocking(Dispatchers.Main)  {
+    fun whenTracksAreSearched_thenTheyAreReturned() = runBlocking(Dispatchers.Main) {
         //GIVEN
         val expected = "title1"
         val query = "query"
         //WHEN
-        `when`(interactor.searchTracks(query)).thenReturn(source.tracks)
-        viewModel.searchTracks(query)
+        `when`(interactor.searchTracksAsObservable(query, "")
+        ).thenReturn(Observable.just(source.tracks))
+
+        var actual = ""
+        viewModel.searchTracksAsObservable(query) {
+            actual = it[0].title
+        }
         delay(1000)
         //THEN
-        val actual = viewModel.searchedTracks.getOrAwaitValue()[0].title
-        assertEquals(expected,actual)
-
+        assertEquals(expected, actual)
     }
 
     @Test
     fun whenDefaultImageUrlUpdated_thenWorkoutContainsIt() = runBlocking {
         //GIVEN
         val expected = "newImageUrl"
-        `when`(interactor.updateWorkoutDefaultImage(expected,0)).thenReturn(updateUrl(expected))
+        `when`(interactor.updateWorkoutDefaultImage(expected, 0)).thenReturn(updateUrl(expected))
         //WHEN
         viewModel.updateWorkoutDefaultImage(expected, 0)
         //THEN
         val actual = source.workout.imageUrl
-        assertEquals(expected,actual)
+        assertEquals(expected, actual)
 
     }
 
-    private fun updateUrl(url: String){
+    private fun updateUrl(url: String) {
         source.workout.imageUrl = url
     }
 
@@ -125,7 +129,7 @@ class SearchViewModelTest {
         //WHEN
         val actual = viewModel.formatCurrentDuration(source.tracks)
         //THEN
-        assertEquals(expected,actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -135,7 +139,7 @@ class SearchViewModelTest {
         //WHEN
         val actual = viewModel.formatDuration(1000 * 60 * 3)
         //THEN
-        assertEquals(expected,actual)
+        assertEquals(expected, actual)
     }
 
     @Test
@@ -145,7 +149,7 @@ class SearchViewModelTest {
         //WHEN
         val actual = viewModel.formatSnackBarText("title", "decoration")
         //THEN
-        assertEquals(expected,actual)
+        assertEquals(expected, actual)
     }
 
 

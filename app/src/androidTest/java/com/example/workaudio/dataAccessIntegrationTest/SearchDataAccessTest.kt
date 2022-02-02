@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.workaudio.TestDataSource
+import com.example.workaudio.TestDatabaseFactory
+import com.example.workaudio.TestRetrofitFactory
 import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.usecases.searchTracks.SearchDataAccess
 import com.example.workaudio.data.database.ApplicationDAO
@@ -11,10 +14,18 @@ import com.example.workaudio.data.database.ApplicationDatabase
 import com.example.workaudio.data.database.WorkoutRoomEntity
 import com.example.workaudio.data.web.SpotifyRestApi
 import com.example.workaudio.data.web.SpotifyWebService
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,73 +37,75 @@ import java.io.IOException
 
 class SearchDataAccessTest {
 
-    companion object {
-        private const val ENDPOINT = "https://api.spotify.com/v1/"
-    }
-
     private lateinit var dataAccess: SearchDataAccess
-    private lateinit var db: ApplicationDatabase
     private lateinit var dao: ApplicationDAO
+    private lateinit var source: TestDataSource
+    private var id = 0
 
     @Before
     fun createDb() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(
-            context, ApplicationDatabase::class.java
-        ).build()
-        dao = db.applicationDao()
-        val retrofit = Retrofit.Builder()
-            .baseUrl(ENDPOINT)
-            .client(OkHttpClient())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val api = retrofit.create(SpotifyRestApi::class.java)
-        val webService = SpotifyWebService(api)
+
+        source = TestDataSource()
+        dao = TestDatabaseFactory.createDao()!!
+        val webService = TestRetrofitFactory.createWebService()
         dataAccess = SearchDataAccess(dao, webService)
 
-
         runBlocking {
-            val workout =
-                WorkoutRoomEntity(name = "test_name", duration = 30 * 1000 * 60, imageUrl = "test")
             dao.clearWorkouts()
-            dao.insertWorkout(workout)
+            dao.insertWorkout(source.workoutRoomEntity)
+            id = dao.getLatestWorkout()?.id ?: 0
         }
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        db.close()
+        TestDatabaseFactory.disposeDb()
     }
 
     @Test
-    fun test_searchTracks() = runBlocking {
-        val queryText = "Radio Gaga"
-        val title = dataAccess.searchTracks(queryText)[0].title
-        val result = title.contains("Radio") || title.contains("Gaga")
-        assert(title.isNotEmpty())
+    fun whenTracksSearchedFromWebApi_thenTheyAreReturned() = runBlocking(Dispatchers.Main) {
+        //Given
+        val queryText = "R"
+        val token = dao.getToken()?.token.orEmpty()
+        //When
+        dataAccess.searchTracksAsObservable(queryText, token)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : Observer<List<Track>> {
+                override fun onSubscribe(d: Disposable) {}
+                override fun onNext(t: List<Track>) {
+                    assertTrue(t.size == 20)
+                }
+                override fun onError(e: Throwable) {}
+                override fun onComplete() {}
+            })
+    }
+
+
+    @Test
+    fun whenTracksRequested_thenReturnedAsFLow() = runBlocking {
+        //Given
+        val track = source.tracks[0]
+        //When
+        dataAccess.insertTrack(track, id)
+        //Then
+        val resultTrack = dataAccess.getWorkoutTracksAsFlow(id).first()?.get(0)
+        assertEquals(track.title, resultTrack?.title)
+
+        dao.clearWorkoutsTracks()
     }
 
     @Test
-    fun test_insertWorkout_then_getWorkoutTracksAsFlow() = runBlocking {
-        val track = Track("title", "uri", 1000, "artist", "album", "url", 0)
-        dao.getLatestWorkout()?.id?.let { id ->
-            dataAccess.insertTrack(track, id)
-            val resultTrack =
-                dataAccess.getWorkoutTracksAsFlow(id).first()?.get(0)
-            dao.clearWorkoutsTracks()
-            assert(track.title == resultTrack?.title)
-        }
-    }
+    fun whenImageUrlUpdated_thenWorkoutImageUrlUpdatedAccordingly() = runBlocking {
+        //When
+        dataAccess.updateWorkoutDefaultImage("new", id)
 
-    @Test
-    fun test_updateImageUrl_then_getWorkoutAsFlow_and_check_url() = runBlocking {
-        dao.getLatestWorkout()?.id?.let {  id ->
-            dataAccess.updateWorkoutDefaultImage("new", id)
-            val newUrl = dataAccess.getWorkoutAsFlow(id).first()?.imageUrl
-            dao.clearWorkouts()
-            assert(newUrl == "new")
-        }
+        //Then
+        val newUrl = dataAccess.getWorkoutAsFlow(id).first()?.imageUrl
+        assertEquals("new", newUrl)
+
+        dao.clearWorkouts()
     }
 
 }

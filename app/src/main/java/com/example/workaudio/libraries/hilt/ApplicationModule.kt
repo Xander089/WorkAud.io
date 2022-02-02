@@ -108,8 +108,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideCreationDataAccessImpl(db: ApplicationDatabase, service: SpotifyWebService) =
-        CreationDataAccess(db.applicationDao(), service)
+    fun provideCreationDataAccessImpl(db: ApplicationDatabase) =
+        CreationDataAccess(db.applicationDao())
 
     @Singleton
     @Provides

@@ -1,6 +1,7 @@
 package com.example.workaudio.dataAccessIntegrationTest
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.MediumTest
 import com.example.workaudio.TestDataSource
 import com.example.workaudio.TestDatabaseFactory
 import com.example.workaudio.TestRetrofitFactory
@@ -15,6 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 
+@MediumTest
 @RunWith(AndroidJUnit4::class)
 class CreationDataAccessTest {
 
@@ -26,13 +28,9 @@ class CreationDataAccessTest {
     @Before
     fun setup() {
         source = TestDataSource()
-        val webService = TestRetrofitFactory.createWebService()
         dao = TestDatabaseFactory.createDao()!!
 
-        dataAccess = CreationDataAccess(
-            dao,
-            webService
-        )
+        dataAccess = CreationDataAccess(dao)
 
         runBlocking {
             dao.clearWorkouts()
@@ -46,30 +44,6 @@ class CreationDataAccessTest {
         TestDatabaseFactory.disposeDb()
     }
 
-
-    @Test
-    fun whenLatestWorkoutIsRequested_thenItIsReturned() = runBlocking {
-        //Given
-        val expected = "test_name"
-        //When
-        val workoutName = dataAccess.getWorkout()?.name.orEmpty()
-        dao.clearWorkouts()
-        //Then
-        assertEquals(expected, workoutName)
-    }
-
-    @Test
-    fun whenLatestWorkoutIsRequestedAsFlow_thenItIsReturned() = runBlocking {
-        //Given
-        val expected = "test_name"
-        //When
-        val workoutName = dataAccess.getLatestWorkoutAsFlow().first()?.name.orEmpty()
-        dao.clearWorkouts()
-        //Then
-        assertEquals(expected, workoutName)
-
-    }
-
     @Test
     fun whenNewWorkoutIsCreated_thenItIsReturned() =
         runBlocking {
@@ -77,7 +51,7 @@ class CreationDataAccessTest {
             val expected = "new_name"
             //When
             dataAccess.insertWorkout("new_name", 0)
-            val workoutName = dataAccess.getLatestWorkoutAsFlow().first()?.name.orEmpty()
+            val workoutName = dao.getLatestWorkoutAsFlow().first()?.name.orEmpty()
             dao.clearWorkouts()
             //Then
             assertEquals(expected, workoutName)

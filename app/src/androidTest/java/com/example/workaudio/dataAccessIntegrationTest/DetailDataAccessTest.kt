@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.MediumTest
+import com.example.workaudio.TestDataSource
+import com.example.workaudio.TestDatabaseFactory
 import com.example.workaudio.core.usecases.detail.DetailDataAccess
 import com.example.workaudio.data.database.ApplicationDAO
 import com.example.workaudio.data.database.ApplicationDatabase
@@ -16,69 +19,73 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
+import kotlin.math.exp
 
+@MediumTest
 @RunWith(AndroidJUnit4::class)
-
 class DetailDataAccessTest {
 
 
     private lateinit var dataAccess: DetailDataAccess
-    private lateinit var db: ApplicationDatabase
     private lateinit var dao: ApplicationDAO
+    private lateinit var source: TestDataSource
+    private var id = 0
 
     @Before
     fun createDb() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(
-            context, ApplicationDatabase::class.java
-        ).build()
-        dao = db.applicationDao()
+        dao = TestDatabaseFactory.createDao()!!
         dataAccess = DetailDataAccess(dao)
-
+        source = TestDataSource()
 
         runBlocking {
-            val workout =
-                WorkoutRoomEntity(name = "test_name", duration = 30 * 1000 * 60, imageUrl = "test")
             dao.clearWorkouts()
-            dao.insertWorkout(workout)
+            dao.insertWorkout(source.workoutRoomEntity)
+            id = dao.getLatestWorkout()?.id ?: 0
         }
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        db.close()
+        TestDatabaseFactory.disposeDb()
     }
 
 
     @Test
-    fun when_workout_is_requested_then_it_is_returned() = runBlocking {
-        dao.getLatestWorkout()?.id?.let { id ->
-            val result = dataAccess.getWorkoutAsFlow(id).first()
-            dao.clearWorkouts()
-            assertEquals("test_name", result?.name)
-        }
+    fun whenWorkoutRequestedAsFlow_thenItIsEmitted() = runBlocking {
+        //Given
+        val expected = "test_name"
+        //When
+        val actual = dataAccess.getWorkoutAsFlow(id).first()?.name.orEmpty()
+        //Then
+        assertEquals(expected, actual)
+        dao.clearWorkouts()
     }
 
     @Test
-    fun when_name_parameter_is_new_name_then_workout_name_is_updated_accordingly() = runBlocking {
-        dao.getLatestWorkout()?.id?.let { id ->
-            dataAccess.updateWorkoutName("new_name", id)
-            val result = dataAccess.getWorkoutAsFlow(id).first()
-            dao.clearWorkouts()
-            assertEquals("new_name", result?.name)
-        }
+    fun whenNameParameterIs_newName_thenWorkoutNameUpdatedAccordingly() = runBlocking {
+        //Given
+        val expected = "new_name"
+        //When
+        dataAccess.updateWorkoutName(expected, id)
+        val actual = dataAccess.getWorkoutAsFlow(id).first()?.name.orEmpty()
+        //Then
+        assertEquals(expected, actual)
+        dao.clearWorkouts()
     }
 
     @Test
-    fun when_duration_parameter_is_ten_then_workout_duration_is_updated_accordingly() = runBlocking {
-        dao.getLatestWorkout()?.id?.let { id ->
-            dataAccess.updateWorkoutDuration(id,10)
-            val result = dataAccess.getWorkoutAsFlow(id).first()
+    fun whenDurationParameterIs_10_thenWorkoutDurationUpdatedAccordingly() =
+        runBlocking {
+            //Given
+            val expected = 10
+            //When
+            dataAccess.updateWorkoutDuration(id, expected)
+            val actual = dataAccess.getWorkoutAsFlow(id).first()?.duration?.or(0)
+            //Then
+            assertEquals(expected, actual)
             dao.clearWorkouts()
-            assertEquals(10, result?.duration)
         }
-    }
 
 
 }

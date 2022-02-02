@@ -8,6 +8,7 @@ import com.example.workaudio.core.entities.Track
 import com.example.workaudio.core.entities.Workout
 import com.example.workaudio.core.usecases.player.PlayerBoundary
 import com.example.workaudio.presentation.utils.timer.AbstractTimerFactory
+import com.example.workaudio.presentation.utils.timer.TimerFactoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBoundary) :
     ViewModel() {
 
+    private val timerFactory: AbstractTimerFactory = TimerFactoryImpl.newInstance()
 
     private var dispatcher: CoroutineDispatcher = Dispatchers.IO
     fun setDispatcher(dispatcher: CoroutineDispatcher) {
@@ -43,8 +45,6 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
     var playerPosition: LiveData<Int> = _playerPosition
     private fun getPlayerPosition() = _playerPosition.value ?: 0
 
-    @Inject
-    lateinit var timerFactory: AbstractTimerFactory
 
     //MAIN PLAYER TIMER
     private var countDownTimer: Flow<Int>? = null

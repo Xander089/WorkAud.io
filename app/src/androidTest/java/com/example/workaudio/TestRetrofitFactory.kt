@@ -4,6 +4,7 @@ import com.example.workaudio.data.web.SpotifyRestApi
 import com.example.workaudio.data.web.SpotifyWebService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 object TestRetrofitFactory {
@@ -15,6 +16,7 @@ object TestRetrofitFactory {
             .baseUrl(ENDPOINT)
             .client(OkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .build()
         val api = retrofit.create(SpotifyRestApi::class.java)
         return SpotifyWebService(api)

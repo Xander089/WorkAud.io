@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.workaudio.TestDataSource
+import com.example.workaudio.TestDatabaseFactory
 import com.example.workaudio.core.usecases.player.PlayerDataAccess
 import com.example.workaudio.data.database.ApplicationDAO
 import com.example.workaudio.data.database.ApplicationDatabase
@@ -22,41 +24,40 @@ class PlayerDataAccessTest {
 
 
     private lateinit var dataAccess: PlayerDataAccess
-    private lateinit var db: ApplicationDatabase
     private lateinit var dao: ApplicationDAO
+    private lateinit var source: TestDataSource
+    private var id = 0
+
 
     @Before
     fun createDb() {
-        val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(
-            context, ApplicationDatabase::class.java
-        ).build()
-        dao = db.applicationDao()
+        source = TestDataSource()
+        dao = TestDatabaseFactory.createDao()!!
         dataAccess = PlayerDataAccess(dao)
 
-
         runBlocking {
-            val workout =
-                WorkoutRoomEntity(name = "test_name", duration = 30 * 1000 * 60, imageUrl = "test")
             dao.clearWorkouts()
-            dao.insertWorkout(workout)
+            dao.insertWorkout(source.workoutRoomEntity)
+            id = dao.getLatestWorkout()?.id ?: 0
         }
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        db.close()
+        TestDatabaseFactory.disposeDb()
     }
 
 
     @Test
-    fun when_workout_is_requested_then_it_is_returned() = runBlocking {
-        dao.getLatestWorkout()?.id?.let { id ->
-            val result = dataAccess.getWorkout(id)
-            dao.clearWorkouts()
-            assertEquals("test_name", result?.name)
-        }
+    fun whenWorkoutRequested_thenItIsReturned() = runBlocking {
+        val expected = "test_name"
+        //When
+        val result = dataAccess.getWorkout(id)
+        //Then
+        assertEquals(expected, result?.name)
+        dao.clearWorkouts()
+
     }
 
 }

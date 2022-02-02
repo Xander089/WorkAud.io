@@ -46,23 +46,9 @@ class CreationViewModelTest {
     fun setup() {
         source = TestDataSource()
         hiltRule.inject()
-        mockWorkoutEmission()
         viewModel = DurationFragmentViewModel(interactor)
         viewModel.setDispatcher(Dispatchers.Main)
 
-    }
-
-    private fun mockWorkoutEmission(){
-        `when`(interactor.getLatestWorkout()).thenReturn(flow {
-            emit(source.workout)
-        })
-    }
-
-    @Test
-    fun whenWorkoutRequested_thenItIsEmittedAsLiveData() = runBlocking(Dispatchers.Main) {
-        val expected = "test_name"
-        val actual = viewModel.workout.getOrAwaitValue()?.name.orEmpty()
-        assertEquals(expected,actual)
     }
 
     @Test
