@@ -34,7 +34,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
-
 class SearchDataAccessTest {
 
     private lateinit var dataAccess: SearchDataAccess

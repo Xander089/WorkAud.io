@@ -1,5 +1,6 @@
 package com.example.workaudio.presentation.player
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.workaudio.common.Constants.DEFAULT_DELAY_TIME
 import com.example.workaudio.common.Constants.MILLIS_TO_SECOND
@@ -14,6 +15,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.cancellable
 import javax.inject.Inject
+
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBoundary) :
@@ -119,10 +121,9 @@ class PlayerViewModel @Inject constructor(private val playerInteractor: PlayerBo
         val songTotSeconds = DataHelper.fromMinutesToSeconds(songTotTime)
         countDownTimer = createTimer(seconds, false)
         startMainTimerJob()
-
         songTimer = createTimer(songTotSeconds - songSeconds, true)
         songJob = createJob(songTimer) { currentTime ->
-            _playingTrackText.value = DataHelper.formatTrackDuration(currentTime) + songSeconds
+            _playingTrackText.value = DataHelper.formatTrackDuration(currentTime + songSeconds)
         }.also { it.launch() }
     }
 

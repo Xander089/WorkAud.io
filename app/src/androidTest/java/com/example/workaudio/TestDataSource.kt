@@ -8,10 +8,9 @@ import com.example.workaudio.data.database.WorkoutTracksRoomEntity
 
 class TestDataSource {
 
-    val tokens = mutableListOf<String>()
     val tracks = mutableListOf(
-        Track("title1", "uri2", 60000, "artist1", "album1", "url1"),
-        Track("title2", "uri2", 120000, "artist2", "album2", "url2")
+        Track("title1", "uri", 60000, "artist1", "album1", "url1"),
+        Track("title2", "uri", 120000, "artist2", "album2", "url2")
     )
 
     var workout = Workout(
@@ -43,6 +42,7 @@ class TestDataSource {
         )
 
     val token = TokenRoomEntity("token")
+    val tokens = mutableListOf(token.token.orEmpty())
 
 
 }

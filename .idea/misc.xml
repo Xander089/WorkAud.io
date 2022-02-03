@@ -34,6 +34,7 @@
         <entry key="app/src/main/res/layout/modal_layout.xml" value="0.12692307692307692" />
         <entry key="app/src/main/res/menu/detail_menu.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/menu/search_menu.xml" value="0.2203125" />
+        <entry key="app/src/main/res/xml/activity_main_xml_constraintlayout_scene.xml" value="0.37604166666666666" />
       </map>
     </option>
   </component>

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
@@ -17,6 +18,7 @@ import com.example.workaudio.R
 import com.example.workaudio.databinding.ActivityPlayerBinding
 import com.example.workaudio.libraries.spotify.SpotifyManager
 import com.example.workaudio.presentation.utils.OnScrollListenerFactory
+import com.example.workaudio.presentation.utils.SplashScreenFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
 import com.example.workaudio.presentation.utils.adapter.PlayerTracksAdapter
@@ -24,7 +26,6 @@ import com.example.workaudio.presentation.utils.dialogs.DialogFactory
 import com.example.workaudio.presentation.utils.dialogs.DialogFlavour
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 class PlayerActivity : AppCompatActivity() {
@@ -65,7 +66,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
-        spotify.spotifyConnect(this, getSpotifyClientId())
+        spotify.spotifyConnect(this, applicationContext)
         super.onStart()
     }
 
@@ -79,7 +80,7 @@ class PlayerActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
-               onBackPressed()
+                onBackPressed()
             }
             else -> {}
         }
@@ -90,6 +91,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun setupLayout() {
         setupPlayButton()
         setupTrackList()
+        setupSplashScreen()
     }
 
     private fun setupObservers() {
@@ -136,6 +138,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun play() {
         binding.playButton.setImageResource(R.drawable.ic_pause)
         viewModel.setPlayerState(PlayerState.PLAYING)
+
         viewModel.restartTimer(
             binding.timerText.text.toString(),
             binding.currentTimeText.text.toString(),
@@ -162,6 +165,14 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupSplashScreen() {
+        binding.motionLayout.setTransitionListener(
+            SplashScreenFactory.create {
+                binding.motionLayout.visibility = View.GONE
+            }
+        )
+    }
+
     private fun setupWorkoutObserver() {
         viewModel.workout.observe(this@PlayerActivity, { workout ->
             viewModel.initTimer()
@@ -178,8 +189,15 @@ class PlayerActivity : AppCompatActivity() {
     private fun setupMainTimerObserver() {
         viewModel.timerText.observe(this@PlayerActivity, { timerText ->
             binding.timerText.text = timerText
-            spotify.stopSpotifyPlayer(timerText)
+            finishActivityCheck(timerText)
         })
+    }
+
+    private fun finishActivityCheck(time: String) {
+        if (time == getString(R.string.reset_time)) {
+            spotify.pausePlayer()
+            finish()
+        }
     }
 
     private fun setupPlayingTrackObserver() {
@@ -236,12 +254,6 @@ class PlayerActivity : AppCompatActivity() {
             supportFragmentManager,
             STOP_TAG
         )
-    }
-
-    private fun getSpotifyClientId(): String {
-        val ai: ApplicationInfo = applicationContext.packageManager
-            .getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
-        return ai.metaData["clientId"].toString()
     }
 
 }

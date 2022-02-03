@@ -1,6 +1,8 @@
 package com.example.workaudio.libraries.spotify
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import com.example.workaudio.common.Constants.RESET_TIME
 import com.example.workaudio.R
 import com.spotify.android.appremote.api.ConnectionParams
@@ -18,10 +20,13 @@ class SpotifyManager() {
     fun spotifyDisconnect() = SpotifyAppRemote.disconnect(mSpotifyAppRemote)
     fun logOut(context: Context) = AuthorizationClient.clearCookies(context)
 
-    fun spotifyConnect(context: Context, clientId: String = "") {
+    fun spotifyConnect(context: Context, applicationContext: Context) {
         SpotifyAppRemote.connect(
             context,
-            getConnectionParams(context,clientId),
+            getConnectionParams(
+                context,
+                getSpotifyClientId(applicationContext)
+            ),
             object : ConnectionListener {
                 override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                     if (mSpotifyAppRemote == null) {
@@ -31,6 +36,12 @@ class SpotifyManager() {
 
                 override fun onFailure(throwable: Throwable) {}
             })
+    }
+
+    private fun getSpotifyClientId(applicationContext: Context): String {
+        val ai: ApplicationInfo = applicationContext.packageManager
+            .getApplicationInfo(applicationContext.packageName, PackageManager.GET_META_DATA)
+        return ai.metaData["clientId"].toString()
     }
 
     private fun getConnectionParams(
@@ -57,13 +68,6 @@ class SpotifyManager() {
     fun pausePlayer() = getPlayer()?.pause()
 
     fun resumePlayer() = getPlayer()?.resume()
-
-    fun stopSpotifyPlayer(timerText: String) {
-        val resetTimeText = RESET_TIME
-        if (timerText == resetTimeText) {
-            pausePlayer()
-        }
-    }
 
 
 }

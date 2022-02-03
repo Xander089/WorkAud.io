@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
@@ -16,11 +17,13 @@ import com.example.workaudio.R
 import com.example.workaudio.databinding.FragmentEditingTracksBinding
 import com.example.workaudio.common.Constants.ID_TAG
 import com.example.workaudio.core.entities.Track
+import com.example.workaudio.presentation.utils.NavigationManager
 import com.example.workaudio.presentation.utils.OnScrollListenerFactory
 import com.example.workaudio.presentation.utils.QueryTextListenerFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
 import com.example.workaudio.presentation.utils.adapter.SearchedTracksAdapter
+import com.example.workaudio.presentation.workoutDetail.DetailFragment
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.core.Observer
@@ -29,6 +32,17 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchTracksFragment : Fragment() {
+
+    //onBackPressed -> navigate to home screen
+    private val onBackPressedCallback: OnBackPressedCallback =
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                NavigationManager.navigateTo(
+                    findNavController(),
+                    R.id.action_editingTracksFragment_to_workoutDetailFragment
+                )
+            }
+        }
 
     @Inject
     lateinit var viewModel: SearchTracksFragmentViewModel
@@ -47,17 +61,19 @@ class SearchTracksFragment : Fragment() {
         viewModel.setupCurrentWorkout(getWorkoutId())
 
         buildAdapter()
-        addOnScrollListener()
         setupLayout()
         setupObservers()
 
         return binding.root
     }
 
-    //in order to inflate menu in app bar
+    //in order to inflate menu in app bar and on back press navigation
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(onBackPressedCallback)
     }
 
     private fun getResourceString(resId: Int) = context?.resources?.getString(resId).orEmpty()
@@ -130,23 +146,6 @@ class SearchTracksFragment : Fragment() {
                 Glide.with(requireActivity()).load(imageUri).into(imageView)
             }
         ) as SearchedTracksAdapter
-    }
-
-    //when user scrolls up, hide the app bar
-    private fun addOnScrollListener() {
-        binding.trackList.addOnScrollListener(OnScrollListenerFactory.create(
-            onScrollStateChanged = { newState -> viewModel.setScrollState(newState) },
-            onScrolled = { dy -> onScrolled(dy) }
-        ))
-    }
-
-    private fun onScrolled(dy: Int) {
-        if (dy > 0 && (viewModel.getScrollState() in listOf(0, 2))) {
-            binding.topAppBar.visibility = View.GONE
-        } else {
-            binding.topAppBar.visibility = View.VISIBLE
-        }
-
     }
 
     private fun setupLayout() {
