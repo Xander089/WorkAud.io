@@ -57,4 +57,6 @@
     <string name="delete">Delete</string>
     <string name="search_track">Search Track</string>
     <string name="searchview_src">android:id/search_src_text</string>
+    <string name="genres">Genres</string>
+    <string name="workouts">Workouts</string>
 </resources>

@@ -26,8 +26,10 @@
         <entry key="app/src/main/res/layout/fragment_tracks.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/fragment_workout_detail.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_workout_list.xml" value="0.27975510281515426" />
+        <entry key="app/src/main/res/layout/fragment_workout_list2.xml" value="0.24270833333333333" />
         <entry key="app/src/main/res/layout/item_detail_track.xml" value="0.27291666666666664" />
         <entry key="app/src/main/res/layout/item_detail_track_horizontal.xml" value="0.375" />
+        <entry key="app/src/main/res/layout/item_genre.xml" value="0.4371458138374371" />
         <entry key="app/src/main/res/layout/item_track.xml" value="0.37604166666666666" />
         <entry key="app/src/main/res/layout/item_workout_list.xml" value="0.45" />
         <entry key="app/src/main/res/layout/modal_bottom_layout.xml" value="0.37604166666666666" />
@@ -47,7 +49,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.33" />
+        <option name="scale" value="0.24270833333333333" />
       </ProjectState>
     </option>
   </component>

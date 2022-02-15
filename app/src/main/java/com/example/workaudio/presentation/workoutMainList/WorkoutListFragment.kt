@@ -8,18 +8,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.os.bundleOf
+import androidx.core.widget.NestedScrollView
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.workaudio.common.Constants.ID_TAG
 import com.example.workaudio.common.Constants.MODAL_ACTION
 import com.example.workaudio.common.Constants.MODAL_TITLE
 import com.example.workaudio.R
+import com.example.workaudio.common.Constants.GENRES
 import com.example.workaudio.databinding.FragmentWorkoutListBinding
 import com.example.workaudio.common.Constants.TAG
+import com.example.workaudio.databinding.FragmentWorkoutList2Binding
 import com.example.workaudio.presentation.utils.NavigationManager
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
+import com.example.workaudio.presentation.utils.adapter.GenreAdapter
 import com.example.workaudio.presentation.utils.adapter.WorkoutAdapter
 import com.example.workaudio.presentation.utils.modal.BottomModalDialog
 import com.example.workaudio.presentation.utils.modal.ModalAction
@@ -35,8 +40,9 @@ class WorkoutListFragment : Fragment() {
             R.id.action_workoutListFragment_to_workoutDetailFragment
     }
 
-    private lateinit var binding: FragmentWorkoutListBinding
+    private lateinit var binding: FragmentWorkoutList2Binding
     private lateinit var workoutAdapter: WorkoutAdapter
+    private lateinit var genresAdapter: GenreAdapter
 
     @Inject
     lateinit var viewModel: WorkoutListFragmentViewModel
@@ -45,14 +51,17 @@ class WorkoutListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWorkoutListBinding.inflate(inflater, container, false)
-        workoutAdapter = provideAdapter() as WorkoutAdapter
+        binding = FragmentWorkoutList2Binding.inflate(inflater, container, false)
         setupLayoutFunctionality()
         setupObservers()
         return binding.root
     }
 
     private fun setupLayoutFunctionality() {
+
+        workoutAdapter = provideAdapter() as WorkoutAdapter
+        genresAdapter = provideGenreAdapter() as GenreAdapter
+
         binding.apply {
             workoutList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
@@ -62,12 +71,26 @@ class WorkoutListFragment : Fragment() {
             createWorkoutButton.setOnClickListener {
                 NavigationManager.navigateTo(findNavController(), WORKOUTS_TO_NAME)
             }
+            genresList.apply {
+                layoutManager = GridLayoutManager(requireContext(),2)
+                adapter = genresAdapter
+            }
+            scrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
+                handleScroll(scrollY)
+            })
+            genresAdapter.update(GENRES)
+        }
+    }
+    private fun handleScroll(scrollPosition: Int) {
+        binding.mainTitle.text = when (scrollPosition) {
+            in 0..binding.anotherTextView.top -> binding.titleTextView.text.toString()
+            in binding.titleTextView.top..binding.materialButton.top -> binding.anotherTextView.text.toString()
+            else -> ""
         }
     }
 
     private fun setupObservers() {
         viewModel.workouts.observe(this, { workouts ->
-            Log.v("ciccio", workouts.toString())
             workouts?.let {
                 workoutAdapter.updateWorkouts(it)
             }
@@ -86,6 +109,11 @@ class WorkoutListFragment : Fragment() {
         fetchImage = { imageView, imageUri ->
             fetchImage(imageView, imageUri)
         }
+    )
+
+    private fun provideGenreAdapter() = AdapterFactory.create(
+        AdapterFlavour.GENRE,
+        open = {}
     )
 
     private fun fetchImage(imageView: ImageView, imageUri: String) {

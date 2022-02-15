@@ -24,5 +24,22 @@ object Constants {
     const val DURATION_TAG = "EditDurationDialog"
     const val STOP_TAG = "StopPlayerDialog"
 
+    val GENRES = listOf(
+        "PUNK",
+        "POP",
+        "ALTERNATIVE",
+        "ROCK",
+        "METAL",
+        "EDM",
+        "HOUSE",
+        "PUNK",
+        "POP",
+        "ALTERNATIVE",
+        "ROCK",
+        "METAL",
+        "EDM",
+        "HOUSE"
+    )
+
 
 }

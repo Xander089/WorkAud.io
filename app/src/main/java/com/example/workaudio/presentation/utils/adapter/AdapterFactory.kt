@@ -11,6 +11,7 @@ object AdapterFactory {
         fetchImage: (ImageView, String) -> Unit = { _, _ -> },
         addTrack: (Track) -> Unit = {},
         deleteTrack: (String) -> Unit = {},
+        open: (String) -> Unit = {},
         onSwipe: (String) -> Unit = {},
         openWorkoutDetail: (Int) -> Unit = {},
         showBottomModal: (Int) -> Unit = {},
@@ -24,7 +25,13 @@ object AdapterFactory {
                 deleteTrack,
                 onSwipe
             )
-            AdapterFlavour.WORKOUT -> WorkoutAdapter(mutableListOf(),openWorkoutDetail,showBottomModal,fetchImage)
+            AdapterFlavour.WORKOUT -> WorkoutAdapter(
+                mutableListOf(),
+                openWorkoutDetail,
+                showBottomModal,
+                fetchImage
+            )
+            AdapterFlavour.GENRE -> GenreAdapter(mutableListOf(), open)
             else -> PlayerTracksAdapter(mutableListOf(), fetchImage)
 
         }
