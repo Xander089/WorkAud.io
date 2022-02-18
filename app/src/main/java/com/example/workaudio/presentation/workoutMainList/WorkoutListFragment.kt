@@ -1,7 +1,7 @@
 package com.example.workaudio.presentation.workoutMainList
 
 import android.os.Bundle
-import android.util.Log
+import android.util.DisplayMetrics
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +18,6 @@ import com.example.workaudio.common.Constants.MODAL_ACTION
 import com.example.workaudio.common.Constants.MODAL_TITLE
 import com.example.workaudio.R
 import com.example.workaudio.common.Constants.GENRES
-import com.example.workaudio.databinding.FragmentWorkoutListBinding
 import com.example.workaudio.common.Constants.TAG
 import com.example.workaudio.databinding.FragmentWorkoutList2Binding
 import com.example.workaudio.presentation.utils.NavigationManager
@@ -72,21 +71,22 @@ class WorkoutListFragment : Fragment() {
                 NavigationManager.navigateTo(findNavController(), WORKOUTS_TO_NAME)
             }
             genresList.apply {
-                layoutManager = GridLayoutManager(requireContext(),2)
+                layoutManager = GridLayoutManager(requireContext(), 2)
                 adapter = genresAdapter
             }
             scrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
                 handleScroll(scrollY)
             })
-            genresAdapter.update(GENRES)
+            genresAdapter.update(GENRES, getDpiScreenWidth())
         }
     }
+
     private fun handleScroll(scrollPosition: Int) {
-        binding.mainTitle.text = when (scrollPosition) {
-            in 0..binding.anotherTextView.top -> binding.titleTextView.text.toString()
-            in binding.titleTextView.top..binding.materialButton.top -> binding.anotherTextView.text.toString()
-            else -> ""
-        }
+//        binding.mainTitle.text = when (scrollPosition) {
+//            in 0..binding.anotherTextView.top -> binding.titleTextView.text.toString()
+//            in binding.titleTextView.top..binding.materialButton.top -> binding.anotherTextView.text.toString()
+//            else -> ""
+//        }
     }
 
     private fun setupObservers() {
@@ -134,5 +134,23 @@ class WorkoutListFragment : Fragment() {
         modalBottomSheet.arguments = bundle
         modalBottomSheet.show(parentFragmentManager, TAG)
     }
+
+    private fun metrics(): DisplayMetrics {
+        val outMetrics = DisplayMetrics()
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            val display = requireActivity().display
+            display?.getRealMetrics(outMetrics)
+        } else {
+            @Suppress("DEPRECATION")
+            val display = requireActivity().windowManager.defaultDisplay
+            @Suppress("DEPRECATION")
+            display.getMetrics(outMetrics)
+        }
+        return outMetrics
+    }
+
+    private fun getDpiScreenWidth() =
+        metrics().widthPixels
+
 
 }
