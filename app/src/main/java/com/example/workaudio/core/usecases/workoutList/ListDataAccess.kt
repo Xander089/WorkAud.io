@@ -20,7 +20,10 @@ class ListDataAccess(
         }
     }
 
-    override suspend fun deleteWorkout(workoutId: Int) = dao.deleteWorkout(workoutId)
-    override suspend fun getWorkoutTrack(workoutId: Int) = dao.getWorkoutTrack(workoutId)?.toTrack()
+    override suspend fun deleteWorkout(workoutId: Int) =
+        dao.deleteWorkout(workoutId)
+
+    override suspend fun getWorkoutTrack(workoutId: Int) =
+        dao.getWorkoutTrack(workoutId)?.toTrack()
 
 }

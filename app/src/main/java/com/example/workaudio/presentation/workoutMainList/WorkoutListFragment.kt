@@ -74,19 +74,37 @@ class WorkoutListFragment : Fragment() {
                 layoutManager = GridLayoutManager(requireContext(), 2)
                 adapter = genresAdapter
             }
-            scrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
-                handleScroll(scrollY)
-            })
+
+            scrollView.setOnScrollChangeListener(
+                NestedScrollView.OnScrollChangeListener { _, _, scrollY, _, _ ->
+                    handleScroll(scrollY)
+                })
             genresAdapter.update(GENRES, getDpiScreenWidth())
         }
     }
 
+
     private fun handleScroll(scrollPosition: Int) {
-//        binding.mainTitle.text = when (scrollPosition) {
-//            in 0..binding.anotherTextView.top -> binding.titleTextView.text.toString()
-//            in binding.titleTextView.top..binding.materialButton.top -> binding.anotherTextView.text.toString()
-//            else -> ""
-//        }
+        hideTopAppBar(scrollPosition)
+        populateMainLabel(scrollPosition)
+    }
+
+    private fun populateMainLabel(scrollPosition: Int) {
+        val edges = arrayOf(
+            0,
+            binding.workoutLabel.top,
+            binding.workoutList.bottom
+        )
+        binding.mainLabel.text = when (scrollPosition) {
+            in edges[0]..edges[1] -> getString(R.string.genres)
+            in edges[1]..edges[2] -> getString(R.string.workouts)
+            else -> ""
+        }
+    }
+
+    private fun hideTopAppBar(scrollPosition: Int) {
+        val visibility = if (scrollPosition > 0) View.GONE else View.VISIBLE
+        binding.mainCardView.visibility = visibility
     }
 
     private fun setupObservers() {

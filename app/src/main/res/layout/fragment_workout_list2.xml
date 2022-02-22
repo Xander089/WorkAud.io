@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/main_card_view"
         android:layout_width="0dp"
@@ -52,10 +53,41 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/scrollView">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black">
+
+            <TextView
+                android:id="@+id/mainLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/hammersmith_one"
+                android:text="@string/genres"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,10 +113,10 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/genresList"
-                android:nestedScrollingEnabled="false"
                 android:layout_width="0dp"
-                android:layout_height="600dp"
+                android:layout_height="1200dp"
                 android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/genresLabel" />
@@ -104,11 +136,11 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/workoutList"
-                android:nestedScrollingEnabled="false"
                 android:layout_width="0dp"
-                android:layout_height="600dp"
+                android:layout_height="1200dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
+                android:nestedScrollingEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -39,12 +39,12 @@
     <string name="cancel">CANCEL</string>
     <string name="set_duration">Set duration:</string>
     <string name="standard_duration">30 min</string>
-    <string name="enter_a_new_name">Enter a new name</string>
+    <string name="enter_a_new_name">Pick a new name</string>
     <string name="stop_the_workout">Stop the workout?</string>
     <string name="create_workout">CREATE WORKOUT</string>
     <string name="standard_workout_time">20</string>
     <string name="standard_duration2">/30 min</string>
-    <string name="enter_a_name">Enter a name:</string>
+    <string name="enter_a_name">Pick a name:</string>
     <string name="continue_message">CONTINUE</string>
     <string name="add_tracks">Add Tracks</string>
     <string name="thirty">30</string>

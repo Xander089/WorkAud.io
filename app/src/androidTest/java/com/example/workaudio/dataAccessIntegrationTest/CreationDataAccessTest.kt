@@ -7,6 +7,7 @@ import com.example.workaudio.TestDatabaseFactory
 import com.example.workaudio.TestRetrofitFactory
 import com.example.workaudio.core.usecases.creation.CreationDataAccess
 import com.example.workaudio.data.database.ApplicationDAO
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -55,5 +56,16 @@ class CreationDataAccessTest {
             dao.clearWorkouts()
             //Then
             assertEquals(expected, workoutName)
+        }
+
+    @Test
+    fun whenNewWorkoutIsNotCreated_thenItIsNotReturned() =
+        runBlocking {
+            //Given
+            //When
+            dao.clearWorkouts()
+            val workoutName = dao.getLatestWorkoutAsFlow().first()?.name.orEmpty()
+            //Then
+            assertTrue(workoutName.isEmpty())
         }
 }

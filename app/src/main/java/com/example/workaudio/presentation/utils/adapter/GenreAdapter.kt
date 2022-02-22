@@ -10,7 +10,6 @@ import com.example.workaudio.common.Constants
 import com.example.workaudio.databinding.ItemGenreBinding
 import kotlin.random.Random
 
-
 class GenreAdapter(
     private val genres: MutableList<String>,
     private val action: (String) -> Unit,
