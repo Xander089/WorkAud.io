@@ -114,7 +114,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/genresList"
                 android:layout_width="0dp"
-                android:layout_height="1200dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintEnd_toEndOf="parent"

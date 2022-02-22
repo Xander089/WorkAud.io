@@ -20,6 +20,7 @@ import com.example.workaudio.R
 import com.example.workaudio.common.Constants.GENRES
 import com.example.workaudio.common.Constants.TAG
 import com.example.workaudio.databinding.FragmentWorkoutList2Binding
+import com.example.workaudio.databinding.FragmentWorkoutListBinding
 import com.example.workaudio.presentation.utils.NavigationManager
 import com.example.workaudio.presentation.utils.adapter.AdapterFactory
 import com.example.workaudio.presentation.utils.adapter.AdapterFlavour
@@ -39,7 +40,7 @@ class WorkoutListFragment : Fragment() {
             R.id.action_workoutListFragment_to_workoutDetailFragment
     }
 
-    private lateinit var binding: FragmentWorkoutList2Binding
+    private lateinit var binding: FragmentWorkoutListBinding
     private lateinit var workoutAdapter: WorkoutAdapter
     private lateinit var genresAdapter: GenreAdapter
 
@@ -50,7 +51,7 @@ class WorkoutListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentWorkoutList2Binding.inflate(inflater, container, false)
+        binding = FragmentWorkoutListBinding.inflate(inflater, container, false)
         setupLayoutFunctionality()
         setupObservers()
         return binding.root
@@ -85,7 +86,7 @@ class WorkoutListFragment : Fragment() {
 
 
     private fun handleScroll(scrollPosition: Int) {
-        hideTopAppBar(scrollPosition)
+//        hideTopAppBar(scrollPosition)
         populateMainLabel(scrollPosition)
     }
 
